@@ -1,0 +1,7 @@
+keys:
+  - &key age14uepygtepskwehywergh9fe9j2a3ytqd80y9r2ekfmett6rq3peqjtgxns
+creation_rules:
+  - path_regex: .*
+    key_groups:
+      - age:
+          - *key
