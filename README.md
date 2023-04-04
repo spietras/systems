@@ -1,2 +1,3 @@
 # homelab
-configuration for my homelab 🌐
+
+configuration for my homelab 🏠
