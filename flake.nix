@@ -9,6 +9,13 @@
       ref = "nixos-unstable";
     };
 
+    flake-utils = {
+      type = "github";
+      owner = "numtide";
+      repo = "flake-utils";
+      ref = "main";
+    };
+
     sops-nix = {
       type = "github";
       owner = "Mic92";
@@ -32,10 +39,21 @@
 
   outputs = _inputs: let
     inputs = _inputs // {utils = import ./utils;};
-  in
-    inputs.utils.mkHosts {
+    hostConfigs = inputs.utils.mkHosts {
       inherit inputs;
       directory = "hosts";
       hosts = ["xenon"];
+    };
+    formatterConfig = inputs.utils.mkFormatter {
+      inherit inputs;
+      formatter = "alejandra";
+    };
+  in
+    inputs.utils.mergeAll {
+      inherit inputs;
+      attrsets = [
+        hostConfigs
+        formatterConfig
+      ];
     };
 }
