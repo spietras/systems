@@ -1,0 +1,52 @@
+name: Lint
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "**.nix"
+      - "scripts/lint.sh"
+      - ".github/workflows/lint.yaml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "**.nix"
+      - "scripts/lint.sh"
+      - ".github/workflows/lint.yaml"
+
+env:
+  CACHE_DIR: /tmp/nixcache
+  CACHE_NUMBER: 0
+
+jobs:
+  lint:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3.5.2
+      - name: Setup cache
+        uses: actions/cache@v3.3.1
+        id: cache
+        with:
+          path: ${{ env.CACHE_DIR }}
+          key: ${{ runner.os }}-lint-${{ env.CACHE_NUMBER }}
+      - name: Install Nix
+        uses: cachix/install-nix-action@v20
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          install_url: https://releases.nixos.org/nix/nix-2.15.0/install
+      - name: Import Nix store cache
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: nix-store --import < ${{ env.CACHE_DIR }}
+      - name: Lint
+        run: ./scripts/lint.sh
+      - name: Export Nix store cache
+        if: "!cancelled()"
+        run: nix-store --export $(find /nix/store -maxdepth 1 -name '*-*') > /tmp/nixcache
