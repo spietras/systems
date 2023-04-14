@@ -36,4 +36,4 @@ set -- $unparsed
 
 ### MAIN ###
 
-nix fmt -- --check . "$@"
+nix --extra-experimental-features 'nix-command flakes' fmt -- --check . "$@"

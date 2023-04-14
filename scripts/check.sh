@@ -36,4 +36,4 @@ set -- $unparsed
 
 ### MAIN ###
 
-nix flake check "$@"
+nix --extra-experimental-features 'nix-command flakes' flake check "$@"
