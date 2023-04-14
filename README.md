@@ -1,6 +1,15 @@
-# homelab
+<h1 align="center">homelab</h1>
+
+<div align="center">
 
 configuration for my homelab 🏠
+
+[![Lint](https://github.com/spietras/homelab/actions/workflows/lint.yaml/badge.svg)](https://github.com/spietras/homelab/actions/workflows/lint.yaml)
+[![Check](https://github.com/spietras/homelab/actions/workflows/check.yaml/badge.svg)](https://github.com/spietras/homelab/actions/workflows/check.yaml)
+
+</div>
+
+---
 
 ## Prerequisites
 
