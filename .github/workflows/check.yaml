@@ -28,7 +28,6 @@ on:
 
 env:
   CACHE_DIR: /tmp/nixcache
-  CACHE_NUMBER: 0
 
 jobs:
   check:
@@ -42,7 +41,7 @@ jobs:
         id: cache
         with:
           path: ${{ env.CACHE_DIR }}
-          key: ${{ runner.os }}-check-${{ env.CACHE_NUMBER }}
+          key: ${{ runner.os }}-check
       - name: Install Nix
         uses: cachix/install-nix-action@v20
         with:
