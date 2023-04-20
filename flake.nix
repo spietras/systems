@@ -2,18 +2,25 @@
   description = "homelab configuration";
 
   inputs = {
-    nixpkgs = {
-      type = "github";
-      owner = "NixOS";
-      repo = "nixpkgs";
-      ref = "nixos-unstable";
-    };
-
     flake-utils = {
       type = "github";
       owner = "numtide";
       repo = "flake-utils";
       ref = "main";
+    };
+
+    impermanence = {
+      type = "github";
+      owner = "nix-community";
+      repo = "impermanence";
+      ref = "master";
+    };
+
+    nixpkgs = {
+      type = "github";
+      owner = "NixOS";
+      repo = "nixpkgs";
+      ref = "nixos-unstable";
     };
 
     sops-nix = {
@@ -28,28 +35,23 @@
         };
       };
     };
-
-    impermanence = {
-      type = "github";
-      owner = "nix-community";
-      repo = "impermanence";
-      ref = "master";
-    };
   };
 
   outputs = _inputs: let
-    inputs = _inputs // {utils = import ./utils;};
+    # add custom local inputs
     inputs =
       _inputs
       // {
         packages = import ./packages;
         utils = import ./utils;
       };
+    # configuration for all hosts
     hostConfigs = inputs.utils.mkHosts {
       inherit inputs;
       directory = "hosts";
       hosts = ["xenon"];
     };
+    # configuration for formatter
     formatterConfig = inputs.utils.mkFormatter {
       inherit inputs;
       formatter = "alejandra";
