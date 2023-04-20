@@ -10,6 +10,7 @@
     ./nix
     ./performance
     ./secrets
+    ./security
     ./storage
     ./users
     ./vm
