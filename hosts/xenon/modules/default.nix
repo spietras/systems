@@ -8,7 +8,7 @@
     ./network.nix
     ./network
     ./nix
-    ./users.nix
+    ./performance
     ./secrets
     ./storage
     ./users
