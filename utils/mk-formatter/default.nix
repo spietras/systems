@@ -1,8 +1,10 @@
+# Create configuration for given formatter
 {
-  inputs,
   formatter,
+  inputs,
   ...
 }:
+# Create packages for each system
 inputs.flake-utils.lib.eachDefaultSystem (
   system: {
     formatter = inputs.nixpkgs.legacyPackages.${system}.${formatter};

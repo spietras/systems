@@ -1,12 +1,13 @@
+# Create configurations for all given hosts
 {
-  inputs,
   directory,
   hosts,
+  inputs,
   ...
 }: let
   _mkHost = host:
     inputs.utils.mkHost {
-      inherit inputs directory host;
+      inherit directory host inputs;
     };
   hostConfigs = builtins.map _mkHost hosts;
 in

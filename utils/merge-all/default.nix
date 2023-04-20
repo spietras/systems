@@ -1,6 +1,7 @@
+# Merge a list of attrsets into a single attrset.
 {
-  inputs,
   attrsets,
+  inputs,
   ...
 }: let
   mergeOperator = inputs.nixpkgs.lib.recursiveUpdate;
