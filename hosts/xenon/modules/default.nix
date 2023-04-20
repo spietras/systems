@@ -5,7 +5,7 @@
     ./constants
     ./hardware
     ./install
-    ./network.nix
+    ./misc
     ./network
     ./nix
     ./performance
