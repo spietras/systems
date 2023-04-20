@@ -39,6 +39,12 @@
 
   outputs = _inputs: let
     inputs = _inputs // {utils = import ./utils;};
+    inputs =
+      _inputs
+      // {
+        packages = import ./packages;
+        utils = import ./utils;
+      };
     hostConfigs = inputs.utils.mkHosts {
       inherit inputs;
       directory = "hosts";
