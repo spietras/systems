@@ -1,5 +1,10 @@
+# Local Nix build output
 /result/
+
+# Untracked binary files (like runtime VM state)
 /bin/
+# But keep the .gitkeep file, so the directory is tracked
 !/bin/.gitkeep
 
+# If you want to write some untracked TODO notes, you can do so in this file
 TODO
