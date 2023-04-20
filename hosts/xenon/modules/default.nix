@@ -1,6 +1,6 @@
 {
   imports = [
-    ./boot.nix
+    ./appearance
     ./boot
     ./constants
     ./hardware
