@@ -104,3 +104,37 @@ done
 echo
 
 echo "Formatting complete"
+
+### PREPARATION ###
+
+echo "Mounting persistent filesystems"
+
+if ! mkdir -p "/mnt/$ZFS_HARDSTATE" "/mnt/$ZFS_SOFTSTATE" ||
+    ! mount -t zfs -o zfsutil "$MAIN_LABEL/$ZFS_HARDSTATE" "/mnt/$ZFS_HARDSTATE" ||
+    ! mount -t zfs -o zfsutil "$MAIN_LABEL/$ZFS_SOFTSTATE" "/mnt/$ZFS_SOFTSTATE"; then
+    echo "Mounting filesystems failed" >&2
+    exit 7
+fi
+
+echo "Creating necessary directories"
+
+if ! mkdir -p \
+    "/mnt/$ZFS_SOFTSTATE/etc/NetworkManager/system-connections" \
+    "/mnt/$ZFS_SOFTSTATE/var/cache" \
+    "/mnt/$ZFS_SOFTSTATE/var/games" \
+    "/mnt/$ZFS_SOFTSTATE/var/lib" \
+    "/mnt/$ZFS_SOFTSTATE/var/log" \
+    "/mnt/$ZFS_SOFTSTATE/var/tmp" \
+    ; then
+    echo "Creating directories failed" >&2
+    exit 8
+fi
+
+echo "Unmounting persistent filesystems"
+
+if ! umount "/mnt/$ZFS_HARDSTATE" "/mnt/$ZFS_SOFTSTATE"; then
+    echo "Unmounting filesystems failed" >&2
+    exit 9
+fi
+
+echo "Preparation complete"

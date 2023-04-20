@@ -1,5 +1,7 @@
+# Users configuration
 {config, ...}: {
   users = {
+    # Don't allow changing users configuration during runtime
     mutableUsers = false;
 
     users = {
@@ -8,8 +10,14 @@
       };
 
       spietras = {
+        description = "Sebastian Pietras";
+
+        extraGroups = [
+          # Can use sudo
+          "wheel"
+        ];
+
         isNormalUser = true;
-        extraGroups = ["wheel"];
       };
     };
   };

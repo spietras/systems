@@ -1,14 +1,17 @@
 {
   imports = [
     ./boot.nix
-    ./constants.nix
-    ./storage.nix
-    ./hardware.nix
-    ./install.nix
+    ./boot
+    ./constants
+    ./hardware
+    ./install
     ./network.nix
-    ./nix.nix
-    ./secrets.nix
+    ./network
+    ./nix
     ./users.nix
-    ./vm.nix
+    ./secrets
+    ./storage
+    ./users
+    ./vm
   ];
 }
