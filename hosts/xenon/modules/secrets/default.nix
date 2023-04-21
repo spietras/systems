@@ -31,7 +31,10 @@
         neededForUsers = true;
       };
 
-      "tailscaleKey" = {
+      "tailscale/clientId" = {
+      };
+
+      "tailscale/clientSecret" = {
       };
     };
   };

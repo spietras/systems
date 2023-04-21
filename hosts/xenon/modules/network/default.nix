@@ -113,8 +113,47 @@
 
   systemd = {
     services = {
-      # Autoconnect to tailscale network with authentication key
-      tailscale-autoconnect = {
+      # Logout from Tailscale network on shutdown
+      tailscale-logout = {
+        # Run only after network is online and tailscale daemon is running
+        after = [
+          "network-online.target"
+          "tailscaled.service"
+        ];
+
+        description = "Automatic logout from Tailscale";
+
+        # Require network to be online and tailscale daemon to be running
+        requires = [
+          "network-online.target"
+          "tailscaled.service"
+        ];
+
+        serviceConfig = {
+          # Run only once at shutdown
+          Type = "oneshot";
+
+          # This is needed for some reason
+          RemainAfterExit = "yes";
+        };
+
+        # Run when stopping the system
+        preStop = builtins.readFile (
+          pkgs.substituteAll {
+            src = ./tailscale-logout.sh;
+
+            tailscale = "${pkgs.tailscale}/bin/tailscale";
+          }
+        );
+
+        # Make available at startup
+        wantedBy = [
+          "multi-user.target"
+        ];
+      };
+
+      # Autoconnect to Tailscale network with authentication key
+      tailscale-up = {
         # Run only after network is online and tailscale daemon is running
         after = [
           "network-online.target"
@@ -123,19 +162,29 @@
 
         description = "Automatic connection to Tailscale";
 
+        # Require network to be online and tailscale daemon to be running
+        requires = [
+          "network-online.target"
+          "tailscaled.service"
+        ];
+
         serviceConfig = {
           # Connect only once at startup
           Type = "oneshot";
         };
 
-        script = builtins.readFile ./tailscale.sh;
-        scriptArgs = "--tailscale ${pkgs.tailscale}/bin/tailscale --key ${config.sops.secrets.tailscaleKey.path}";
+        script = builtins.readFile (
+          pkgs.substituteAll {
+            src = ./tailscale-up.sh;
 
-        # Run only after network is online and tailscale daemon is running
-        wants = [
-          "network-online.target"
-          "tailscaled.service"
-        ];
+            mktemp = "${pkgs.coreutils}/bin/mktemp";
+            curl = "${pkgs.curl}/bin/curl";
+            jq = "${pkgs.jq}/bin/jq";
+            tailscale = "${pkgs.tailscale}/bin/tailscale";
+            clientId = config.sops.secrets."tailscale/clientId".path;
+            clientSecret = config.sops.secrets."tailscale/clientSecret".path;
+          }
+        );
 
         # Run at startup
         wantedBy = [
