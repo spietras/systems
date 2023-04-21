@@ -195,20 +195,6 @@ if ! mount -t tmpfs -o mode=755 none /mnt ||
     exit 7
 fi
 
-echo "Creating necessary directories"
-
-if ! mkdir -p \
-    "/mnt/$ZFS_SOFTSTATE/etc/NetworkManager/system-connections" \
-    "/mnt/$ZFS_SOFTSTATE/var/cache" \
-    "/mnt/$ZFS_SOFTSTATE/var/games" \
-    "/mnt/$ZFS_SOFTSTATE/var/lib" \
-    "/mnt/$ZFS_SOFTSTATE/var/log" \
-    "/mnt/$ZFS_SOFTSTATE/var/tmp" \
-    ; then
-    echo "Creating directories failed" >&2
-    exit 8
-fi
-
 echo "Copying age keys"
 
 # copy age keys

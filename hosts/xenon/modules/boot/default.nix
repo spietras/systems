@@ -1,5 +1,9 @@
 # Boot configuration
-{config, ...}: {
+{
+  config,
+  pkgs,
+  ...
+}: {
   boot = {
     initrd = {
       # This was autodetected by nixos-generate-config
@@ -10,6 +14,19 @@
         "sr_mod"
         "virtio_blk"
       ];
+
+      # Setup directories for persistent storage at boot
+      postDeviceCommands = builtins.readFile (
+        pkgs.substituteAll {
+          src = ./prepare.sh;
+
+          main = config.constants.storage.partitions.main.label;
+          hardstate = config.constants.storage.partitions.main.datasets.hardstate.label;
+          softstate = config.constants.storage.partitions.main.datasets.softstate.label;
+
+          udevadm = "udevadm";
+        }
+      );
 
       # Needed to support ZFS at boot
       supportedFilesystems = [

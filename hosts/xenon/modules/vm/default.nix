@@ -1,6 +1,7 @@
 # Virtual machine configuration
 {
   config,
+  lib,
   pkgs,
   ...
 }: {
@@ -8,30 +9,32 @@
     vmVariantWithBootLoader = {
       boot = {
         initrd = {
-          # pkgs.substituteAll returns a path to a file, so we need to read it
-          postDeviceCommands = builtins.readFile (
-            # This is used to provide data to the script by replacing some strings
-            pkgs.substituteAll {
-              src = ./prepare.sh;
+          postDeviceCommands = lib.mkForce (
+            # pkgs.substituteAll returns a path to a file, so we need to read it
+            builtins.readFile (
+              # This is used to provide data to the script by replacing some strings
+              pkgs.substituteAll {
+                src = ./prepare.sh;
 
-              disk = config.constants.vm.diskPath;
-              main = config.constants.storage.partitions.main.label;
-              swap = config.constants.storage.partitions.swap.label;
-              nix = config.constants.storage.partitions.main.datasets.nix.label;
-              home = config.constants.storage.partitions.main.datasets.home.label;
-              hardstate = config.constants.storage.partitions.main.datasets.hardstate.label;
-              softstate = config.constants.storage.partitions.main.datasets.softstate.label;
-              swapsize = (builtins.toString config.constants.vm.swapSize) + "MB";
+                disk = config.constants.vm.diskPath;
+                main = config.constants.storage.partitions.main.label;
+                swap = config.constants.storage.partitions.swap.label;
+                nix = config.constants.storage.partitions.main.datasets.nix.label;
+                home = config.constants.storage.partitions.main.datasets.home.label;
+                hardstate = config.constants.storage.partitions.main.datasets.hardstate.label;
+                softstate = config.constants.storage.partitions.main.datasets.softstate.label;
+                swapsize = (builtins.toString config.constants.vm.swapSize) + "MB";
 
-              # parted is not in PATH so we need to provide the full path
-              parted = "${pkgs.parted}/bin/parted";
+                # parted is not in PATH so we need to provide the full path
+                parted = "${pkgs.parted}/bin/parted";
 
-              # All utilities below are already in PATH
-              udevadm = "udevadm";
-              zpool = "zpool";
-              zfs = "zfs";
-              mkswap = "mkswap";
-            }
+                # All utilities below are already in PATH
+                udevadm = "udevadm";
+                zpool = "zpool";
+                zfs = "zfs";
+                mkswap = "mkswap";
+              }
+            )
           );
         };
       };
