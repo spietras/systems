@@ -11,6 +11,7 @@
     ./performance
     ./secrets
     ./security
+    ./ssh
     ./storage
     ./users
     ./vm

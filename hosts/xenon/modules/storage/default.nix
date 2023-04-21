@@ -41,6 +41,10 @@
         files = [
           # Machine ID should be preserved and not changed
           "/etc/machine-id"
+
+          # SSH host keys
+          "/etc/ssh/ssh_host_rsa_key"
+          "/etc/ssh/ssh_host_ed25519_key"
         ];
 
         # Don't display as mounts to reduce clutter
