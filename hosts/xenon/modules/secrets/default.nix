@@ -30,6 +30,9 @@
         # This is needed to make the secret available early enough
         neededForUsers = true;
       };
+
+      "tailscaleKey" = {
+      };
     };
   };
 }

@@ -1,5 +1,5 @@
 # Things related to security
-{
+{config, ...}: {
   networking = {
     firewall = {
       enable = true;
@@ -9,6 +9,11 @@
 
       # Reject bad packets instead of dropping them
       rejectPackets = true;
+
+      trustedInterfaces = [
+        # Allow traffic from Tailscale
+        config.services.tailscale.interfaceName
+      ];
     };
 
     # Use tcpcrypt to encrypt TCP connections when possible

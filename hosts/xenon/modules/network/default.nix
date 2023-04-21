@@ -97,9 +97,51 @@
       settings = pkgs.stubby.passthru.settingsExample;
     };
 
+    # Use tailscale for networking between machines
+    tailscale = {
+      enable = true;
+
+      # Pick port at random
+      port = 0;
+    };
+
     # Disable systemd-timesyncd, we use chrony
     timesyncd = {
       enable = false;
+    };
+  };
+
+  systemd = {
+    services = {
+      # Autoconnect to tailscale network with authentication key
+      tailscale-autoconnect = {
+        # Run only after network is online and tailscale daemon is running
+        after = [
+          "network-online.target"
+          "tailscale.service"
+        ];
+
+        description = "Automatic connection to Tailscale";
+
+        serviceConfig = {
+          # Connect only once at startup
+          Type = "oneshot";
+        };
+
+        script = builtins.readFile ./tailscale.sh;
+        scriptArgs = "--tailscale ${pkgs.tailscale}/bin/tailscale --key ${config.sops.secrets.tailscaleKey.path}";
+
+        # Run only after network is online and tailscale daemon is running
+        wants = [
+          "network-online.target"
+          "tailscale.service"
+        ];
+
+        # Run at startup
+        wantedBy = [
+          "multi-user.target"
+        ];
+      };
     };
   };
 }
