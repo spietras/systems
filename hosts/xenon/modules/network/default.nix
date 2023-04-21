@@ -118,7 +118,7 @@
         # Run only after network is online and tailscale daemon is running
         after = [
           "network-online.target"
-          "tailscale.service"
+          "tailscaled.service"
         ];
 
         description = "Automatic connection to Tailscale";
@@ -134,7 +134,7 @@
         # Run only after network is online and tailscale daemon is running
         wants = [
           "network-online.target"
-          "tailscale.service"
+          "tailscaled.service"
         ];
 
         # Run at startup
