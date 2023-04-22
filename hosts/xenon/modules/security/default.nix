@@ -23,9 +23,6 @@
   };
 
   security = {
-    # Disable loading of kernel modules after boot
-    lockKernelModules = true;
-
     # Disable modifiying kernel image after boot
     protectKernelImage = true;
 
