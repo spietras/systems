@@ -8,6 +8,9 @@
       };
     };
 
+    # Make all firmware available
+    enableAllFirmware = true;
+
     # Enable additional logging capabilities for hardware
     mcelog = {
       enable = true;
