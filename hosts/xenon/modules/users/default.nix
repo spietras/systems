@@ -15,6 +15,9 @@
         extraGroups = [
           # Can use sudo
           "wheel"
+
+          # Can use docker
+          "docker"
         ];
 
         isNormalUser = true;

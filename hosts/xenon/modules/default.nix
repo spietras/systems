@@ -3,6 +3,7 @@
     ./appearance
     ./boot
     ./constants
+    ./docker
     ./hardware
     ./install
     ./misc
