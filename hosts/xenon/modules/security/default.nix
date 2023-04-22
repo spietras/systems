@@ -37,6 +37,9 @@
     sudo = {
       # Only users in wheel group can use sudo
       execWheelOnly = true;
+
+      # But they don't need to enter a password
+      wheelNeedsPassword = false;
     };
   };
 
