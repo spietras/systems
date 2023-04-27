@@ -7,12 +7,6 @@
     };
   };
 
-  environment = {
-    systemPackages = [
-      pkgs.beep
-    ];
-  };
-
   services = {
     udev = {
       extraRules = ''
