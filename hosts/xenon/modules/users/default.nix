@@ -18,6 +18,9 @@
 
           # Can use docker
           "docker"
+
+          # Can use beep
+          "beep"
         ];
 
         isNormalUser = true;
