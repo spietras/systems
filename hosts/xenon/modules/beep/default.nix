@@ -1,8 +1,10 @@
 {pkgs, ...}: {
   boot = {
-    kernelModules = [
-      "pcspkr"
-    ];
+    initrd = {
+      kernelModules = [
+        "pcspkr"
+      ];
+    };
   };
 
   environment = {
