@@ -2,7 +2,7 @@
 /result/
 
 # Untracked binary files (like runtime VM state)
-/bin/
+/bin/*
 # But keep the .gitkeep file, so the directory is tracked
 !/bin/.gitkeep
 
