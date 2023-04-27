@@ -1,6 +1,7 @@
 {
   imports = [
     ./appearance
+    ./beep
     ./boot
     ./constants
     ./docker
