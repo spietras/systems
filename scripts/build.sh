@@ -49,4 +49,4 @@ shift
 
 ### MAIN ###
 
-nix --extra-experimental-features 'nix-command flakes' build ".#$target" -- "$@"
+nix --extra-experimental-features 'nix-command flakes' build ".#$target" "$@"

@@ -36,4 +36,4 @@ set -- $unparsed
 
 ### MAIN ###
 
-nix --extra-experimental-features 'nix-command flakes' store gc
+nix --extra-experimental-features 'nix-command flakes' store gc "$@"

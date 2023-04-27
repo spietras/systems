@@ -49,4 +49,4 @@ shift
 
 ### MAIN ###
 
-nix --extra-experimental-features 'nix-command flakes' run ".#$host-vm" -- "$@"
+nix --extra-experimental-features 'nix-command flakes' run ".#$host-vm" "$@"
