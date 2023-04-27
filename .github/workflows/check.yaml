@@ -50,7 +50,7 @@ jobs:
       - name: Import Nix store cache
         if: steps.cache.outputs.cache-hit == 'true'
         run: nix-store --import < ${{ env.CACHE_DIR }}
-      - name: Lint
+      - name: Check
         run: ./scripts/check.sh
       - name: Export Nix store cache
         if: "!cancelled()"
