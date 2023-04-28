@@ -8,6 +8,6 @@
 }: {
   "${inputs.self.nixosConfigurations.${host}.config.nixpkgs.buildPlatform.system}" = {
     # The package will have "-vm" suffix, for example "nixos-vm"
-    "${host}-vm" = inputs.self.nixosConfigurations.${host}.config.system.build.vmWithBootLoader;
+    "${host}-vm" = inputs.self.nixosConfigurations.${host}.config.system.build.vm;
   };
 }

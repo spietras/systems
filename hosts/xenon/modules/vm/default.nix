@@ -6,7 +6,7 @@
   ...
 }: {
   virtualisation = {
-    vmVariantWithBootLoader = {
+    vmVariant = {
       boot = {
         initrd = {
           postDeviceCommands = lib.mkForce (
@@ -46,9 +46,6 @@
         diskImage = "./bin/${config.system.name}.qcow2";
 
         diskSize = config.constants.vm.diskSize;
-
-        # This file will also be created on your development machine
-        efiVars = "./bin/${config.system.name}-efi-vars.fd";
 
         # Filesystems need to be defined separately for virtual machines
         # But it's the same as in the real system
@@ -120,9 +117,6 @@
 
         # Use our custom filesystems instead of the default ones
         useDefaultFilesystems = false;
-
-        # Use UEFI instead of BIOS
-        useEFIBoot = true;
       };
     };
   };
