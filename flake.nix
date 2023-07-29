@@ -1,67 +1,132 @@
 {
-  description = "homelab configuration";
-
   inputs = {
-    flake-utils = {
-      type = "github";
-      owner = "numtide";
-      repo = "flake-utils";
-      ref = "main";
+    nixpkgs = {
+      url = "github:NixOS/nixpkgs/nixos-unstable";
+    };
+
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
     };
 
     impermanence = {
-      type = "github";
-      owner = "nix-community";
-      repo = "impermanence";
-      ref = "master";
-    };
-
-    nixpkgs = {
-      type = "github";
-      owner = "NixOS";
-      repo = "nixpkgs";
-      ref = "nixos-unstable";
+      url = "github:nix-community/impermanence";
     };
 
     sops-nix = {
-      type = "github";
-      owner = "Mic92";
-      repo = "sops-nix";
-      ref = "master";
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-      inputs = {
-        nixpkgs = {
-          follows = "nixpkgs";
-        };
-      };
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
   outputs = _inputs: let
-    # add custom local inputs
+    # Add custom local inputs
     inputs =
       _inputs
       // {
-        packages = import ./packages;
-        utils = import ./utils;
+        packages = import ./src/packages;
+        utils = import ./src/utils;
       };
-    # configuration for all hosts
-    hostConfigs = inputs.utils.mkHosts {
-      inherit inputs;
-      directory = "hosts";
-      hosts = ["xenon"];
-    };
-    # configuration for formatter
-    formatterConfig = inputs.utils.mkFormatter {
-      inherit inputs;
-      formatter = "alejandra";
-    };
   in
-    inputs.utils.mergeAll {
-      inherit inputs;
-      attrsets = [
-        hostConfigs
-        formatterConfig
+    inputs.flake-parts.lib.mkFlake {inherit inputs;} {
+      # Import local override if it exists
+      imports = [
+        (
+          if builtins.pathExists ./local.nix
+          then ./local.nix
+          else {}
+        )
       ];
+
+      # System-specific configuration
+      flake = inputs.utils.mkHosts {
+        inherit inputs;
+        directory = "hosts";
+        hosts = ["xenon"];
+      };
+
+      # Sensible defaults
+      systems = [
+        "x86_64-linux"
+        "i686-linux"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ];
+
+      perSystem = {
+        config,
+        pkgs,
+        system,
+        ...
+      }: let
+        nil = pkgs.nil;
+        task = pkgs.go-task;
+        trunk = pkgs.trunk-io;
+        # Build copier manually, because the nixpkgs version is outdated
+        copier = pkgs.callPackage ./copier.nix {};
+        sops = pkgs.sops;
+      in {
+        # Override pkgs argument
+        _module.args.pkgs = import inputs.nixpkgs {
+          inherit system;
+          config = {
+            # Allow packages with non-free licenses
+            allowUnfree = true;
+            # Allow packages with broken dependencies
+            allowBroken = true;
+            # Allow packages with unsupported system
+            allowUnsupportedSystem = true;
+          };
+        };
+
+        # Set which formatter should be used
+        formatter = pkgs.alejandra;
+
+        # Define multiple development shells for different purposes
+        devShells = {
+          default = pkgs.mkShell {
+            name = "dev";
+
+            packages = [
+              nil
+              task
+              trunk
+              copier
+              sops
+            ];
+          };
+
+          template = pkgs.mkShell {
+            name = "template";
+
+            packages = [
+              task
+              copier
+            ];
+          };
+
+          flake = pkgs.mkShell {
+            name = "flake";
+
+            packages = [
+              task
+            ];
+          };
+
+          lint = pkgs.mkShell {
+            name = "lint";
+
+            packages = [
+              task
+              trunk
+            ];
+          };
+        };
+      };
     };
 }

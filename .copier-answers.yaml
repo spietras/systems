@@ -1,0 +1,10 @@
+---
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: 0.3.4
+_src_path: gh:quickplates/generic
+description: configuration for my homelab 🏠
+docs: false
+docsurl: https://spietras.github.io/homelab
+projectname: homelab
+releases: false
+username: spietras

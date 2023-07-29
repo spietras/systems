@@ -1,0 +1,22 @@
+{
+  imports = [
+    ./appearance
+    ./beep
+    ./boot
+    ./constants
+    ./docker
+    ./hardware
+    ./home
+    ./install
+    ./misc
+    ./network
+    ./nix
+    ./performance
+    ./secrets
+    ./security
+    ./ssh
+    ./storage
+    ./users
+    ./vm
+  ];
+}

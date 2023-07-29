@@ -1,0 +1,6 @@
+---
+rules:
+  line-length:
+    # Allow long lines with text without spaces (e.g. hashes)
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: true

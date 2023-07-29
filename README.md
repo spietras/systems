@@ -5,41 +5,22 @@
 configuration for my homelab 🏠
 
 [![Lint](https://github.com/spietras/homelab/actions/workflows/lint.yaml/badge.svg)](https://github.com/spietras/homelab/actions/workflows/lint.yaml)
-[![Check](https://github.com/spietras/homelab/actions/workflows/check.yaml/badge.svg)](https://github.com/spietras/homelab/actions/workflows/check.yaml)
 
 </div>
 
 ---
 
-## Prerequisites
+## 💡 About
 
-You need to have `nix` installed on your development machine.
+This repository contains [`NixOS`](https://nixos.org/)
+configurations for all my homelab machines.
 
-## Secrets management
+## ⚙️ Installation
 
-Prepare `age` private key and put in somewhere on your development machine.
-The best is to store it in `~/.config/sops/age/keys.txt` file.
-However, you can put it anywhere you want,
-just make sure to set the `SOPS_AGE_KEY_DIR` and `SOPS_AGE_KEY_FILE` environment variables accordingly.
+Boot the target machine from [`NixOS` ISO](https://nixos.org/download.html#nixos-iso)
+and run the following command:
 
-When you want to edit some secret file, run:
-
-```bash
-./scripts/secret.sh $FILE
-```
-
-where `$FILE` is the path to the file you want to edit.
-This will use the `age` key
-provided by `SOPS_AGE_KEY_FILE` environment variable to decrypt the file
-and open it in the editor specified by `EDITOR` environment variable.
-When you are done editing the file,
-the file will be encrypted so that you can safely commit it to the repository.
-
-## Installation
-
-Boot the target machine from NixOS ISO and run the following command:
-
-```bash
+```sh
 sudo nixos-generate-config
 ```
 
@@ -49,31 +30,21 @@ Put it in `hosts/$HOST` directory in the repository,
 where `$HOST` is the name of the host device of your choice.
 When you are ready, commit the changes to the repository.
 
-Put the `age` private key somewhere on the target machine
+Put the [`age`](https://github.com/FiloSottile/age)
+private key somewhere on the target machine
 and set the `SOPS_AGE_KEY_FILE` environment variable accordingly.
 The installation script will copy the key to persistent storage.
 
 Change the `HOST` variable to the name of the host device and run:
 
-```bash
+```sh
 sudo nix --experimental-features 'nix-command flakes' \
-    run "github:spietras/homelab#$HOST-install" -- -k "$SOPS_AGE_KEY_FILE"
+    run "github:spietras/homelab#${HOST}-install" -- -k "${SOPS_AGE_KEY_FILE}"
 ```
 
 and then reboot the machine.
 
-## Testing inside virtual machine
+## 💻 Development
 
-Make sure you have the `age` private key in the appropriate location
-on your development machine.
-If it's not in the default location,
-set the `SOPS_AGE_KEY_DIR` environment variable accordingly.
-
-Change the `HOST` variable to the name of the target machine and run:
-
-```bash
-./scripts/run.sh $HOST
-```
-
-Note: due to difficult to understand issues with cross-compilation,
-you can build the virtual machine only on the same architecture as the target machine.
+Read more about how to develop the project
+[here](https://github.com/spietras/homelab/blob/main/CONTRIBUTING.md).

@@ -1,10 +1,11 @@
+---
 keys:
   # This is the public key of the age keypair used to encrypt the file
   # You should have the private key on your machine
   - &key age14uepygtepskwehywergh9fe9j2a3ytqd80y9r2ekfmett6rq3peqjtgxns
 creation_rules:
-  # Allow any path to be encrypted with the age key
-  - path_regex: .*
+  # Allow any path in src to be encrypted with the age key
+  - path_regex: src/.*
     key_groups:
       - age:
           - *key
