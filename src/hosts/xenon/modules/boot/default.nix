@@ -5,6 +5,9 @@
   ...
 }: {
   boot = {
+    # Disable console messages
+    consoleLogLevel = 0;
+
     initrd = {
       # This was autodetected by nixos-generate-config
       availableKernelModules = [
@@ -32,6 +35,9 @@
       supportedFilesystems = [
         "zfs"
       ];
+
+      # Disable log messages
+      verbose = false;
     };
 
     kernel = {
@@ -68,6 +74,13 @@
 
       # Panic on failure
       "boot.panic_on_fail"
+
+      # Disable log messages
+      "quiet"
+      "udev.log_level=3"
+
+      # Enable splash screen
+      "splash"
     ];
 
     loader = {
@@ -102,9 +115,47 @@
       };
     };
 
+    # Enable splash screen
+    plymouth = {
+      enable = true;
+      theme = "angular";
+
+      themePackages = [
+        # See https://github.com/adi1090x/plymouth-themes for more themes
+        (pkgs.adi1090x-plymouth-themes.override {selected_themes = ["angular"];})
+      ];
+    };
+
     # Also needed to support ZFS at boot
     supportedFilesystems = [
       "zfs"
     ];
+  };
+
+  systemd = {
+    services = {
+      # Splash screen showoff
+      splash-delay = {
+        # Make plymouth wait for this service
+        before = [
+          "plymouth-quit.service"
+        ];
+
+        description = "Wait at boot to show splash screen animation";
+
+        serviceConfig = {
+          # Run only once at startup
+          Type = "oneshot";
+        };
+
+        # Adjust the delay to your liking
+        script = "sleep 1";
+
+        # Run at startup
+        wantedBy = [
+          "multi-user.target"
+        ];
+      };
+    };
   };
 }
