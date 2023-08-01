@@ -179,9 +179,14 @@
         };
 
         services = {
-          # TODO: automatically start daemon
           pueue = {
             enable = true;
+
+            settings = {
+              shared = {};
+              client = {};
+              daemon = {};
+            };
           };
         };
 
