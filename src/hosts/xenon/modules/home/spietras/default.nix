@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  config,
+  pkgs,
+  ...
+}: {
   home-manager = {
     users = {
       spietras = {
@@ -54,18 +58,18 @@
             ];
           };
 
-          # TODO: enable shell integration
           broot = {
             enable = true;
+            enableZshIntegration = true;
           };
 
           btop = {
             enable = true;
           };
 
-          # TODO: enable shell integration
           direnv = {
             enable = true;
+            enableZshIntegration = true;
 
             nix-direnv = {
               enable = true;
@@ -74,20 +78,18 @@
 
           exa = {
             enable = true;
-            icons = true; # TODO: fix
+            icons = true;
           };
 
-          # TODO: enable shell integration
-          # TODO: configure (add bat integration)
           fzf = {
             enable = true;
+            enableZshIntegration = true;
           };
 
           git = {
             enable = true;
 
-            # TODO: research other diff tools
-            delta = {
+            difftastic = {
               enable = true;
             };
 
@@ -99,9 +101,12 @@
             enable = true;
           };
 
-          # TODO: enable shell integration
           keychain = {
             enable = true;
+            enableZshIntegration = true;
+
+            keys = [
+            ];
           };
 
           lazygit = {
@@ -113,24 +118,63 @@
             generateCaches = true;
           };
 
-          # TODO: enable shell integration
           mcfly = {
             enable = true;
+            enableZshIntegration = true;
           };
 
-          # TODO: enable shell integration
-          oh-my-posh = {
+          starship = {
             enable = true;
-            useTheme = "dracula";
+            enableZshIntegration = true;
           };
 
-          # TODO: fix downloading cache
           tealdeer = {
             enable = true;
+
+            settings = {
+              updates = {
+                auto_update = true;
+              };
+            };
           };
 
           yt-dlp = {
             enable = true;
+          };
+
+          zsh = {
+            enable = true;
+            enableAutosuggestions = true;
+            enableCompletion = true;
+            enableVteIntegration = true;
+
+            history = {
+              ignoreDups = true;
+            };
+
+            historySubstringSearch = {
+              enable = true;
+
+              searchDownKey = [
+                "^[[B"
+                "\\eOB"
+                "^[OB"
+              ];
+
+              searchUpKey = [
+                "^[[A"
+                "\\eOA"
+                "^[OA"
+              ];
+            };
+
+            initExtraFirst = ''
+              touch "${config.home-manager.users.spietras.programs.zsh.history.path}"
+            '';
+
+            syntaxHighlighting = {
+              enable = true;
+            };
           };
         };
 

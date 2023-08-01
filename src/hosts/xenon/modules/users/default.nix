@@ -1,5 +1,9 @@
 # Users configuration
-{config, ...}: {
+{
+  config,
+  pkgs,
+  ...
+}: {
   users = {
     # Don't allow changing users configuration during runtime
     mutableUsers = false;
@@ -24,6 +28,8 @@
         ];
 
         isNormalUser = true;
+
+        shell = pkgs.zsh;
       };
     };
   };

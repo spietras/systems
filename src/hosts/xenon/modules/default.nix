@@ -8,12 +8,14 @@
     ./hardware
     ./home
     ./install
+    ./locales
     ./misc
     ./network
     ./nix
     ./performance
     ./secrets
     ./security
+    ./shell
     ./ssh
     ./storage
     ./users
