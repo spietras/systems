@@ -190,14 +190,8 @@
           };
         };
 
-        # TODO: environment variables are not set
         xdg = {
           enable = true;
-
-          userDirs = {
-            createDirectories = true;
-            enable = true;
-          };
         };
       };
     };
