@@ -55,7 +55,7 @@
         platform = "x86_64-linux";
 
         vm = {
-          # You need these resources to your development machine to run the VM
+          # You need these resources on your development machine to run the VM
           # You can change these to whatever you want, but the defaults should be fine
           cores = 4;
           diskSize = 8192;
