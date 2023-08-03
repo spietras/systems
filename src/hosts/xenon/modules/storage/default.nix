@@ -45,6 +45,9 @@
           # SSH host keys
           "/etc/ssh/ssh_host_rsa_key"
           "/etc/ssh/ssh_host_ed25519_key"
+
+          # MOTD
+          "/etc/motd"
         ];
 
         # Don't display as mounts to reduce clutter

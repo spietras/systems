@@ -10,6 +10,7 @@
     ./install
     ./locales
     ./misc
+    ./motd
     ./network
     ./nix
     ./performance
