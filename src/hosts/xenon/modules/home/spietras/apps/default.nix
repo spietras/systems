@@ -57,14 +57,6 @@
             enable = true;
           };
 
-          keychain = {
-            enable = true;
-            enableZshIntegration = true;
-
-            keys = [
-            ];
-          };
-
           man = {
             enable = true;
             generateCaches = true;

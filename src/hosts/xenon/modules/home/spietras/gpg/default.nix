@@ -43,20 +43,21 @@
           };
 
           zsh = {
-            # We need to setup the GPG agent socket
-            # When connecting to the server, use the socket at /home/spietras/.gnupg/S.gpg-agent
+            # We need to setup the GPG agent sockets
+            # When connecting to the server, use the sockets at /home/spietras/.gnupg/S.gpg-agent and /home/spietras/.gnupg/S.gpg-agent.ssh
             initExtra = let
               gpgconf = "${config.home-manager.users.spietras.programs.gpg.package}/bin/gpgconf";
-              socket = "${config.home-manager.users.spietras.programs.gpg.homedir}/S.gpg-agent";
+              agentSocket = "${config.home-manager.users.spietras.programs.gpg.homedir}/S.gpg-agent";
+              sshSocket = "${config.home-manager.users.spietras.programs.gpg.homedir}/S.gpg-agent.ssh";
               ln = "${pkgs.coreutils}/bin/ln";
             in ''
               # Create the socket directory
               ${gpgconf} --create-socketdir
 
-              # Create symbolic link to the socket
+              # Create symbolic link to the agent socket
               # Run in a subshell to avoid polluting the environment
               (
-                TARGET='${socket}'
+                TARGET='${agentSocket}'
                 LINKNAME="$(${gpgconf} --list-dirs agent-socket)"
                 if [ ! -L "$LINKNAME" ]; then
                   ${ln} --symbolic "$TARGET" "$LINKNAME"
@@ -64,6 +65,22 @@
                   ${ln} --symbolic --force --no-dereference "$TARGET" "$LINKNAME"
                 fi
               )
+
+              # Create symbolic link to the SSH agent socket
+              # Run in a subshell to avoid polluting the environment
+              (
+                TARGET='${sshSocket}'
+                LINKNAME="$(${gpgconf} --list-dirs agent-ssh-socket)"
+                if [ ! -L "$LINKNAME" ]; then
+                  ${ln} --symbolic "$TARGET" "$LINKNAME"
+                elif [ "$(readlink --canonicalize "$LINKNAME")" != "$TARGET" ]; then
+                  ${ln} --symbolic --force --no-dereference "$TARGET" "$LINKNAME"
+                fi
+              )
+
+              # Set the SSH_AUTH_SOCK environment variable so that SSH uses the forwarded GPG agent
+              # But don't override it if it's set, because it means that the user is forwarding the SSH agent
+              [ -z "$SSH_AUTH_SOCK" ] && export SSH_AUTH_SOCK="$(${gpgconf} --list-dirs agent-ssh-socket)"
             '';
           };
         };
