@@ -6,6 +6,10 @@
           packages = [
             pkgs.beep
           ];
+
+          shellAliases = {
+            zellij = "systemd-run --user --scope --quiet -- zellij";
+          };
         };
 
         programs = {
@@ -78,6 +82,10 @@
           };
 
           yt-dlp = {
+            enable = true;
+          };
+
+          zellij = {
             enable = true;
           };
         };
