@@ -9,6 +9,7 @@ in {
     packages = [
       pkgs.bandwhich
       pkgs.beep
+      pkgs.bluetuith
       pkgs.chafa
       pkgs.chatgpt-cli
       pkgs.cpufetch

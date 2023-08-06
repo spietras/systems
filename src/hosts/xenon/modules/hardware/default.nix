@@ -1,6 +1,11 @@
 # Hardware configuration
-{config, ...}: {
+{
   hardware = {
+    # Enable Bluetooth support
+    bluetooth = {
+      enable = true;
+    };
+
     cpu = {
       intel = {
         # Enable updates of the microcode for Intel CPUs
