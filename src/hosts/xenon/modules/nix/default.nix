@@ -1,9 +1,5 @@
 # Nix, NixOS and nixpkgs configuration
-{
-  config,
-  pkgs,
-  ...
-}: {
+{config, ...}: {
   nix = {
     gc = {
       # Enable automatic garbage collection
@@ -57,8 +53,8 @@
   system = {
     # Enable automatic updates
     autoUpgrade = {
-      # Check for updates every hour
-      dates = "hourly";
+      # Check for updates every day at night
+      dates = "04:00";
 
       enable = true;
 
@@ -73,33 +69,10 @@
       persistent = false;
 
       # Introduce some randomness to avoid regular network traffic spikes
-      # This means that the update will be checked at a random time in each hour
+      # This means that the update will be checked at a random time between 04:00 and 05:00
       randomizedDelaySec = "1h";
     };
 
     stateVersion = "22.11";
-  };
-
-  systemd = {
-    services = {
-      # Create a service for rebooting the system automatically
-      reboot = {
-        description = "Reboot the system to apply updates";
-
-        # The service is oneshot, so we don't need to restart it
-        restartIfChanged = false;
-
-        serviceConfig = {
-          # Run the service only once
-          Type = "oneshot";
-
-          # This reboots the system
-          ExecStart = "${pkgs.systemd}/bin/systemctl --no-block reboot";
-        };
-
-        # Reboot the system every day at 4 AM
-        startAt = "04:00";
-      };
-    };
   };
 }
