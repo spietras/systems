@@ -17,7 +17,7 @@
       sshKeyPaths = [];
     };
 
-    defaultSopsFile = ../../secrets.yaml;
+    defaultSopsFile = ./secrets.yaml;
 
     gnupg = {
       # This is needed so that ssh keys are not unnecessarily picked up

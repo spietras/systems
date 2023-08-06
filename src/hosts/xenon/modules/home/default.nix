@@ -2,11 +2,18 @@
 {inputs, ...}: {
   imports = [
     inputs.home-manager.nixosModules.home-manager
-    ./spietras
   ];
 
   home-manager = {
+    extraSpecialArgs = {
+      inherit inputs;
+    };
+
     useGlobalPkgs = true;
     useUserPackages = true;
+
+    users = {
+      spietras = import ./spietras;
+    };
   };
 }
