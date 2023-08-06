@@ -6,5 +6,6 @@
     ./misc
     ./secrets
     ./shell
+    ./ssh
   ];
 }

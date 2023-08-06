@@ -38,6 +38,10 @@
         # Remove existing socket before creating a new one
         # Needed for GPG agent forwarding
         StreamLocalBindUnlink = "yes";
+
+        # Accept environment variables from the client
+        # COLORTERM is used to demonstrate color support of client terminal
+        AcceptEnv = "COLORTERM";
       };
 
       # Save resources by only starting the service when needed
