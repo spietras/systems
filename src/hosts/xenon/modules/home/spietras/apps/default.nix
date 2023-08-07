@@ -146,11 +146,6 @@ in {
     };
 
     zsh = {
-      initExtraBeforeCompInit = ''
-        # Completions for trashy are broken, so we ignore them
-        zstyle ':completion:*:*:trash:*' completer _ignored
-      '';
-
       shellAliases = {
         cgpt = "OPENAI_API_KEY=\"$(cat ${config.sops.secrets."openai/apiKey".path})\" chatgpt";
       };
