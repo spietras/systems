@@ -29,6 +29,7 @@ in {
       pkgs.krabby
       pkgs.lazydocker
       pkgs.lolcat
+      pkgs.micro
       pkgs.miller
       pkgs.neo
       pkgs.neo-cowsay
