@@ -57,6 +57,10 @@
         # Ignore outgoing ICMP redirects to prevent MITM attacks
         "net.ipv4.conf.all.send_redirects" = false;
         "net.ipv4.conf.default.send_redirects" = false;
+
+        # Increase socket buffer size
+        "net.core.rmem_max" = 2500000;
+        "net.core.wmem_max" = 2500000;
       };
     };
 
