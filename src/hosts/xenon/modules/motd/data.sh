@@ -47,12 +47,6 @@ get_pokemon_data() {
 	"${CURL}" -fsL https://pokeapi.co/api/v2/pokemon/"${1}"
 }
 
-# Get species data
-# $1: species url
-get_species_data() {
-	"${CURL}" -fsL "${1}"
-}
-
 # Get species url
 # $1: pokemon data file
 get_species_url() {

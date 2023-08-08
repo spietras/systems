@@ -16,25 +16,29 @@
       # Enable automatic optimisation
       automatic = true;
 
-      # Run the optimisation every day at midnight
       dates = [
+        # Run every day at midnight
         "daily"
       ];
     };
 
     settings = {
-      # Allow wheel and users groups to use nix
       allowed-users = [
+        # Allow the wheel group (basically, all users with sudo access)
         "@wheel"
+
+        # Allow all normal users
         "@users"
       ];
 
       # Enable automatic optimisation
       auto-optimise-store = true;
 
-      # Enable commands and flakes
       experimental-features = [
+        # Enable commands
         "nix-command"
+
+        # Enable flakes
         "flakes"
       ];
     };
@@ -51,11 +55,11 @@
   };
 
   system = {
-    # Enable automatic updates
     autoUpgrade = {
       # Check for updates every day at night
       dates = "04:00";
 
+      # Enable automatic updates
       enable = true;
 
       # Point to the GitHub repository as the source of truth
@@ -73,6 +77,7 @@
       randomizedDelaySec = "1h";
     };
 
+    # This should just stay as is
     stateVersion = "22.11";
   };
 }

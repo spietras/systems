@@ -5,6 +5,7 @@
   ...
 }: {
   imports = [
+    # Import impermanence module
     inputs.impermanence.nixosModules.impermanence
   ];
 
@@ -142,7 +143,6 @@
   };
 
   services = {
-    # Enable periodic snapshots of the ZFS datasets
     sanoid = {
       datasets = {
         "${config.constants.storage.partitions.main.label}/${config.constants.storage.partitions.main.datasets.home.label}" = {
@@ -155,6 +155,7 @@
           # Don't keep any monthly snapshots
           monthly = 0;
         };
+
         "${config.constants.storage.partitions.main.label}/${config.constants.storage.partitions.main.datasets.hardstate.label}" = {
           # Keep 30 past snapshots that are taken once a day
           daily = 30;
@@ -167,6 +168,7 @@
         };
       };
 
+      # Enable periodic snapshots of the ZFS datasets
       enable = true;
     };
 

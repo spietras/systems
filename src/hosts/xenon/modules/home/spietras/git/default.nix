@@ -1,9 +1,11 @@
+# Git configuration
 {config, ...}: {
   programs = {
     git = {
       enable = true;
 
       difftastic = {
+        # Enable difftastic for better diffs
         enable = true;
       };
 
@@ -23,6 +25,7 @@
     };
 
     lazygit = {
+      # Enable git TUI
       enable = true;
     };
   };

@@ -1,3 +1,4 @@
+# Message of the Day
 {
   config,
   pkgs,
@@ -9,8 +10,8 @@
       motd = {
         description = "Change the MOTD";
 
-        # Require network to be online
         requires = [
+          # Require network to be online
           "network-online.target"
         ];
 

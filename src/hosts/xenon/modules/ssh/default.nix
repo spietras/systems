@@ -1,3 +1,4 @@
+# SSH server configuration
 {
   lib,
   pkgs,
@@ -25,6 +26,7 @@
 
   services = {
     openssh = {
+      # Enable SSH server
       enable = true;
 
       settings = {

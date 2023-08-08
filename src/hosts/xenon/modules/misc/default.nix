@@ -16,15 +16,15 @@
   };
 
   programs = {
-    # Don't give users hints about how to install missing commands
     command-not-found = {
+      # Don't give users hints about how to install missing commands
       enable = false;
     };
   };
 
   services = {
-    # Disable logrotate
     logrotate = {
+      # Disable logrotate
       enable = false;
     };
   };

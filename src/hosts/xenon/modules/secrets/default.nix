@@ -5,6 +5,7 @@
   ...
 }: {
   imports = [
+    # Import sops module
     inputs.sops-nix.nixosModules.sops
   ];
 

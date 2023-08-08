@@ -2,6 +2,7 @@
 {config, ...}: {
   networking = {
     firewall = {
+      # Enable the firewall
       enable = true;
 
       # Limit the number of pings allowed to prevent ping flooding
@@ -16,8 +17,8 @@
       ];
     };
 
-    # Use tcpcrypt to encrypt TCP connections when possible
     tcpcrypt = {
+      # Use tcpcrypt to encrypt TCP connections when possible
       enable = true;
     };
   };

@@ -8,6 +8,7 @@
   runtimeDir = "/run/user/${uid}";
 in {
   imports = [
+    # Import sops module
     inputs.sops-nix.homeManagerModules.sops
   ];
 
@@ -18,6 +19,8 @@ in {
     };
 
     defaultSopsFile = ./secrets.yaml;
+
+    # Make the paths explicit
     defaultSymlinkPath = "${runtimeDir}/secrets";
     defaultSecretsMountPoint = "${runtimeDir}/secrets.d";
 

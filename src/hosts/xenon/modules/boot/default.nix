@@ -31,8 +31,8 @@
         }
       );
 
-      # Needed to support ZFS at boot
       supportedFilesystems = [
+        # Needed to support ZFS at boot
         "zfs"
       ];
 
@@ -88,7 +88,6 @@
     ];
 
     loader = {
-      # Use systemd-boot as bootloader
       systemd-boot = {
         # Keep maximum 5 previous generations
         configurationLimit = 5;
@@ -99,18 +98,19 @@
         # Disable editing kernel parameters
         editor = false;
 
+        # Use systemd-boot as bootloader
         enable = true;
 
-        # Enable memtest86 to be able to test RAM
         memtest86 = {
+          # Enable memtest86 to be able to test RAM
           enable = true;
 
           # This is needed for correct ordering of boot entries
           entryFilename = "a_memtest86.conf";
         };
 
-        # Enable netboot.xyz to be able to boot any OS from network
         netbootxyz = {
+          # Enable netboot.xyz to be able to boot any OS from network
           enable = true;
 
           # This is needed for correct ordering of boot entries
@@ -119,9 +119,10 @@
       };
     };
 
-    # Enable splash screen
     plymouth = {
+      # Enable splash screen
       enable = true;
+
       theme = "angular";
 
       themePackages = [
@@ -130,8 +131,8 @@
       ];
     };
 
-    # Also needed to support ZFS at boot
     supportedFilesystems = [
+      # Also needed to support ZFS at boot
       "zfs"
     ];
   };
@@ -140,8 +141,8 @@
     services = {
       # Splash screen showoff
       splash-delay = {
-        # Make plymouth wait for this service
         before = [
+          # Make plymouth wait for this service
           "plymouth-quit.service"
         ];
 
@@ -155,8 +156,8 @@
         # Adjust the delay to your liking
         script = "sleep 1";
 
-        # Run at startup
         wantedBy = [
+          # Run at startup
           "multi-user.target"
         ];
       };

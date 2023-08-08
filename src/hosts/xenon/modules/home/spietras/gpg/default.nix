@@ -1,3 +1,4 @@
+# GPG configuration
 {
   config,
   pkgs,

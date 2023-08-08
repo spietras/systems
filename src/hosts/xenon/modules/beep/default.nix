@@ -1,7 +1,9 @@
+# PC Speaker configuration
 {pkgs, ...}: {
   boot = {
     initrd = {
       kernelModules = [
+        # This kernel module is needed for the PC speaker to work
         "pcspkr"
       ];
     };
@@ -18,6 +20,7 @@
 
   users = {
     groups = {
+      # Create beep group
       beep = {
       };
     };

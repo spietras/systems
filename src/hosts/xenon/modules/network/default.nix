@@ -1,13 +1,12 @@
 # Network configuration
 {
   config,
-  lib,
   pkgs,
   ...
 }: {
   networking = {
-    # Disable dhcpcd, we use NetworkManager which has its own DHCP client
     dhcpcd = {
+      # Disable dhcpcd, we use NetworkManager which has its own DHCP client
       enable = false;
     };
 
@@ -20,7 +19,6 @@
       "::1"
     ];
 
-    # Use NetworkManager to manage network connections
     networkmanager = {
       dispatcherScripts = [
         # Change chrony servers states based on connection status
@@ -46,6 +44,7 @@
       # Use systemd-resolved as the system DNS resolver
       dns = "systemd-resolved";
 
+      # Use NetworkManager to manage network connections
       enable = true;
 
       wifi = {
@@ -60,53 +59,55 @@
 
     wireless = {
       iwd = {
+        # Enable wireless networking
         enable = true;
       };
     };
   };
 
   services = {
-    # Use chrony as the NTP client
     chrony = {
+      # Use chrony as the NTP client
       enable = true;
 
-      # First pool is from ntp.org, which is probably the most reliable
-      # Second pool is from Cloudflare, which is also great and supports NTS
-      # But you can't connect to the second one on some networks
-      # So we need to use 'authselectmode ignore' to not rely only on NTS
-      # Also we provide the directory for DHCP-provided NTP servers
       extraConfig = ''
+        # ntp.org is probably the most reliable NTP server
         pool pool.ntp.org iburst
+
+        # Cloudflare is also great and supports NTS
         pool time.cloudflare.com iburst nts
 
+        # Use NTS only as a fallback, because it's not reliable on some networks
         authselectmode ignore
+
+        # Also use DHCP-provided NTP servers
         sourcedir /var/run/chrony/dhcp
       '';
     };
 
-    # Use systemd-resolved as the system DNS resolver
     resolved = {
+      # Use systemd-resolved as the system DNS resolver
       enable = true;
     };
 
-    # Use stubby as a local DNS resolver
     stubby = {
+      # Use stubby as a local DNS resolver
       enable = true;
 
       # For some reason, this is not the default, so we need to set it manually
       settings = pkgs.stubby.passthru.settingsExample;
     };
 
-    # Use tailscale for networking between machines
     tailscale = {
+      # Use tailscale for networking between machines
       enable = true;
 
       # Pick port at random
       port = 0;
     };
 
-    # Disable systemd-timesyncd, we use chrony
     timesyncd = {
+      # Disable systemd-timesyncd, we use chrony
       enable = false;
     };
   };
@@ -115,17 +116,21 @@
     services = {
       # Logout from Tailscale network on shutdown
       tailscale-logout = {
-        # Run only after network is online and tailscale daemon is running
         after = [
+          # Run after network is online
           "network-online.target"
+
+          # Run after tailscale daemon is running
           "tailscaled.service"
         ];
 
         description = "Automatic logout from Tailscale";
 
-        # Require network to be online and tailscale daemon to be running
         requires = [
+          # Require network to be online
           "network-online.target"
+
+          # Require tailscale daemon to be running
           "tailscaled.service"
         ];
 
@@ -146,25 +151,29 @@
           }
         );
 
-        # Make available at startup
         wantedBy = [
+          # Make available at startup
           "multi-user.target"
         ];
       };
 
       # Autoconnect to Tailscale network with authentication key
       tailscale-up = {
-        # Run only after network is online and tailscale daemon is running
         after = [
+          # Run after network is online
           "network-online.target"
+
+          # Run after tailscale daemon is running
           "tailscaled.service"
         ];
 
         description = "Automatic connection to Tailscale";
 
-        # Require network to be online and tailscale daemon to be running
         requires = [
+          # Require network to be online
           "network-online.target"
+
+          # Require tailscale daemon to be running
           "tailscaled.service"
         ];
 
@@ -186,8 +195,8 @@
           }
         );
 
-        # Run at startup
         wantedBy = [
+          # Run at startup
           "multi-user.target"
         ];
       };

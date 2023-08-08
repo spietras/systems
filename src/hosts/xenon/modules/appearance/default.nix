@@ -23,9 +23,10 @@
           "New York"
         ];
 
-        # Unpatched font as fallback
         monospace = [
           "SFMono Nerd Font"
+
+          # Unpatched font as fallback
           "SF Mono"
         ];
 
@@ -37,9 +38,11 @@
   };
 
   services = {
-    # Alternative virtual console with hardware rendering
     kmscon = {
+      # Use alternative virtual console
       enable = true;
+
+      # Enable hardware rendering
       hwRender = true;
     };
   };

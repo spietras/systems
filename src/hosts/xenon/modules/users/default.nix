@@ -28,7 +28,11 @@
         ];
 
         isNormalUser = true;
+
+        # Use zsh as default shell
         shell = pkgs.zsh;
+
+        # Make the UID static so it can be used in other places in the configuration
         uid = 1000;
       };
     };

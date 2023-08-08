@@ -1,9 +1,11 @@
+# Containerisation
 {
   virtualisation = {
     docker = {
-      # Enable automatic pruning of old Docker resources
       autoPrune = {
         dates = "Sun, 02:00";
+
+        # Enable automatic pruning of old Docker resources
         enable = true;
 
         flags = [
@@ -30,6 +32,7 @@
         };
       };
 
+      # Enable Docker daemon
       enable = true;
     };
   };

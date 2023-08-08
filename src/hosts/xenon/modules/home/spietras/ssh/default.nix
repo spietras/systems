@@ -1,3 +1,4 @@
+# SSH client configuration
 {
   programs = {
     ssh = {

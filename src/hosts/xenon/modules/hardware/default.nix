@@ -1,8 +1,8 @@
 # Hardware configuration
 {
   hardware = {
-    # Enable Bluetooth support
     bluetooth = {
+      # Enable Bluetooth support
       enable = true;
     };
 
@@ -16,18 +16,18 @@
     # Make all firmware available
     enableAllFirmware = true;
 
-    # Enable additional logging capabilities for hardware
     mcelog = {
+      # Enable additional logging capabilities for hardware
       enable = true;
     };
 
-    # Enable emulated devices
     uinput = {
+      # Enable emulated devices
       enable = true;
     };
 
-    # Enable usage for USB modems
     usb-modeswitch = {
+      # Enable usage for USB modems
       enable = true;
     };
 
@@ -36,8 +36,8 @@
   };
 
   services = {
-    # Include a tool for updating the firmware of devices
     fwupd = {
+      # Include a tool for updating the firmware of devices
       enable = true;
     };
   };

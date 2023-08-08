@@ -4,7 +4,7 @@
     ./beep
     ./boot
     ./constants
-    ./docker
+    ./containers
     ./hardware
     ./home
     ./install
