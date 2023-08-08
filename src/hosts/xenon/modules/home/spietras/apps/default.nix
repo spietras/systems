@@ -12,6 +12,7 @@ in {
       pkgs.bluetuith
       pkgs.chafa
       pkgs.chatgpt-cli
+      pkgs.cloudflared
       pkgs.cpufetch
       pkgs.croc
       pkgs.ctop
@@ -148,6 +149,7 @@ in {
 
     zsh = {
       shellAliases = {
+        cfd = "TUNNEL_TOKEN=\"$(cat ${config.sops.secrets."cloudflared/token".path})\" TUNNEL_TRANSPORT_PROTOCOL=http2 cloudflared";
         cgpt = "OPENAI_API_KEY=\"$(cat ${config.sops.secrets."openai/apiKey".path})\" chatgpt";
       };
     };

@@ -23,6 +23,9 @@ in {
 
     # You need to explicitly list here all secrets you want to use
     secrets = {
+      "cloudflared/token" = {
+      };
+
       "openai/apiKey" = {
       };
     };
