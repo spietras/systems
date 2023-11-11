@@ -36,7 +36,7 @@ ${CURL} -s 'https://api.tailscale.com/api/v2/tailnet/-/keys' \
   "capabilities": {
     "devices": {
       "create": {
-        "reusable": false,
+        "reusable": true,
         "ephemeral": true,
         "preauthorized": true,
         "tags": [ "tag:host" ]
