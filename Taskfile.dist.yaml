@@ -1,4 +1,3 @@
----
 version: "3"
 
 tasks:
@@ -6,9 +5,8 @@ tasks:
     desc: Fetch template updates
     interactive: true
     env:
-      GIT_CONFIG_COUNT: 1
-      GIT_CONFIG_KEY_0: commit.gpgsign
-      GIT_CONFIG_VALUE_0: false
+      GIT_CONFIG_GLOBAL: ""
+      GIT_CONFIG_SYSTEM: ""
     cmds:
       - >
         copier
@@ -22,7 +20,8 @@ tasks:
       - >
         nix
         --accept-flake-config
-        --extra-experimental-features 'nix-command flakes'
+        --extra-experimental-features
+        'nix-command flakes'
         --no-warn-dirty
         flake
         update
@@ -47,20 +46,21 @@ tasks:
       - >
         rm
         --force
-        ./build
+        build
     status:
       - >
         test
         '!'
         -e
-        ./build
+        build
   build:
     desc: Build a target
     cmds:
       - >
         nix
         --accept-flake-config
-        --extra-experimental-features 'nix-command flakes'
+        --extra-experimental-features
+        'nix-command flakes'
         --no-warn-dirty
         build
         --out-link
@@ -73,7 +73,8 @@ tasks:
       - >
         nix
         --accept-flake-config
-        --extra-experimental-features 'nix-command flakes'
+        --extra-experimental-features
+        'nix-command flakes'
         --no-warn-dirty
         run
         {{ .CLI_ARGS }}

@@ -29,9 +29,9 @@ fi
 
 echo "Mounting persistent filesystems"
 
-if ! mkdir -p "/mnt/${ZFS_HARDSTATE}" "/mnt/${ZFS_SOFTSTATE}" ||
-	! mount -t zfs -o zfsutil "${MAIN_LABEL}/${ZFS_HARDSTATE}" "/mnt/${ZFS_HARDSTATE}" ||
-	! mount -t zfs -o zfsutil "${MAIN_LABEL}/${ZFS_SOFTSTATE}" "/mnt/${ZFS_SOFTSTATE}"; then
+if ! mkdir -p "/mnt/${ZFS_HARDSTATE}/" "/mnt/${ZFS_SOFTSTATE}/" ||
+	! mount -t zfs -o zfsutil "${MAIN_LABEL}/${ZFS_HARDSTATE}" "/mnt/${ZFS_HARDSTATE}/" ||
+	! mount -t zfs -o zfsutil "${MAIN_LABEL}/${ZFS_SOFTSTATE}" "/mnt/${ZFS_SOFTSTATE}/"; then
 	echo "Mounting filesystems failed" >&2
 	exit 2
 fi
@@ -39,12 +39,12 @@ fi
 echo "Creating necessary directories"
 
 if ! mkdir -p \
-	"/mnt/${ZFS_SOFTSTATE}/etc/NetworkManager/system-connections" \
-	"/mnt/${ZFS_SOFTSTATE}/var/cache" \
-	"/mnt/${ZFS_SOFTSTATE}/var/games" \
-	"/mnt/${ZFS_SOFTSTATE}/var/lib" \
-	"/mnt/${ZFS_SOFTSTATE}/var/log" \
-	"/mnt/${ZFS_SOFTSTATE}/var/tmp" \
+	"/mnt/${ZFS_SOFTSTATE}/etc/NetworkManager/system-connections/" \
+	"/mnt/${ZFS_SOFTSTATE}/var/cache/" \
+	"/mnt/${ZFS_SOFTSTATE}/var/games/" \
+	"/mnt/${ZFS_SOFTSTATE}/var/lib/" \
+	"/mnt/${ZFS_SOFTSTATE}/var/log/" \
+	"/mnt/${ZFS_SOFTSTATE}/var/tmp/" \
 	; then
 	echo "Creating directories failed" >&2
 	exit 3
@@ -52,7 +52,7 @@ fi
 
 echo "Unmounting persistent filesystems"
 
-if ! umount "/mnt/${ZFS_HARDSTATE}" "/mnt/${ZFS_SOFTSTATE}"; then
+if ! umount "/mnt/${ZFS_HARDSTATE}/" "/mnt/${ZFS_SOFTSTATE}/"; then
 	echo "Unmounting filesystems failed" >&2
 	exit 4
 fi

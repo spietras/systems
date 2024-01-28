@@ -17,13 +17,13 @@ if [ -z "${INTERFACE}" ] || [ "${INTERFACE}" = 'none' ]; then
 fi
 
 # make sure the sources directory exists and has the right permissions
-mkdir -p /var/run/chrony
-chmod 750 /var/run/chrony
-chown chrony:chrony /var/run/chrony
+mkdir -p /var/run/chrony/
+chmod 750 /var/run/chrony/
+chown chrony:chrony /var/run/chrony/
 
-mkdir -p "/var/run/chrony/${SOURCEDIR}"
-chmod 750 "/var/run/chrony/${SOURCEDIR}"
-chown chrony:chrony "/var/run/chrony/${SOURCEDIR}"
+mkdir -p "/var/run/chrony/${SOURCEDIR}/"
+chmod 750 "/var/run/chrony/${SOURCEDIR}/"
+chown chrony:chrony "/var/run/chrony/${SOURCEDIR}/"
 
 touch "${SOURCEFILE}"
 chmod 640 "${SOURCEFILE}"

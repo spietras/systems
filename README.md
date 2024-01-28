@@ -39,7 +39,7 @@ Change the `HOST` variable to the name of the host device and run:
 
 ```sh
 sudo nix --experimental-features 'nix-command flakes' \
-    run "github:spietras/homelab#${HOST}-install" -- -k "${SOPS_AGE_KEY_FILE}"
+    run "github:spietras/homelab#${HOST}-install-script" -- -k "${SOPS_AGE_KEY_FILE}"
 ```
 
 and then reboot the machine.

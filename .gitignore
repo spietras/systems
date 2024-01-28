@@ -2,7 +2,7 @@
 /local.nix
 
 #Task
-/.task
+/.task/
 /Taskfile.yaml
 /Taskfile.yml
 
@@ -11,9 +11,8 @@
 .todo
 
 # Build
-/build
+/build/
 
-# Untracked binary files (like runtime VM state)
+# Binary files (like runtime VM state)
 /bin/*
-# But keep the .gitkeep file, so the directory is tracked
 !/bin/.gitkeep

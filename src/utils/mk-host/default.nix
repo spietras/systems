@@ -7,5 +7,5 @@
   ...
 }: {
   nixosConfigurations = inputs.utils.mkNixosConfig {inherit directory host inputs;};
-  packages = inputs.nixpkgs.lib.recursiveUpdate (inputs.utils.mkVmPackage {inherit host inputs;}) (inputs.utils.mkInstallScript {inherit host inputs;});
+  packages = inputs.nixpkgs.lib.recursiveUpdate (inputs.utils.mkVirtualMachine {inherit host inputs;}) (inputs.utils.mkInstallScript {inherit host inputs;});
 }

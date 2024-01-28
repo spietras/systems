@@ -81,7 +81,7 @@
         authselectmode ignore
 
         # Also use DHCP-provided NTP servers
-        sourcedir /var/run/chrony/dhcp
+        sourcedir /var/run/chrony/dhcp/
       '';
     };
 

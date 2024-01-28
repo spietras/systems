@@ -1,7 +1,7 @@
 {
   inputs = {
     nixpkgs = {
-      url = "github:NixOS/nixpkgs/nixos-unstable";
+      url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     };
 
     flake-parts = {
@@ -66,9 +66,9 @@
       }: let
         nil = pkgs.nil;
         task = pkgs.go-task;
+        coreutils = pkgs.coreutils;
         trunk = pkgs.trunk-io;
-        # Build copier manually, because the nixpkgs version is outdated
-        copier = pkgs.callPackage ./copier.nix {};
+        copier = pkgs.copier;
         sops = pkgs.sops;
       in {
         # Override pkgs argument
@@ -95,10 +95,15 @@
             packages = [
               nil
               task
+              coreutils
               trunk
               copier
               sops
             ];
+
+            shellHook = ''
+              export TMPDIR=/tmp
+            '';
           };
 
           template = pkgs.mkShell {
@@ -106,16 +111,13 @@
 
             packages = [
               task
+              coreutils
               copier
             ];
-          };
 
-          flake = pkgs.mkShell {
-            name = "flake";
-
-            packages = [
-              task
-            ];
+            shellHook = ''
+              export TMPDIR=/tmp
+            '';
           };
 
           lint = pkgs.mkShell {
@@ -123,8 +125,13 @@
 
             packages = [
               task
+              coreutils
               trunk
             ];
+
+            shellHook = ''
+              export TMPDIR=/tmp
+            '';
           };
         };
       };

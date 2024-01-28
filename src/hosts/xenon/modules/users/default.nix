@@ -10,7 +10,7 @@
 
     users = {
       root = {
-        passwordFile = config.sops.secrets."passwords/root".path;
+        hashedPasswordFile = config.sops.secrets."passwords/root".path;
       };
 
       spietras = {

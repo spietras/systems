@@ -7,7 +7,7 @@
   ...
 }: {
   "${inputs.self.nixosConfigurations.${host}.config.nixpkgs.buildPlatform.system}" = {
-    # The package will have "-install" suffix, for example "nixos-install"
-    "${host}-install" = inputs.self.nixosConfigurations.${host}.config.installScript;
+    # The package will have "-install-script" suffix, for example "nixos-install-script"
+    "${host}-install-script" = inputs.self.nixosConfigurations.${host}.config.installScript;
   };
 }

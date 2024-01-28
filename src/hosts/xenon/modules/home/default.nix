@@ -14,7 +14,7 @@
     # Use global nixpkgs for consistency
     useGlobalPkgs = true;
 
-    # Install user packages to /etc/profiles
+    # Install user packages to /etc/profiles/
     useUserPackages = true;
 
     users = {

@@ -9,22 +9,22 @@
 }: let
   # The hashes can change in the future, so you need to update them if the build fails
   newYork = fetchurl {
-    sha256 = "sha256-XOiWc4c7Yah+mM7axk8g1gY12vXamQF78Keqd3/0/cE=";
+    sha256 = "sha256-tn1QLCSjgo5q4PwE/we80pJavr3nHVgFWrZ8cp29qBk=";
     url = "https://devimages-cdn.apple.com/design/resources/download/NY.dmg";
   };
 
   sanFranciscoCompact = fetchurl {
-    sha256 = "sha256-7mk4i36CWPy08RdNTuFyahL3gb6HL7wwjWS9Zs1LH6s=";
+    sha256 = "sha256-Mkf+GK4iuUhZdUdzMW0VUOmXcXcISejhMeZVm0uaRwY=";
     url = "https://devimages-cdn.apple.com/design/resources/download/SF-Compact.dmg";
   };
 
   sanFranciscoMono = fetchurl {
-    sha256 = "sha256-pqkYgJZttKKHqTYobBUjud0fW79dS5tdzYJ23we9TW4=";
+    sha256 = "sha256-tZHV6g427zqYzrNf3wCwiCh5Vjo8PAai9uEvayYPsjM=";
     url = "https://devimages-cdn.apple.com/design/resources/download/SF-Mono.dmg";
   };
 
   sanFranciscoPro = fetchurl {
-    sha256 = "sha256-XoTegyl5BTBPHrKfaxJ18U2mzzxqCXLS9yUtN0hcB7I=";
+    sha256 = "sha256-Mu0pmx3OWiKBmMEYLNg+u2MxFERK07BQGe3WAhEec5Q=";
     url = "https://devimages-cdn.apple.com/design/resources/download/SF-Pro.dmg";
   };
 in
@@ -47,5 +47,5 @@ in
     ];
 
     # This doesn't matter, but it's required
-    version = "0.0.1";
+    version = "0.0.0";
   }

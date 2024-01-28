@@ -21,22 +21,22 @@
       "/softstate" = {
         directories = [
           # Network connections
-          "/etc/NetworkManager/system-connections"
+          "/etc/NetworkManager/system-connections/"
 
           # Cache that should be preserved
-          "/var/cache"
+          "/var/cache/"
 
           # Games data
-          "/var/games"
+          "/var/games/"
 
           # Various local state
-          "/var/lib"
+          "/var/lib/"
 
           # Logs
-          "/var/log"
+          "/var/log/"
 
           # Temporary files that should be preserved
-          "/var/tmp"
+          "/var/tmp/"
         ];
 
         files = [
@@ -99,7 +99,7 @@
     "/home" = {
       device = "${config.constants.storage.partitions.main.label}/${config.constants.storage.partitions.main.datasets.home.label}";
 
-      # /nix is a ZFS dataset
+      # /home is a ZFS dataset
       fsType = "zfs";
 
       # /home is needed at boot, so nix can create the user environment

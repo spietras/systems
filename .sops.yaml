@@ -1,4 +1,3 @@
----
 keys:
   # This is the public key of the age keypair used to encrypt the file
   # You should have the private key on your machine

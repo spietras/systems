@@ -45,7 +45,7 @@ in {
       pkgs.duf
 
       # Better ls
-      pkgs.exa
+      pkgs.eza
 
       # Display system information
       pkgs.fastfetch
@@ -141,8 +141,8 @@ in {
     ];
 
     shellAliases = {
-      # Enable icons in exa
-      ex = "exa --icons";
+      # Enable icons in eza
+      ez = "eza --icons";
 
       # Run zellij as a systemd service so it's not killed when the terminal is closed
       zj = "systemd-run --user --scope --quiet -- zellij";

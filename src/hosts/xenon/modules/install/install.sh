@@ -63,7 +63,7 @@ echo "Cleaning up old state"
 rm -f "/mnt/${ZFS_HARDSTATE}/sops/age/keys.txt"
 
 # unmount everything
-mountpoint -q /mnt && umount -R /mnt
+mountpoint -q /mnt/ && umount -R /mnt/
 
 # disable swap
 swapoff "/dev/disk/by-partlabel/${SWAP_LABEL}" 2>/dev/null || true
@@ -185,12 +185,12 @@ fi
 echo "Mounting filesystems"
 
 # mount everything
-if ! mount -t tmpfs -o mode=755 none /mnt ||
-	! mkdir -p "/mnt/boot" "/mnt/nix" "/mnt/home" "/mnt/${ZFS_HARDSTATE}" "/mnt/${ZFS_SOFTSTATE}" ||
-	! mount -t vfat "/dev/disk/by-label/${BOOT_LABEL}" "/mnt/boot" ||
-	! mount -t zfs -o zfsutil "${MAIN_LABEL}/${ZFS_NIX}" "/mnt/nix" ||
-	! mount -t zfs -o zfsutil "${MAIN_LABEL}/${ZFS_HARDSTATE}" "/mnt/${ZFS_HARDSTATE}" ||
-	! mount -t zfs -o zfsutil "${MAIN_LABEL}/${ZFS_SOFTSTATE}" "/mnt/${ZFS_SOFTSTATE}"; then
+if ! mount -t tmpfs -o mode=755 none /mnt/ ||
+	! mkdir -p /mnt/boot/ /mnt/nix/ /mnt/home/ "/mnt/${ZFS_HARDSTATE}/" "/mnt/${ZFS_SOFTSTATE}/" ||
+	! mount -t vfat "/dev/disk/by-label/${BOOT_LABEL}" /mnt/boot/ ||
+	! mount -t zfs -o zfsutil "${MAIN_LABEL}/${ZFS_NIX}" /mnt/nix/ ||
+	! mount -t zfs -o zfsutil "${MAIN_LABEL}/${ZFS_HARDSTATE}" "/mnt/${ZFS_HARDSTATE}/" ||
+	! mount -t zfs -o zfsutil "${MAIN_LABEL}/${ZFS_SOFTSTATE}" "/mnt/${ZFS_SOFTSTATE}/"; then
 	echo "Mounting filesystems failed" >&2
 	exit 7
 fi
@@ -198,7 +198,7 @@ fi
 echo "Copying age keys"
 
 # copy age keys
-if ! mkdir -p "/mnt/${ZFS_HARDSTATE}/sops/age" ||
+if ! mkdir -p "/mnt/${ZFS_HARDSTATE}/sops/age/" ||
 	! cp "${keyfile}" "/mnt/${ZFS_HARDSTATE}/sops/age/keys.txt"; then
 	echo "Copying age keys failed" >&2
 	exit 8
