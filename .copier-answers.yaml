@@ -2,9 +2,9 @@
 _commit: 0.4.0
 _src_path: gh:quickplates/generic
 accountname: spietras
-description: configuration for my homelab 🏠
+description: NixOS configs for my homelab ❄️
 docs: false
-projectname: homelab
+projectname: systems
 releases: false
-reponame: homelab
-repourl: https://github.com/spietras/homelab
+reponame: systems
+repourl: https://github.com/spietras/systems
