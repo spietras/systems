@@ -39,17 +39,17 @@
           "/var/tmp/"
         ];
 
-        files = [
-          # Machine ID should be preserved and not changed
-          "/etc/machine-id"
+        files =
+          [
+            # Machine ID should be preserved and not changed
+            "/etc/machine-id"
 
+            # MOTD
+            "/etc/motd"
+          ]
+          ++
           # SSH host keys
-          "/etc/ssh/ssh_host_rsa_key"
-          "/etc/ssh/ssh_host_ed25519_key"
-
-          # MOTD
-          "/etc/motd"
-        ];
+          map (key: key.path) config.services.openssh.hostKeys;
 
         # Don't display as mounts to reduce clutter
         hideMounts = true;

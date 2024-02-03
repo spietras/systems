@@ -28,7 +28,7 @@
             home = config.constants.storage.partitions.main.datasets.home.label;
             hardstate = config.constants.storage.partitions.main.datasets.hardstate.label;
             softstate = config.constants.storage.partitions.main.datasets.softstate.label;
-            swapsize = (builtins.toString config.constants.storage.partitions.swap.size) + "MB";
+            swapsize = (toString config.constants.storage.partitions.swap.size) + "MB";
           }
         );
       };

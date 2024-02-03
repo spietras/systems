@@ -23,7 +23,25 @@
                 home = config.constants.storage.partitions.main.datasets.home.label;
                 hardstate = config.constants.storage.partitions.main.datasets.hardstate.label;
                 softstate = config.constants.storage.partitions.main.datasets.softstate.label;
-                swapsize = (builtins.toString config.constants.vm.swapSize) + "MB";
+                hardstateDirectories = (
+                  lib.strings.concatStringsSep
+                  ":"
+                  (
+                    map
+                    (directory: directory.directory)
+                    config.environment.persistence."/hardstate".directories
+                  )
+                );
+                softstateDirectories = (
+                  lib.strings.concatStringsSep
+                  ":"
+                  (
+                    map
+                    (directory: directory.directory)
+                    config.environment.persistence."/softstate".directories
+                  )
+                );
+                swapsize = (toString config.constants.vm.swapSize) + "MB";
 
                 # parted is not in PATH so we need to provide the full path
                 parted = "${pkgs.parted}/bin/parted";
