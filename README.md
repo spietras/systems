@@ -1,10 +1,10 @@
-<h1 align="center">homelab</h1>
+<h1 align="center">systems</h1>
 
 <div align="center">
 
-configuration for my homelab 🏠
+NixOS configs for my homelab ❄️
 
-[![Lint](https://github.com/spietras/homelab/actions/workflows/lint.yaml/badge.svg)](https://github.com/spietras/homelab/actions/workflows/lint.yaml)
+[![Lint](https://github.com/spietras/systems/actions/workflows/lint.yaml/badge.svg)](https://github.com/spietras/systems/actions/workflows/lint.yaml)
 
 </div>
 
@@ -13,7 +13,7 @@ configuration for my homelab 🏠
 ## 💡 About
 
 This repository contains [`NixOS`](https://nixos.org/)
-configurations for all my homelab machines.
+configurations for all my systems machines.
 
 ## ⚙️ Installation
 
@@ -39,7 +39,7 @@ Change the `HOST` variable to the name of the host device and run:
 
 ```sh
 sudo nix --experimental-features 'nix-command flakes' \
-    run "github:spietras/homelab#${HOST}-install-script" -- -k "${SOPS_AGE_KEY_FILE}"
+    run "github:spietras/systems#${HOST}-install-script" -- -k "${SOPS_AGE_KEY_FILE}"
 ```
 
 and then reboot the machine.
@@ -47,4 +47,4 @@ and then reboot the machine.
 ## 💻 Development
 
 Read more about how to develop the project
-[here](https://github.com/spietras/homelab/blob/main/CONTRIBUTING.md).
+[here](https://github.com/spietras/systems/blob/main/CONTRIBUTING.md).

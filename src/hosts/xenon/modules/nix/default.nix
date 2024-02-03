@@ -63,7 +63,7 @@
       enable = true;
 
       # Point to the GitHub repository as the source of truth
-      flake = "github:spietras/homelab#${config.constants.name}";
+      flake = "github:spietras/systems#${config.constants.name}";
 
       # Despite the name, this doesn't make the system reboot automatically
       # This only builds the new generation and makes it available at the next boot
