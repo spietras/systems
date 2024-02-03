@@ -4,7 +4,7 @@
   osConfig,
   ...
 }: let
-  uid = builtins.toString osConfig.users.users.spietras.uid;
+  uid = toString osConfig.users.users.spietras.uid;
   runtimeDir = "/run/user/${uid}";
 in {
   imports = [

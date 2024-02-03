@@ -9,7 +9,7 @@
     inputs.utils.mkHost {
       inherit directory host inputs;
     };
-  hostConfigs = builtins.map _mkHost hosts;
+  hostConfigs = map _mkHost hosts;
 in
   inputs.utils.mergeAll {
     inherit inputs;

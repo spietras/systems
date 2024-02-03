@@ -17,14 +17,14 @@
         description = "Sebastian Pietras";
 
         extraGroups = [
-          # Can use sudo
-          "wheel"
+          # Can use beep
+          "beep"
 
           # Can use docker
           "docker"
 
-          # Can use beep
-          "beep"
+          # Can use sudo
+          "wheel"
         ];
 
         isNormalUser = true;

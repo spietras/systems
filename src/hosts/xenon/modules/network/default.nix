@@ -10,6 +10,13 @@
       enable = false;
     };
 
+    firewall = {
+      trustedInterfaces = [
+        # Allow traffic from Tailscale
+        config.services.tailscale.interfaceName
+      ];
+    };
+
     hostId = config.constants.network.hostId;
     hostName = config.constants.name;
 

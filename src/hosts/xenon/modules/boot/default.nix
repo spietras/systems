@@ -1,6 +1,7 @@
 # Boot configuration
 {
   config,
+  lib,
   pkgs,
   ...
 }: {
@@ -26,6 +27,24 @@
           main = config.constants.storage.partitions.main.label;
           hardstate = config.constants.storage.partitions.main.datasets.hardstate.label;
           softstate = config.constants.storage.partitions.main.datasets.softstate.label;
+          hardstateDirectories = (
+            lib.strings.concatStringsSep
+            ":"
+            (
+              map
+              (directory: directory.directory)
+              config.environment.persistence."/hardstate".directories
+            )
+          );
+          softstateDirectories = (
+            lib.strings.concatStringsSep
+            ":"
+            (
+              map
+              (directory: directory.directory)
+              config.environment.persistence."/softstate".directories
+            )
+          );
 
           udevadm = "udevadm";
         }
