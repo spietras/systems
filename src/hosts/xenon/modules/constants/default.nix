@@ -1,73 +1,134 @@
 # Reusable constants are defined here
+# All options have default values
 # You can use them in other modules
-# The way to define this is a little bit weird, but it works
 {lib, ...}: {
   options = {
-    constants = lib.mkOption {
-      type = lib.types.attrs;
-      default = {
-        name = "xenon";
+    constants = {
+      name = lib.mkOption {
+        default = "xenon";
+        description = "Name of the machine";
+        type = lib.types.str;
+      };
 
-        network = {
-          # This is just randomly generated, but is needed
-          hostId = "9f86d081";
+      network = {
+        hostId = lib.mkOption {
+          default = "9f86d081";
+          description = "Unique identifier for the machine";
+          type = lib.types.str;
+        };
+      };
+
+      platform = lib.mkOption {
+        default = "x86_64-linux";
+        description = "Platform of the machine";
+        type = lib.types.str;
+      };
+
+      storage = {
+        diskPath = lib.mkOption {
+          default = "/dev/sda";
+          description = "Path to the disk";
+          type = lib.types.path;
         };
 
-        storage = {
-          # Xenon has one SSD
-          diskPath = "/dev/sda";
-
-          partitions = {
-            boot = {
-              label = "boot";
+        partitions = {
+          boot = {
+            label = lib.mkOption {
+              default = "boot";
+              description = "Label for the boot partition";
+              type = lib.types.str;
             };
+          };
 
-            main = {
-              label = "main";
-              datasets = {
-                nix = {
-                  label = "nix";
+          main = {
+            datasets = {
+              hardstate = {
+                label = lib.mkOption {
+                  default = "hardstate";
+                  description = "Label for the hardstate dataset";
+                  type = lib.types.str;
                 };
+              };
 
-                home = {
-                  label = "home";
+              home = {
+                label = lib.mkOption {
+                  default = "home";
+                  description = "Label for the home dataset";
+                  type = lib.types.str;
                 };
+              };
 
-                hardstate = {
-                  label = "hardstate";
+              nix = {
+                label = lib.mkOption {
+                  default = "nix";
+                  description = "Label for the nix dataset";
+                  type = lib.types.str;
                 };
+              };
 
-                softstate = {
-                  label = "softstate";
+              softstate = {
+                label = lib.mkOption {
+                  default = "softstate";
+                  description = "Label for the softstate dataset";
+                  type = lib.types.str;
                 };
               };
             };
 
-            swap = {
-              label = "swap";
+            label = lib.mkOption {
+              default = "main";
+              description = "Label for the main partition";
+              type = lib.types.str;
+            };
+          };
 
-              # 16GB for swap
-              size = 16384;
+          swap = {
+            label = lib.mkOption {
+              default = "swap";
+              description = "Label for the swap partition";
+              type = lib.types.str;
+            };
+
+            size = lib.mkOption {
+              default = 16384;
+              description = "Size of the swap partition in MB";
+              type = lib.types.int;
             };
           };
         };
-
-        platform = "x86_64-linux";
-
-        vm = {
-          # You need these resources on your development machine to run the VM
-          # You can change these to whatever you want, but the defaults should be fine
-          cores = 4;
-          diskSize = 8192;
-          memorySize = 4096;
-          swapSize = 1024;
-
-          # In the virtual machine, the disk is called vda
-          diskPath = "/dev/vda";
-        };
       };
 
-      description = "Constants";
+      vm = {
+        cores = lib.mkOption {
+          default = 4;
+          description = "Number of CPU cores";
+          type = lib.types.int;
+        };
+
+        diskPath = lib.mkOption {
+          default = "/dev/vda";
+          description = "Path to the disk in the virtual machine";
+          type = lib.types.path;
+        };
+
+        diskSize = lib.mkOption {
+          default = 8192;
+          description = "Size of the disk in MB";
+          type = lib.types.int;
+        };
+
+        memorySize = lib.mkOption {
+          default = 4096;
+          description = "Size of the memory in MB";
+          type = lib.types.int;
+        };
+
+        swapSize = lib.mkOption {
+          default = 1024;
+          description = "Size of the swap in MB";
+          type = lib.types.int;
+        };
+      };
     };
   };
 }
