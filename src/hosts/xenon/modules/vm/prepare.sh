@@ -3,25 +3,24 @@
 ### CONFIGURATION ###
 
 DISK='@disk@'
-MAIN_LABEL='@main@'
-SWAP_LABEL='@swap@'
-ZFS_NIX='@nix@'
-ZFS_HOME='@home@'
 ZFS_HARDSTATE='@hardstate@'
-ZFS_SOFTSTATE='@softstate@'
-HARDSTATE_DIRECTORIES='@hardstateDirectories@'
-SOFTSTATE_DIRECTORIES='@softstateDirectories@'
-SWAP_SIZE='@swapsize@'
-
-PARTED='@parted@'
-UDEVADM='@udevadm@'
-ZPOOL='@zpool@'
-ZFS='@zfs@'
+ZFS_HOME='@home@'
+MAIN_LABEL='@main@'
 MKSWAP='@mkswap@'
+ZFS_NIX='@nix@'
+PARTED='@parted@'
+PRINTF='@printf@'
+SLEEP='@sleep@'
+ZFS_SOFTSTATE='@softstate@'
+SWAP_LABEL='@swap@'
+SWAP_SIZE='@swapSize@'
+UDEVADM='@udevadm@'
+ZFS='@zfs@'
+ZPOOL='@zpool@'
 
 ### PARTITIONING ###
 
-echo "Partitioning disk ${DISK}"
+${PRINTF} '%s\n' "Partitioning disk ${DISK}"
 
 # partition the disk
 # use GPT to store partition metadata
@@ -31,7 +30,7 @@ if ! ${PARTED} --script --align optimal "${DISK}" -- \
 	mklabel gpt \
 	mkpart "${MAIN_LABEL}" 1MB "-${SWAP_SIZE}" \
 	mkpart "${SWAP_LABEL}" linux-swap "-${SWAP_SIZE}" 100%; then
-	echo "Partitioning failed" >&2
+	${PRINTF} '%s\n' 'Partitioning failed' >&2
 	exit 1
 fi
 
@@ -41,19 +40,19 @@ ${UDEVADM} trigger
 printf '%s' "Waiting for partitions to appear..."
 while [ ! -e "/dev/disk/by-partlabel/${MAIN_LABEL}" ] ||
 	[ ! -e "/dev/disk/by-partlabel/${SWAP_LABEL}" ]; do
-	sleep 1
+	${SLEEP} 1
 	printf '%s' '.'
 done
-echo
+${PRINTF} '\n'
 
-echo "Partitioning complete"
+${PRINTF} '%s\n' 'Partitioning complete'
 
 ### FORMATTING ###
 
 # format the partitions with appropriate filesystems
 # note that referring to devices by by-partlabel works only when using GPT
 
-echo "Creating ZFS pool ${MAIN_LABEL} on /dev/disk/by-partlabel/${MAIN_LABEL}"
+${PRINTF} '%s\n' "Creating ZFS pool ${MAIN_LABEL} on /dev/disk/by-partlabel/${MAIN_LABEL}"
 
 # setup main partition with zfs
 if ! ${ZPOOL} create -f \
@@ -72,25 +71,25 @@ if ! ${ZPOOL} create -f \
 	-O relatime=on \
 	-O xattr=sa \
 	"${MAIN_LABEL}" "/dev/disk/by-partlabel/${MAIN_LABEL}"; then
-	echo "Creating ZFS pool failed" >&2
+	${PRINTF} '%s\n' 'Creating ZFS pool failed' >&2
 	exit 2
 fi
 
-echo "Creating ZFS datasets"
+${PRINTF} '%s\n' 'Creating ZFS datasets'
 
 if ! ${ZFS} create -o compression=on "${MAIN_LABEL}/${ZFS_NIX}" ||
 	! ${ZFS} create -o compression=on "${MAIN_LABEL}/${ZFS_HOME}" ||
 	! ${ZFS} create -o compression=on "${MAIN_LABEL}/${ZFS_HARDSTATE}" ||
 	! ${ZFS} create -o compression=on "${MAIN_LABEL}/${ZFS_SOFTSTATE}"; then
-	echo "Creating ZFS datasets failed" >&2
+	${PRINTF} '%s\n' 'Creating ZFS datasets failed' >&2
 	exit 3
 fi
 
-echo "Formatting /dev/disk/by-partlabel/${SWAP_LABEL} as swap"
+${PRINTF} '%s\n' "Formatting /dev/disk/by-partlabel/${SWAP_LABEL} as swap"
 
 # swap is just swap
 if ! ${MKSWAP} -L "${SWAP_LABEL}" "/dev/disk/by-partlabel/${SWAP_LABEL}"; then
-	echo "Formatting swap partition failed" >&2
+	${PRINTF} '%s\n' 'Formatting swap partition failed' >&2
 	exit 4
 fi
 
@@ -100,48 +99,14 @@ ${UDEVADM} trigger
 printf '%s' "Waiting for filesystems to appear..."
 while [ ! -e "/dev/disk/by-label/${MAIN_LABEL}" ] ||
 	[ ! -e "/dev/disk/by-label/${SWAP_LABEL}" ]; do
-	sleep 1
+	${SLEEP} 1
 	printf '%s' '.'
 done
-echo
+${PRINTF} '\n'
 
-echo "Formatting complete"
+${PRINTF} '%s\n' 'Formatting complete'
 
-### PREPARATION ###
+### CLEANUP ###
 
-echo "Mounting persistent filesystems"
-
-if ! mkdir -p "/mnt/${ZFS_HARDSTATE}/" "/mnt/${ZFS_SOFTSTATE}/" ||
-	! mount -t zfs -o zfsutil "${MAIN_LABEL}/${ZFS_HARDSTATE}" "/mnt/${ZFS_HARDSTATE}/" ||
-	! mount -t zfs -o zfsutil "${MAIN_LABEL}/${ZFS_SOFTSTATE}" "/mnt/${ZFS_SOFTSTATE}/"; then
-	echo "Mounting filesystems failed" >&2
-	exit 7
-fi
-
-echo "Creating necessary directories"
-
-create_directories() {
-	for directory in $(echo "${HARDSTATE_DIRECTORIES}" | tr ':' ' '); do
-		set -- "/mnt/${ZFS_HARDSTATE}/${directory}" "$@"
-	done
-
-	for directory in $(echo "${SOFTSTATE_DIRECTORIES}" | tr ':' ' '); do
-		set -- "/mnt/${ZFS_SOFTSTATE}/${directory}" "$@"
-	done
-
-	mkdir -p "$@"
-}
-
-if ! create_directories; then
-	echo "Creating directories failed" >&2
-	exit 8
-fi
-
-echo "Unmounting persistent filesystems"
-
-if ! umount "/mnt/${ZFS_HARDSTATE}/" "/mnt/${ZFS_SOFTSTATE}/"; then
-	echo "Unmounting filesystems failed" >&2
-	exit 9
-fi
-
-echo "Preparation complete"
+# export the pool to make the state clean
+${ZPOOL} export "${MAIN_LABEL}"

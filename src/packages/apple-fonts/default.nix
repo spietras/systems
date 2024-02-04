@@ -1,10 +1,11 @@
 # This packages provides fonts used by Apple products
 # Additionally, the monospaced font is patched with nerd-fonts
 {
-  stdenv,
+  coreutils,
   fetchurl,
-  p7zip,
   nerd-font-patcher,
+  p7zip,
+  stdenv,
   ...
 }: let
   # The hashes can change in the future, so you need to update them if the build fails
@@ -33,17 +34,18 @@ in
 
     # Dependencies of the builder script
     nativeBuildInputs = [
-      p7zip
+      coreutils
       nerd-font-patcher
+      p7zip
     ];
 
     pname = "apple-fonts";
 
     srcs = [
-      sanFranciscoPro
+      newYork
       sanFranciscoCompact
       sanFranciscoMono
-      newYork
+      sanFranciscoPro
     ];
 
     # This doesn't matter, but it's required

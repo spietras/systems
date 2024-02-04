@@ -10,49 +10,32 @@
       boot = {
         initrd = {
           postDeviceCommands = lib.mkForce (
-            # pkgs.substituteAll returns a path to a file, so we need to read it
-            builtins.readFile (
-              # This is used to provide data to the script by replacing some strings
-              pkgs.substituteAll {
-                src = ./prepare.sh;
+            (
+              # pkgs.substituteAll returns a path to a file, so we need to read it
+              builtins.readFile (
+                # This is used to provide data to the script by replacing some strings
+                pkgs.substituteAll {
+                  src = ./prepare.sh;
 
-                disk = config.constants.vm.diskPath;
-                main = config.constants.storage.partitions.main.label;
-                swap = config.constants.storage.partitions.swap.label;
-                nix = config.constants.storage.partitions.main.datasets.nix.label;
-                home = config.constants.storage.partitions.main.datasets.home.label;
-                hardstate = config.constants.storage.partitions.main.datasets.hardstate.label;
-                softstate = config.constants.storage.partitions.main.datasets.softstate.label;
-                hardstateDirectories = (
-                  lib.strings.concatStringsSep
-                  ":"
-                  (
-                    map
-                    (directory: directory.directory)
-                    config.environment.persistence."/hardstate".directories
-                  )
-                );
-                softstateDirectories = (
-                  lib.strings.concatStringsSep
-                  ":"
-                  (
-                    map
-                    (directory: directory.directory)
-                    config.environment.persistence."/softstate".directories
-                  )
-                );
-                swapsize = (toString config.constants.vm.swapSize) + "MB";
-
-                # parted is not in PATH so we need to provide the full path
-                parted = "${pkgs.parted}/bin/parted";
-
-                # All utilities below are already in PATH
-                udevadm = "udevadm";
-                zpool = "zpool";
-                zfs = "zfs";
-                mkswap = "mkswap";
-              }
+                  disk = config.constants.vm.diskPath;
+                  hardstate = config.constants.storage.partitions.main.datasets.hardstate.label;
+                  home = config.constants.storage.partitions.main.datasets.home.label;
+                  main = config.constants.storage.partitions.main.label;
+                  mkswap = "${pkgs.util-linux}/bin/mkswap";
+                  nix = config.constants.storage.partitions.main.datasets.nix.label;
+                  parted = "${pkgs.parted}/bin/parted";
+                  printf = "${pkgs.coreutils}/bin/printf";
+                  sleep = "${pkgs.coreutils}/bin/sleep";
+                  softstate = config.constants.storage.partitions.main.datasets.softstate.label;
+                  swap = config.constants.storage.partitions.swap.label;
+                  swapSize = (toString config.constants.vm.swapSize) + "MB";
+                  udevadm = "${pkgs.eudev}/bin/udevadm";
+                  zfs = "${pkgs.zfs}/bin/zfs";
+                  zpool = "${pkgs.zfs}/bin/zpool";
+                }
+              )
             )
+            + config.boot.initrd.postDeviceCommands
           );
         };
       };

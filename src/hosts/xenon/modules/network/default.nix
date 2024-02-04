@@ -34,6 +34,7 @@
             src = ./chrony-online-offline.sh;
 
             chronyc = "${pkgs.chrony}/bin/chronyc";
+            printf = "${pkgs.coreutils}/bin/printf";
           };
         }
 
@@ -42,8 +43,15 @@
           source = pkgs.substituteAll {
             src = ./chrony-dhcp-ntp.sh;
 
+            chmod = "${pkgs.coreutils}/bin/chmod";
+            chown = "${pkgs.coreutils}/bin/chown";
             chronyc = "${pkgs.chrony}/bin/chronyc";
+            mkdir = "${pkgs.coreutils}/bin/mkdir";
+            printf = "${pkgs.coreutils}/bin/printf";
             sourcedir = "dhcp";
+            touch = "${pkgs.coreutils}/bin/touch";
+            tr = "${pkgs.coreutils}/bin/tr";
+            wc = "${pkgs.coreutils}/bin/wc";
           };
         }
       ];
@@ -193,12 +201,14 @@
           pkgs.substituteAll {
             src = ./tailscale-up.sh;
 
-            mktemp = "${pkgs.coreutils}/bin/mktemp";
-            curl = "${pkgs.curl}/bin/curl";
-            jq = "${pkgs.jq}/bin/jq";
-            tailscale = "${pkgs.tailscale}/bin/tailscale";
             clientId = config.sops.secrets."tailscale/clientId".path;
             clientSecret = config.sops.secrets."tailscale/clientSecret".path;
+            curl = "${pkgs.curl}/bin/curl";
+            jq = "${pkgs.jq}/bin/jq";
+            mktemp = "${pkgs.coreutils}/bin/mktemp";
+            rm = "${pkgs.coreutils}/bin/rm";
+            tailscale = "${pkgs.tailscale}/bin/tailscale";
+            xargs = "${pkgs.findutils}/bin/xargs";
           }
         );
 

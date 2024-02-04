@@ -2,23 +2,23 @@
 
 ### CONFIGURATION ###
 
-SHUF='@shuf@'
-PRINTF='@printf@'
-MKTEMP='@mktemp@'
+AWK='@awk@'
+BASE64='@base64@'
 CURL='@curl@'
 JQ='@jq@'
-TR='@tr@'
-SED='@sed@'
-AWK='@awk@'
 KRABBY='@krabby@'
-BASE64='@base64@'
+MKTEMP='@mktemp@'
+PRINTF='@printf@'
 RM='@rm@'
+SED='@sed@'
+SHUF='@shuf@'
+TR='@tr@'
 
 ### FUNCTIONS ###
 
 # Get random pokeapi id
 get_random_pokeapi_id() {
-	"${SHUF}" -i 1-905 -n 1
+	"${SHUF}" --input-range 1-905 --head-count 1
 }
 
 # Get pokeapi id
@@ -44,31 +44,31 @@ get_temporary_json_file() {
 # Get pokemon data
 # $1: pokeapi id
 get_pokemon_data() {
-	"${CURL}" -fsL https://pokeapi.co/api/v2/pokemon/"${1}"
+	"${CURL}" --fail --silent --location https://pokeapi.co/api/v2/pokemon/"${1}"
 }
 
 # Get species url
 # $1: pokemon data file
 get_species_url() {
-	"${JQ}" -r '.species.url' <"${1}"
+	"${JQ}" --raw-output '.species.url' <"${1}"
 }
 
 # Get species data
 # $1: species url
 get_species_data() {
-	"${CURL}" -fsL "${1}"
+	"${CURL}" --fail --silent --location "${1}"
 }
 
 # Get pokemon id
 # $1: pokemon data file
 get_pokemon_id() {
-	"${JQ}" -r '.id' <"${1}"
+	"${JQ}" --raw-output '.id' <"${1}"
 }
 
 # Get pokemon types
 # $1: pokemon data file
 get_pokemon_types() {
-	"${JQ}" -r '.types[].type.name' <"${1}" |
+	"${JQ}" --raw-output '.types[].type.name' <"${1}" |
 		"${TR}" '\n' ' ' |
 		"${SED}" 's/ *$//g'
 }
@@ -76,19 +76,19 @@ get_pokemon_types() {
 # Get pokemon name
 # $1: pokemon data file
 get_pokemon_name() {
-	"${JQ}" -r '.name' <"${1}"
+	"${JQ}" --raw-output '.name' <"${1}"
 }
 
 # Get pokemon full name
 # $1: species data file
 get_pokemon_fullname() {
-	"${JQ}" -r 'last(.names[] | select(.language.name == "en")).name' <"${1}"
+	"${JQ}" --raw-output 'last(.names[] | select(.language.name == "en")).name' <"${1}"
 }
 
 # Get pokemon description
 # $1: species data file
 get_pokemon_description() {
-	"${JQ}" -r 'last(.flavor_text_entries[] | select(.language.name == "en")).flavor_text' <"${1}" |
+	"${JQ}" --raw-output 'last(.flavor_text_entries[] | select(.language.name == "en")).flavor_text' <"${1}" |
 		"${TR}" '\n\f' ' ' |
 		"${SED}" 's/ *$//g'
 }
@@ -96,7 +96,7 @@ get_pokemon_description() {
 # Get shininess
 get_shininess() {
 	# shellcheck disable=SC2016
-	shuf -i 1-100 -n 1 |
+	"${SHUF}" --input-range 1-100 --head-count 1 |
 		"${AWK}" '{ if ($1 <= 5) print "true"; else print "false" }'
 }
 
@@ -112,7 +112,7 @@ get_pokemon_image() {
 		"${KRABBY}" name "${1}" --no-title >"${file}" 2>/dev/null || return 2
 	fi
 
-	"${BASE64}" -w 0 <"${file}" || return 3
+	"${BASE64}" --wrap 0 <"${file}" || return 3
 
 	remove_temporary_file "${file}" || return 4
 }
@@ -120,7 +120,7 @@ get_pokemon_image() {
 # Remove temporary file
 # $1: filename
 remove_temporary_file() {
-	"${RM}" -f "${1}"
+	"${RM}" --force "${1}"
 }
 
 # Execute
