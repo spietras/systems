@@ -19,42 +19,42 @@
           pkgs.substituteAll {
             src = ./motd.sh;
 
+            cat = "${pkgs.coreutils}/bin/cat";
+            mktemp = "${pkgs.coreutils}/bin/mktemp";
+            motdfile = config.users.motdFile;
+            rm = "${pkgs.coreutils}/bin/rm";
+
             script = pkgs.substituteAll {
               src = ./print.sh;
               isExecutable = true;
 
-              mktemp = "${pkgs.coreutils}/bin/mktemp";
+              base64 = "${pkgs.coreutils}/bin/base64";
               gum = "${pkgs.gum}/bin/gum";
+              jq = "${pkgs.jq}/bin/jq";
+              mktemp = "${pkgs.coreutils}/bin/mktemp";
+              printf = "${pkgs.coreutils}/bin/printf";
+              rm = "${pkgs.coreutils}/bin/rm";
 
               script = pkgs.substituteAll {
                 src = ./data.sh;
                 isExecutable = true;
 
-                shuf = "${pkgs.coreutils}/bin/shuf";
-                printf = "${pkgs.coreutils}/bin/printf";
-                mktemp = "${pkgs.coreutils}/bin/mktemp";
+                awk = "${pkgs.gawk}/bin/awk";
+                base64 = "${pkgs.coreutils}/bin/base64";
                 curl = "${pkgs.curl}/bin/curl";
                 jq = "${pkgs.jq}/bin/jq";
-                tr = "${pkgs.coreutils}/bin/tr";
-                sed = "${pkgs.gnused}/bin/sed";
-                awk = "${pkgs.gawk}/bin/awk";
                 krabby = "${pkgs.krabby}/bin/krabby";
-                base64 = "${pkgs.coreutils}/bin/base64";
+                mktemp = "${pkgs.coreutils}/bin/mktemp";
+                printf = "${pkgs.coreutils}/bin/printf";
                 rm = "${pkgs.coreutils}/bin/rm";
+                sed = "${pkgs.gnused}/bin/sed";
+                shuf = "${pkgs.coreutils}/bin/shuf";
+                tr = "${pkgs.coreutils}/bin/tr";
               };
 
-              printf = "${pkgs.coreutils}/bin/printf";
-              jq = "${pkgs.jq}/bin/jq";
-              base64 = "${pkgs.coreutils}/bin/base64";
               tr = "${pkgs.coreutils}/bin/tr";
               xargs = "${pkgs.findutils}/bin/xargs";
-              rm = "${pkgs.coreutils}/bin/rm";
             };
-
-            motdfile = config.users.motdFile;
-            mktemp = "${pkgs.coreutils}/bin/mktemp";
-            cat = "${pkgs.coreutils}/bin/cat";
-            rm = "${pkgs.coreutils}/bin/rm";
           }
         );
 

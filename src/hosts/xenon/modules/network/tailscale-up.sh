@@ -2,12 +2,14 @@
 
 ### CONFIGURATION ###
 
-MKTEMP='@mktemp@'
-CURL='@curl@'
-JQ='@jq@'
-TAILSCALE='@tailscale@'
 CLIENT_ID='@clientId@'
 CLIENT_SECRET='@clientSecret@'
+CURL='@curl@'
+JQ='@jq@'
+MKTEMP='@mktemp@'
+RM='@rm@'
+TAILSCALE='@tailscale@'
+XARGS='@xargs@'
 
 ### MAIN ###
 
@@ -18,19 +20,19 @@ tokenfile="$(${MKTEMP})"
 keyfile="$(${MKTEMP})"
 
 # Put client ID and secret into temporary files
-xargs -0 printf 'client_id=%s' <"${CLIENT_ID}" >"${idfile}"
-xargs -0 printf 'client_secret=%s' <"${CLIENT_SECRET}" >"${secretfile}"
+${XARGS} -0 printf 'client_id=%s' <"${CLIENT_ID}" >"${idfile}"
+${XARGS} -0 printf 'client_secret=%s' <"${CLIENT_SECRET}" >"${secretfile}"
 
 # Get access token from Tailscale API
-${CURL} -s 'https://api.tailscale.com/api/v2/oauth/token' \
-	-d "@${idfile}" \
-	-d "@${secretfile}" |
-	${JQ} -r '.access_token' |
-	xargs -0 printf 'Authorization: Bearer %s' >"${tokenfile}"
+${CURL} --silent 'https://api.tailscale.com/api/v2/oauth/token' \
+	--data "@${idfile}" \
+	--data "@${secretfile}" |
+	${JQ} --raw-output '.access_token' |
+	${XARGS} -0 printf 'Authorization: Bearer %s' >"${tokenfile}"
 
 # Create single-use authkey
-${CURL} -s 'https://api.tailscale.com/api/v2/tailnet/-/keys' \
-	-H @"${tokenfile}" \
+${CURL} --silent 'https://api.tailscale.com/api/v2/tailnet/-/keys' \
+	--header @"${tokenfile}" \
 	--data-binary '
 {
   "capabilities": {
@@ -44,10 +46,10 @@ ${CURL} -s 'https://api.tailscale.com/api/v2/tailnet/-/keys' \
     }
   }
 }' |
-	${JQ} -r '.key' >"${keyfile}"
+	${JQ} --raw-output '.key' >"${keyfile}"
 
 # Connect to Tailscale
 ${TAILSCALE} up "--authkey=file:${keyfile}"
 
 # Clean up temporary files
-rm -f "${idfile}" "${secretfile}" "${tokenfile}" "${keyfile}"
+${RM} --force "${idfile}" "${secretfile}" "${tokenfile}" "${keyfile}"

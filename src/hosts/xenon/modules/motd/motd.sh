@@ -2,11 +2,11 @@
 
 ### CONFIGURATION ###
 
-SCRIPT='@script@'
-MOTDFILE='@motdfile@'
-MKTEMP='@mktemp@'
 CAT='@cat@'
+MKTEMP='@mktemp@'
+MOTDFILE='@motdfile@'
 RM='@rm@'
+SCRIPT='@script@'
 
 ### FUNCTIONS ###
 

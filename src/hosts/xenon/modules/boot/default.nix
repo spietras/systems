@@ -24,9 +24,8 @@
         pkgs.substituteAll {
           src = ./prepare.sh;
 
-          main = config.constants.storage.partitions.main.label;
           hardstate = config.constants.storage.partitions.main.datasets.hardstate.label;
-          softstate = config.constants.storage.partitions.main.datasets.softstate.label;
+
           hardstateDirectories = (
             lib.strings.concatStringsSep
             ":"
@@ -36,6 +35,14 @@
               config.environment.persistence."/hardstate".directories
             )
           );
+
+          main = config.constants.storage.partitions.main.label;
+          mkdir = "${pkgs.coreutils}/bin/mkdir";
+          mount = "${pkgs.util-linux}/bin/mount";
+          printf = "${pkgs.coreutils}/bin/printf";
+          sleep = "${pkgs.coreutils}/bin/sleep";
+          softstate = config.constants.storage.partitions.main.datasets.softstate.label;
+
           softstateDirectories = (
             lib.strings.concatStringsSep
             ":"
@@ -46,7 +53,10 @@
             )
           );
 
-          udevadm = "udevadm";
+          tr = "${pkgs.coreutils}/bin/tr";
+          udevadm = "${pkgs.eudev}/bin/udevadm";
+          umount = "${pkgs.util-linux}/bin/umount";
+          zpool = "${pkgs.zfs}/bin/zpool";
         }
       );
 

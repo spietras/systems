@@ -2,15 +2,15 @@
 
 ### CONFIGURATION ###
 
-MKTEMP='@mktemp@'
-GUM='@gum@'
-SCRIPT='@script@'
-PRINTF='@printf@'
-JQ='@jq@'
 BASE64='@base64@'
+GUM='@gum@'
+JQ='@jq@'
+MKTEMP='@mktemp@'
+PRINTF='@printf@'
+RM='@rm@'
+SCRIPT='@script@'
 TR='@tr@'
 XARGS='@xargs@'
-RM='@rm@'
 
 ### FUNCTIONS ###
 
@@ -27,50 +27,50 @@ get_data() {
 # Get pokeapi id
 # $1: data file
 get_pokeapi_id() {
-	"${JQ}" -r '.pokeapi_id' <"${1}"
+	"${JQ}" --raw-output '.pokeapi_id' <"${1}"
 }
 
 # Get pokemon id
 # $1: data file
 get_pokemon_id() {
-	"${JQ}" -r '.pokemon_id' <"${1}"
+	"${JQ}" --raw-output '.pokemon_id' <"${1}"
 }
 
 # Get pokemon types
 # $1: data file
 get_types() {
-	"${JQ}" -r '.types' <"${1}"
+	"${JQ}" --raw-output '.types' <"${1}"
 }
 
 # Get pokemon name
 # $1: data file
 get_name() {
-	"${JQ}" -r '.name' <"${1}"
+	"${JQ}" --raw-output '.name' <"${1}"
 }
 
 # Get pokemon full name
 # $1: data file
 get_fullname() {
-	"${JQ}" -r '.fullname' <"${1}"
+	"${JQ}" --raw-output '.fullname' <"${1}"
 }
 
 # Get pokemon description
 # $1: data file
 get_description() {
-	"${JQ}" -r '.description' <"${1}"
+	"${JQ}" --raw-output '.description' <"${1}"
 }
 
 # Get shininess
 # $1: data file
 get_shininess() {
-	"${JQ}" -r '.shiny' <"${1}"
+	"${JQ}" --raw-output '.shiny' <"${1}"
 }
 
 # Get pokemon image
 # $1: data file
 get_image() {
-	"${JQ}" -r '.image' <"${1}" |
-		"${BASE64}" -d
+	"${JQ}" --raw-output '.image' <"${1}" |
+		"${BASE64}" --decode
 }
 
 # Get shiny color
@@ -261,7 +261,7 @@ print_info() {
 # Remove temporary file
 # $1: filename
 remove_temporary_file() {
-	"${RM}" -f "${1}"
+	"${RM}" --force "${1}"
 }
 
 # Print all
