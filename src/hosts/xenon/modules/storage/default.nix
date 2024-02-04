@@ -81,13 +81,13 @@
       neededForBoot = true;
     };
 
-    "/nix" = {
-      device = "${config.constants.storage.partitions.main.label}/${config.constants.storage.partitions.main.datasets.nix.label}";
+    "/home" = {
+      device = "${config.constants.storage.partitions.main.label}/${config.constants.storage.partitions.main.datasets.home.label}";
 
-      # /nix is a ZFS dataset
+      # /home is a ZFS dataset
       fsType = "zfs";
 
-      # Nix data is needed for boot, because everything important is symlinked from there
+      # /home is needed at boot, so nix can create the user environment
       neededForBoot = true;
 
       options = [
@@ -96,13 +96,13 @@
       ];
     };
 
-    "/home" = {
-      device = "${config.constants.storage.partitions.main.label}/${config.constants.storage.partitions.main.datasets.home.label}";
+    "/nix" = {
+      device = "${config.constants.storage.partitions.main.label}/${config.constants.storage.partitions.main.datasets.nix.label}";
 
-      # /home is a ZFS dataset
+      # /nix is a ZFS dataset
       fsType = "zfs";
 
-      # /home is needed at boot, so nix can create the user environment
+      # Nix data is needed for boot, because everything important is symlinked from there
       neededForBoot = true;
 
       options = [
