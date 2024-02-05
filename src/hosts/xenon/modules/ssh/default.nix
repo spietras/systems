@@ -1,25 +1,15 @@
 # SSH server configuration
 {
+  config,
   lib,
   pkgs,
   ...
 }: {
-  users = {
-    users = {
-      spietras = {
-        openssh = {
-          authorizedKeys = {
-            # Take public keys from GitHub
-            keys = lib.strings.splitString "\n" (
-              builtins.readFile (
-                pkgs.fetchurl {
-                  url = "https://github.com/spietras.keys";
-                  sha256 = "sha256-gtXwzFGet2t8scHAP8lAZqFx2FjfYxAc+zqLecv+8Ik=";
-                }
-              )
-            );
-          };
-        };
+  environment = {
+    persistence = {
+      "/softstate" = {
+        # SSH host keys
+        files = map (key: key.path) config.services.openssh.hostKeys;
       };
     };
   };
@@ -53,6 +43,26 @@
     sshguard = {
       # Prevents brute force attacks
       enable = true;
+    };
+  };
+
+  users = {
+    users = {
+      spietras = {
+        openssh = {
+          authorizedKeys = {
+            # Take public keys from GitHub
+            keys = lib.strings.splitString "\n" (
+              builtins.readFile (
+                pkgs.fetchurl {
+                  url = "https://github.com/spietras.keys";
+                  sha256 = "sha256-gtXwzFGet2t8scHAP8lAZqFx2FjfYxAc+zqLecv+8Ik=";
+                }
+              )
+            );
+          };
+        };
+      };
     };
   };
 }

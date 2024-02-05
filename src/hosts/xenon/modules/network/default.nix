@@ -4,6 +4,17 @@
   pkgs,
   ...
 }: {
+  environment = {
+    persistence = {
+      "/softstate" = {
+        directories = [
+          # Network connections
+          "/etc/NetworkManager/system-connections/"
+        ];
+      };
+    };
+  };
+
   networking = {
     dhcpcd = {
       # Disable dhcpcd, we use NetworkManager which has its own DHCP client
