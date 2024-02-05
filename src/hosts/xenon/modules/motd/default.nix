@@ -4,6 +4,17 @@
   pkgs,
   ...
 }: {
+  environment = {
+    persistence = {
+      "/softstate" = {
+        files = [
+          # MOTD
+          "/etc/motd"
+        ];
+      };
+    };
+  };
+
   systemd = {
     services = {
       # Create a service for changing the MOTD

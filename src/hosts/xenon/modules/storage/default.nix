@@ -20,9 +20,6 @@
       # State that should be preserved but it's okay to lose
       "/softstate" = {
         directories = [
-          # Network connections
-          "/etc/NetworkManager/system-connections/"
-
           # Cache that should be preserved
           "/var/cache/"
 
@@ -39,17 +36,10 @@
           "/var/tmp/"
         ];
 
-        files =
-          [
-            # Machine ID should be preserved and not changed
-            "/etc/machine-id"
-
-            # MOTD
-            "/etc/motd"
-          ]
-          ++
-          # SSH host keys
-          map (key: key.path) config.services.openssh.hostKeys;
+        files = [
+          # Machine ID should be preserved and not changed
+          "/etc/machine-id"
+        ];
 
         # Don't display as mounts to reduce clutter
         hideMounts = true;
