@@ -37,6 +37,9 @@
 
       "tailscale/clientSecret" = {
       };
+
+      "k3s/token" = {
+      };
     };
   };
 }

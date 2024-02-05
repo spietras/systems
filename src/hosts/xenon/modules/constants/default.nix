@@ -1,13 +1,119 @@
 # Reusable constants are defined here
 # All options have default values
 # You can use them in other modules
-{lib, ...}: {
+{
+  config,
+  lib,
+  ...
+}: {
   options = {
     constants = {
       name = lib.mkOption {
         default = "xenon";
         description = "Name of the machine";
         type = lib.types.str;
+      };
+
+      kubernetes = {
+        cluster = {
+          name = lib.mkOption {
+            default = "main";
+            description = "Name of the Kubernetes cluster";
+            type = lib.types.str;
+          };
+        };
+
+        directories = {
+          state = lib.mkOption {
+            default = "/var/lib/kubernetes/k3s/";
+            description = "Directory to store state in";
+            type = lib.types.path;
+          };
+        };
+
+        files = {
+          kubeconfig = lib.mkOption {
+            default = "/etc/kubernetes/kubeconfig.yaml";
+            description = "File to store the kubeconfig in";
+            type = lib.types.path;
+          };
+        };
+
+        flux = {
+          source = {
+            branch = lib.mkOption {
+              default = "main";
+              description = "Branch of the Git repository";
+              type = lib.types.str;
+            };
+
+            path = lib.mkOption {
+              default = "src/clusters/${config.constants.kubernetes.cluster.name}";
+              description = "Path to the directory with manifests";
+              type = lib.types.str;
+            };
+
+            url = lib.mkOption {
+              default = "https://github.com/spietras/clusters";
+              description = "URL of the Git repository";
+              type = lib.types.str;
+            };
+          };
+        };
+
+        network = {
+          addresses = {
+            cluster = lib.mkOption {
+              default = "10.42.0.0/16,2001:cafe:42::/56";
+              description = "IP address allocation range for pods";
+              type = lib.types.str;
+            };
+
+            service = lib.mkOption {
+              default = "10.43.0.0/16,2001:cafe:43::/112";
+              description = "IP address allocation range for services";
+              type = lib.types.str;
+            };
+          };
+
+          ports = {
+            api = lib.mkOption {
+              default = 6443;
+              description = "Port for API server";
+              type = lib.types.int;
+            };
+          };
+        };
+
+        resources = {
+          reserved = {
+            system = {
+              cpu = lib.mkOption {
+                default = "500m";
+                description = "Reserved CPU for system";
+                type = lib.types.str;
+              };
+
+              memory = lib.mkOption {
+                default = "500Mi";
+                description = "Reserved memory for system";
+                type = lib.types.str;
+              };
+
+              storage = lib.mkOption {
+                default = "5Gi";
+                description = "Reserved storage for system";
+                type = lib.types.str;
+              };
+
+              pid = lib.mkOption {
+                default = 100;
+                description = "Reserved number of process IDs for system";
+                type = lib.types.int;
+              };
+            };
+          };
+        };
       };
 
       network = {
