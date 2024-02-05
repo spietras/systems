@@ -63,6 +63,7 @@
         system,
         ...
       }: let
+        node = pkgs.nodejs;
         nil = pkgs.nil;
         task = pkgs.go-task;
         coreutils = pkgs.coreutils;
@@ -92,6 +93,7 @@
             name = "dev";
 
             packages = [
+              node
               nil
               task
               coreutils
@@ -123,9 +125,24 @@
             name = "lint";
 
             packages = [
+              node
               task
               coreutils
               trunk
+            ];
+
+            shellHook = ''
+              export TMPDIR=/tmp
+            '';
+          };
+
+          docs = pkgs.mkShell {
+            name = "docs";
+
+            packages = [
+              node
+              task
+              coreutils
             ];
 
             shellHook = ''

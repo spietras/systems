@@ -72,7 +72,9 @@
     // Mount shell history (not shared)
     "source=devcontainer-${devcontainerId}-shellhistory-persist,target=/persist/shellhistory/,type=volume",
     // Mount trunk cache (shared)
-    "source=devcontainer-shared-trunk-cache,target=/cache/trunk/,type=volume"
+    "source=devcontainer-shared-trunk-cache,target=/cache/trunk/,type=volume",
+    // Mount npm cache (shared)
+    "source=devcontainer-shared-npm-cache,target=/cache/npm/,type=volume"
   ],
   // Run a command when the container is created
   "onCreateCommand": "/hooks/create.sh",
