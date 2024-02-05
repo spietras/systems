@@ -5,6 +5,7 @@
 NixOS configs for my homelab ❄️
 
 [![Lint](https://github.com/spietras/systems/actions/workflows/lint.yaml/badge.svg)](https://github.com/spietras/systems/actions/workflows/lint.yaml)
+[![Docs](https://github.com/spietras/systems/actions/workflows/docs.yaml/badge.svg)](https://github.com/spietras/systems/actions/workflows/docs.yaml)
 
 </div>
 
@@ -12,37 +13,13 @@ NixOS configs for my homelab ❄️
 
 ## 💡 About
 
-This repository contains [`NixOS`](https://nixos.org/)
-configurations for all my systems machines.
+This repository contains [`NixOS`](https://nixos.org)
+configurations for all my homelab machines.
 
-## ⚙️ Installation
+## 📄 Further Reading
 
-Boot the target machine from [`NixOS` ISO](https://nixos.org/download.html#nixos-iso)
-and run the following command:
-
-```sh
-sudo nixos-generate-config
-```
-
-Prepare host configuration based on
-the generated `/etc/nixos/hardware-configuration.nix` file.
-Put it in `hosts/$HOST` directory in the repository,
-where `$HOST` is the name of the host device of your choice.
-When you are ready, commit the changes to the repository.
-
-Put the [`age`](https://github.com/FiloSottile/age)
-private key somewhere on the target machine
-and set the `SOPS_AGE_KEY_FILE` environment variable accordingly.
-The installation script will copy the key to persistent storage.
-
-Change the `HOST` variable to the name of the host device and run:
-
-```sh
-sudo nix --experimental-features 'nix-command flakes' \
-    run "github:spietras/systems#${HOST}-install-script" -- -k "${SOPS_AGE_KEY_FILE}"
-```
-
-and then reboot the machine.
+More in-depth documentation can be found
+[here](https://spietras.github.io/systems).
 
 ## 💻 Development
 
