@@ -41,6 +41,20 @@
       };
 
       constants = {
+        kubernetes = {
+          resources = {
+            reserved = {
+              # Override reserved resources to adjust them for the virtual machine
+              system = {
+                cpu = "500m";
+                memory = "500Mi";
+                storage = "500Mi";
+                pid = 100;
+              };
+            };
+          };
+        };
+
         storage = {
           # Override the disk path to use the virtual machine disk
           diskPath = config.constants.vm.diskPath;

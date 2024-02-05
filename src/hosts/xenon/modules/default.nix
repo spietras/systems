@@ -8,6 +8,7 @@
     ./hardware
     ./home
     ./install
+    ./kubernetes
     ./locales
     ./misc
     ./motd
