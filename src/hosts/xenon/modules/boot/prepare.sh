@@ -2,72 +2,69 @@
 
 ### CONFIGURATION ###
 
+# Don't try to make the script self-contained
+# Just use binaries that are already available
+# This is because this goes to initrd
+# And initrd goes to boot partition which is small
+
 ZFS_HARDSTATE='@hardstate@'
 HARDSTATE_DIRECTORIES='@hardstateDirectories@'
 MAIN_LABEL='@main@'
-MKDIR='@mkdir@'
-MOUNT='@mount@'
 ZFS_SOFTSTATE='@softstate@'
-PRINTF='@printf@'
-SLEEP='@sleep@'
 SOFTSTATE_DIRECTORIES='@softstateDirectories@'
-TR='@tr@'
-UDEVADM="@udevadm@"
-UMOUNT='@umount@'
-ZPOOL='@zpool@'
 
 ### PREPARATION ###
 
 # force udev to reread filesystems
-${UDEVADM} trigger
+udevadm trigger
 
-${PRINTF} '%s' 'Waiting for filesystems to appear...'
+printf '%s' 'Waiting for filesystems to appear...'
 while [ ! -e "/dev/disk/by-label/${MAIN_LABEL}" ]; do
-	${SLEEP} 1
-	${PRINTF} '%s' '.'
+	sleep 1
+	printf '%s' '.'
 done
-${PRINTF} '\n'
+printf '\n'
 
-${PRINTF} '%s\n' 'Importing ZFS pool'
+printf '%s\n' 'Importing ZFS pool'
 
-if ! ${ZPOOL} import -aN -d "/dev/disk/by-label/${MAIN_LABEL}"; then
-	${PRINTF} '%s\n' 'Importing ZFS pool failed' >&2
+if ! zpool import -aN -d "/dev/disk/by-label/${MAIN_LABEL}"; then
+	printf '%s\n' 'Importing ZFS pool failed' >&2
 	exit 1
 fi
 
-${PRINTF} '%s\n' 'Mounting persistent filesystems'
+printf '%s\n' 'Mounting persistent filesystems'
 
-if ! ${MKDIR} --parents "/mnt/${ZFS_HARDSTATE}/" "/mnt/${ZFS_SOFTSTATE}/" ||
-	! ${MOUNT} --types zfs --options zfsutil "${MAIN_LABEL}/${ZFS_HARDSTATE}" "/mnt/${ZFS_HARDSTATE}/" ||
-	! ${MOUNT} --types zfs --options zfsutil "${MAIN_LABEL}/${ZFS_SOFTSTATE}" "/mnt/${ZFS_SOFTSTATE}/"; then
-	${PRINTF} '%s\n' 'Mounting filesystems failed' >&2
+if ! mkdir --parents "/mnt/${ZFS_HARDSTATE}/" "/mnt/${ZFS_SOFTSTATE}/" ||
+	! mount --types zfs --options zfsutil "${MAIN_LABEL}/${ZFS_HARDSTATE}" "/mnt/${ZFS_HARDSTATE}/" ||
+	! mount --types zfs --options zfsutil "${MAIN_LABEL}/${ZFS_SOFTSTATE}" "/mnt/${ZFS_SOFTSTATE}/"; then
+	printf '%s\n' 'Mounting filesystems failed' >&2
 	exit 2
 fi
 
-${PRINTF} '%s\n' 'Creating necessary directories'
+printf '%s\n' 'Creating necessary directories'
 
 create_directories() {
-	for directory in $(${PRINTF} '%s' "${HARDSTATE_DIRECTORIES}" | ${TR} ':' ' '); do
+	for directory in $(printf '%s' "${HARDSTATE_DIRECTORIES}" | tr ':' ' '); do
 		set -- "/mnt/${ZFS_HARDSTATE}/${directory}" "$@"
 	done
 
-	for directory in $(${PRINTF} '%s' "${SOFTSTATE_DIRECTORIES}" | ${TR} ':' ' '); do
+	for directory in $(printf '%s' "${SOFTSTATE_DIRECTORIES}" | tr ':' ' '); do
 		set -- "/mnt/${ZFS_SOFTSTATE}/${directory}" "$@"
 	done
 
-	${MKDIR} --parents "$@"
+	mkdir --parents "$@"
 }
 
 if ! create_directories; then
-	${PRINTF} '%s\n' 'Creating directories failed' >&2
+	printf '%s\n' 'Creating directories failed' >&2
 	exit 3
 fi
 
-${PRINTF} '%s\n' 'Unmounting persistent filesystems'
+printf '%s\n' 'Unmounting persistent filesystems'
 
-if ! ${UMOUNT} "/mnt/${ZFS_HARDSTATE}/" "/mnt/${ZFS_SOFTSTATE}/"; then
-	${PRINTF} '%s\n' 'Unmounting filesystems failed' >&2
+if ! umount "/mnt/${ZFS_HARDSTATE}/" "/mnt/${ZFS_SOFTSTATE}/"; then
+	printf '%s\n' 'Unmounting filesystems failed' >&2
 	exit 4
 fi
 
-${PRINTF} '%s\n' 'Preparation complete'
+printf '%s\n' 'Preparation complete'
