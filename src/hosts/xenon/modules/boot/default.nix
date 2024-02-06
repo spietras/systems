@@ -37,10 +37,6 @@
           );
 
           main = config.constants.storage.partitions.main.label;
-          mkdir = "${pkgs.coreutils}/bin/mkdir";
-          mount = "${pkgs.util-linux}/bin/mount";
-          printf = "${pkgs.coreutils}/bin/printf";
-          sleep = "${pkgs.coreutils}/bin/sleep";
           softstate = config.constants.storage.partitions.main.datasets.softstate.label;
 
           softstateDirectories = (
@@ -52,11 +48,6 @@
               config.environment.persistence."/softstate".directories
             )
           );
-
-          tr = "${pkgs.coreutils}/bin/tr";
-          udevadm = "${pkgs.eudev}/bin/udevadm";
-          umount = "${pkgs.util-linux}/bin/umount";
-          zpool = "${pkgs.zfs}/bin/zpool";
         }
       );
 
