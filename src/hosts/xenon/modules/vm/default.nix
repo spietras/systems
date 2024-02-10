@@ -55,6 +55,19 @@
           };
         };
 
+        # Use different name for the virtual machine
+        name = "xenon-vm";
+
+        network = {
+          # Use different host ID for the virtual machine
+          hostId = "3a299589";
+
+          tailscale = {
+            # Use different IP address for the virtual machine
+            ip = "100.127.132.11";
+          };
+        };
+
         storage = {
           # Override the disk path to use the virtual machine disk
           diskPath = config.constants.vm.diskPath;
