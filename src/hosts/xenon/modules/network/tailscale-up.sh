@@ -5,6 +5,7 @@
 CLIENT_ID='@clientId@'
 CLIENT_SECRET='@clientSecret@'
 CURL='@curl@'
+IP='@ip@'
 JQ='@jq@'
 MKTEMP='@mktemp@'
 RM='@rm@'
@@ -45,11 +46,24 @@ ${CURL} --silent 'https://api.tailscale.com/api/v2/tailnet/-/keys' \
       }
     }
   }
-}' |
+}
+' |
 	${JQ} --raw-output '.key' >"${keyfile}"
 
 # Connect to Tailscale
-${TAILSCALE} up "--authkey=file:${keyfile}"
+${TAILSCALE} up "--authkey=file:${keyfile}" --netfilter-mode=off
+
+# Get device id
+device="$(${TAILSCALE} status --json | ${JQ} --raw-output '.Self.ID')"
+
+# Set device IP address
+${CURL} --silent "https://api.tailscale.com/api/v2/device/${device}/ip" \
+	--header @"${tokenfile}" \
+	--data-binary '
+{
+  "ipv4": "'"${IP}"'"
+}
+'
 
 # Clean up temporary files
 ${RM} --force "${idfile}" "${secretfile}" "${tokenfile}" "${keyfile}"

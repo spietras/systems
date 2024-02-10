@@ -5,23 +5,52 @@
   pkgs,
   ...
 }: let
-  kubeletConfig = pkgs.writeTextFile {
-    name = "kubelet.yaml";
+  jsonFormat = pkgs.formats.json {};
+  yamlFormat = pkgs.formats.yaml {};
+  flannelCniConfig = jsonFormat.generate "flannel-cni.json" {
+    cniVersion = "1.0.0";
+
+    # This was the default
+    name = "cbr0";
+
+    plugins = [
+      {
+        delegate = {
+          # Setting the bridge name explicitly
+          bridge = config.constants.kubernetes.network.interfaces.cni;
+
+          # These were the defaults
+          forceAddress = true;
+          hairpinMode = true;
+          isDefaultGateway = true;
+        };
+
+        type = "flannel";
+      }
+    ];
+  };
+  kubeletConfig = yamlFormat.generate "kubelet.yaml" {
+    apiVersion = "kubelet.config.k8s.io/v1beta1";
+    kind = "KubeletConfiguration";
+    systemReserved = {
+      # Reserved CPU for system
+      cpu = "${config.constants.kubernetes.resources.reserved.system.cpu}";
+
+      # Reserved memory for system
+      memory = "${config.constants.kubernetes.resources.reserved.system.memory}";
+
+      # Reserved storage for system
+      ephemeral-storage = "${config.constants.kubernetes.resources.reserved.system.storage}";
+
+      # Reserved number of process IDs for system
+      pid = "${toString config.constants.kubernetes.resources.reserved.system.pid}";
+    };
+  };
+  resolvConf = pkgs.writeTextFile {
+    name = "resolv.conf";
     text = ''
-      apiVersion: kubelet.config.k8s.io/v1beta1
-      kind: KubeletConfiguration
-      systemReserved:
-        # Reserved CPU for system
-        cpu: '${config.constants.kubernetes.resources.reserved.system.cpu}'
-
-        # Reserved memory for system
-        memory: '${config.constants.kubernetes.resources.reserved.system.memory}'
-
-        # Reserved storage for system
-        ephemeral-storage: '${config.constants.kubernetes.resources.reserved.system.storage}'
-
-        # Reserved number of process IDs for system
-        pid: '${toString config.constants.kubernetes.resources.reserved.system.pid}'
+      # Use dnsproxy on the host
+      nameserver ${config.constants.network.tailscale.ip}
     '';
   };
 in {
@@ -65,6 +94,11 @@ in {
         # Allow WireGuard (IPv6)
         51821
       ];
+
+      trustedInterfaces = [
+        # Allow all traffic on CNI interface
+        config.constants.kubernetes.network.interfaces.cni
+      ];
     };
   };
 
@@ -74,6 +108,9 @@ in {
       enable = true;
 
       extraFlags = lib.strings.concatStringsSep " " [
+        # Listen on Tailscale interface
+        "--bind-address ${config.constants.network.tailscale.ip}"
+
         # Specify IP address allocation range for pods
         "--cluster-cidr ${config.constants.kubernetes.network.addresses.cluster}"
 
@@ -104,11 +141,23 @@ in {
         # Use WireGuard for Container Network Interface
         "--flannel-backend wireguard-native"
 
+        # Use custom CNI configuration
+        "--flannel-cni-conf ${flannelCniConfig}"
+
+        # Use Tailscale interface on the host
+        "--flannel-iface ${config.services.tailscale.interfaceName}"
+
         # Specify port for the API server
         "--https-listen-port ${toString config.constants.kubernetes.network.ports.api}"
 
         # Pass configuration to kubelet
         "--kubelet-arg '--config=${kubeletConfig}'"
+
+        # Advertise Tailscale IP address
+        "--node-ip ${config.constants.network.tailscale.ip}"
+
+        # Pass custom resolv.conf to kubelet
+        "--resolv-conf ${resolvConf}"
 
         # Enable secret encryption
         "--secrets-encryption"
@@ -123,7 +172,7 @@ in {
         "--write-kubeconfig ${config.constants.kubernetes.files.kubeconfig}"
       ];
 
-      # Use xenon as the k3s server
+      # Use this device as the k3s server
       role = "server";
 
       # Shared secret used by all nodes to join the cluster
@@ -135,9 +184,6 @@ in {
     services = {
       flux = {
         after = [
-          # Run after network is online
-          "network-online.target"
-
           # Run after k3s is running
           "k3s.service"
         ];
@@ -145,9 +191,6 @@ in {
         description = "Setup Flux";
 
         requires = [
-          # Require network to be online
-          "network-online.target"
-
           # Require k3s to be running
           "k3s.service"
         ];

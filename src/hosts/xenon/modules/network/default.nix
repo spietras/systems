@@ -3,7 +3,62 @@
   config,
   pkgs,
   ...
-}: {
+}: let
+  yamlFormat = pkgs.formats.yaml {};
+  dnsproxyConfig = yamlFormat.generate "dnsproxy.yaml" {
+    # Query upstream DNS servers in parallel
+    all-servers = true;
+
+    bootstrap = [
+      # Use Cloudflare DNS
+      "1.1.1.1:53"
+
+      # Use Google DNS
+      "8.8.8.8:53"
+    ];
+
+    # Cache DNS responses
+    cache = true;
+
+    fallback = [
+      # Use Cloudflare DNS over TLS
+      "1.1.1.1:853"
+
+      # Use Google DNS over TLS
+      "8.8.8.8:853"
+    ];
+
+    # Enable HTTP/3 support
+    http3 = true;
+
+    listen-addrs = [
+      # Listen on loopback IPv4 interface
+      "127.0.0.1"
+
+      # Listen on loopback IPv6 interface
+      "::1"
+
+      # Listen on Tailscale interface
+      config.constants.network.tailscale.ip
+    ];
+
+    listen-ports = [
+      # Listen on port 53 for DNS
+      53
+    ];
+
+    # Log to a file
+    output = "/var/log/dnsproxy/dnsproxy.log";
+
+    upstream = [
+      # Use Cloudflare DNS over HTTPS
+      "https://cloudflare-dns.com/dns-query"
+
+      # Use Google DNS over HTTPS
+      "https://dns.google/dns-query"
+    ];
+  };
+in {
   environment = {
     persistence = {
       "/softstate" = {
@@ -23,7 +78,7 @@
 
     firewall = {
       trustedInterfaces = [
-        # Allow traffic from Tailscale
+        # Allow all traffic on Tailscale interface
         config.services.tailscale.interfaceName
       ];
     };
@@ -31,7 +86,7 @@
     hostId = config.constants.network.hostId;
     hostName = config.constants.name;
 
-    # We use stubby as a local DNS resolver, so we need to point to it
+    # We use dnsproxy as a local DNS resolver, so we need to point to it
     nameservers = [
       "127.0.0.1"
       "::1"
@@ -67,7 +122,7 @@
         }
       ];
 
-      # Use systemd-resolved as the system DNS resolver
+      # Push DNS configuration to systemd-resolved
       dns = "systemd-resolved";
 
       # Use NetworkManager to manage network connections
@@ -114,22 +169,19 @@
     resolved = {
       # Use systemd-resolved as the system DNS resolver
       enable = true;
-    };
 
-    stubby = {
-      # Use stubby as a local DNS resolver
-      enable = true;
-
-      # For some reason, this is not the default, so we need to set it manually
-      settings = pkgs.stubby.passthru.settingsExample;
+      extraConfig = ''
+        # Disable listening for DNS requests on network interfaces
+        DNSStubListener=no
+      '';
     };
 
     tailscale = {
       # Use tailscale for networking between machines
       enable = true;
 
-      # Pick port at random
-      port = 0;
+      # Allow traffic on Tailscale port
+      openFirewall = true;
     };
 
     timesyncd = {
@@ -140,6 +192,54 @@
 
   systemd = {
     services = {
+      # Run dnsproxy as a local DNS resolver
+      dnsproxy = {
+        after = [
+          # Run after connecting to Tailscale
+          "tailscale-up.service"
+        ];
+
+        before = [
+          # Run before name resolution
+          "nss-lookup.target"
+        ];
+
+        description = "Simple DNS proxy with DoH, DoT, DoQ and DNSCrypt support";
+
+        requires = [
+          # Require Tailscale connection
+          "tailscale-up.service"
+        ];
+
+        serviceConfig = {
+          # Allow binding to privileged ports
+          AmbientCapabilities = "CAP_NET_BIND_SERVICE";
+
+          # Allow binding to privileged ports
+          CapabilityBoundingSet = "CAP_NET_BIND_SERVICE";
+
+          # Run as a user specific to the service
+          DynamicUser = true;
+
+          # Run dnsproxy
+          ExecStart = "${pkgs.dnsproxy}/bin/dnsproxy --config-path=${dnsproxyConfig}";
+
+          # Create directory for logs
+          LogsDirectory = "dnsproxy";
+
+          # Restart always
+          Restart = "always";
+
+          # Run as a daemon
+          Type = "simple";
+        };
+
+        wantedBy = [
+          # Make available at startup
+          "multi-user.target"
+        ];
+      };
+
       # Logout from Tailscale network on shutdown
       tailscale-logout = {
         after = [
@@ -215,6 +315,7 @@
             clientId = config.sops.secrets."tailscale/clientId".path;
             clientSecret = config.sops.secrets."tailscale/clientSecret".path;
             curl = "${pkgs.curl}/bin/curl";
+            ip = config.constants.network.tailscale.ip;
             jq = "${pkgs.jq}/bin/jq";
             mktemp = "${pkgs.coreutils}/bin/mktemp";
             rm = "${pkgs.coreutils}/bin/rm";

@@ -8,12 +8,6 @@
 }: {
   options = {
     constants = {
-      name = lib.mkOption {
-        default = "xenon";
-        description = "Name of the machine";
-        type = lib.types.str;
-      };
-
       kubernetes = {
         cluster = {
           name = lib.mkOption {
@@ -62,15 +56,23 @@
         };
 
         network = {
+          interfaces = {
+            cni = lib.mkOption {
+              default = "cni0";
+              description = "Name of the CNI interface";
+              type = lib.types.str;
+            };
+          };
+
           addresses = {
             cluster = lib.mkOption {
-              default = "10.42.0.0/16,2001:cafe:42::/56";
+              default = "10.42.0.0/16";
               description = "IP address allocation range for pods";
               type = lib.types.str;
             };
 
             service = lib.mkOption {
-              default = "10.43.0.0/16,2001:cafe:43::/112";
+              default = "10.43.0.0/16";
               description = "IP address allocation range for services";
               type = lib.types.str;
             };
@@ -116,11 +118,25 @@
         };
       };
 
+      name = lib.mkOption {
+        default = "xenon";
+        description = "Name of the machine";
+        type = lib.types.str;
+      };
+
       network = {
         hostId = lib.mkOption {
           default = "9f86d081";
           description = "Unique identifier for the machine";
           type = lib.types.str;
+        };
+
+        tailscale = {
+          ip = lib.mkOption {
+            default = "100.127.131.11";
+            description = "IP address of the machine in the Tailscale network";
+            type = lib.types.str;
+          };
         };
       };
 
