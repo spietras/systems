@@ -57,9 +57,9 @@ fi
 
 ${PRINTF} '%s\n' 'Flux installed'
 
-${PRINTF} '%s\n' 'Adding SOPS age key secret'
+${PRINTF} '%s\n' 'Adding SOPS keys secret'
 
-if ! manifest="$(${KUBECTL} --kubeconfig "${KUBECONFIG}" create secret generic sops-age --namespace flux-system --from-file age.agekey="${KEYFILE}" --dry-run=client --save-config --output yaml)"; then
+if ! manifest="$(${KUBECTL} --kubeconfig "${KUBECONFIG}" create secret generic sops-keys --namespace flux-system --from-file sops.agekey="${KEYFILE}" --dry-run=client --save-config --output yaml)"; then
 	${PRINTF} '%s\n' 'Secret manifest creation failed' >&2
 	exit 4
 fi
@@ -84,7 +84,7 @@ ${PRINTF} '%s\n' 'Source created'
 
 ${PRINTF} '%s\n' 'Creating kustomization'
 
-if ! ${FLUX} --kubeconfig "${KUBECONFIG}" create kustomization main --source main --path "${SOURCE_PATH}" --prune --wait; then
+if ! ${FLUX} --kubeconfig "${KUBECONFIG}" create kustomization main --source main --path "${SOURCE_PATH}" --decryption-provider sops --decryption-secret sops-keys --prune --wait; then
 	${PRINTF} '%s\n' 'Flux kustomization creation failed' >&2
 	exit 7
 fi
