@@ -146,6 +146,16 @@
         type = lib.types.str;
       };
 
+      secrets = {
+        sops = {
+          keyFile = lib.mkOption {
+            default = "/${config.constants.storage.partitions.main.datasets.hardstate.label}/sops/age/keys.txt";
+            description = "Path to the age key file for SOPS";
+            type = lib.types.path;
+          };
+        };
+      };
+
       storage = {
         diskPath = lib.mkOption {
           default = "/dev/sda";

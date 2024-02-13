@@ -12,7 +12,7 @@
   sops = {
     age = {
       # age private key should be stored at this path on the host
-      keyFile = "/${config.constants.storage.partitions.main.datasets.hardstate.label}/sops/age/keys.txt";
+      keyFile = config.constants.secrets.sops.keyFile;
 
       # This is needed so that ssh keys are not unnecessarily picked up
       sshKeyPaths = [];
