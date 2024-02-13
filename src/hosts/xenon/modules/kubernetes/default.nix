@@ -68,6 +68,11 @@ in {
           # Kubernetes state
           config.constants.kubernetes.directories.state
         ];
+
+        files = [
+          # Node password
+          "/etc/rancher/node/password"
+        ];
       };
     };
 
