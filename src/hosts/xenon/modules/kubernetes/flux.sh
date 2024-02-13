@@ -3,6 +3,7 @@
 ### CONFIGURATION ###
 
 FLUX='@flux@'
+KEYFILE='@keyFile@'
 KUBECONFIG='@kubeconfig@'
 KUBECTL='@kubectl@'
 PRINTF='@printf@'
@@ -56,11 +57,27 @@ fi
 
 ${PRINTF} '%s\n' 'Flux installed'
 
+${PRINTF} '%s\n' 'Adding SOPS age key secret'
+
+if ! manifest="$(${KUBECTL} --kubeconfig "${KUBECONFIG}" create secret generic sops-age --namespace flux-system --from-file age.agekey="${KEYFILE}" --dry-run=client --save-config --output yaml)"; then
+	${PRINTF} '%s\n' 'Secret manifest creation failed' >&2
+	exit 4
+fi
+
+if ! ${KUBECTL} --kubeconfig "${KUBECONFIG}" apply --filename - <<EOF; then
+${manifest}
+EOF
+	${PRINTF} '%s\n' 'Secret creation failed' >&2
+	exit 5
+fi
+
+${PRINTF} '%s\n' 'Secret added'
+
 ${PRINTF} '%s\n' 'Creating source'
 
 if ! ${FLUX} --kubeconfig "${KUBECONFIG}" create source git main --url "${SOURCE_URL}" --branch "${SOURCE_BRANCH}"; then
 	${PRINTF} '%s\n' 'Flux source creation failed' >&2
-	exit 4
+	exit 6
 fi
 
 ${PRINTF} '%s\n' 'Source created'
@@ -69,7 +86,7 @@ ${PRINTF} '%s\n' 'Creating kustomization'
 
 if ! ${FLUX} --kubeconfig "${KUBECONFIG}" create kustomization main --source main --path "${SOURCE_PATH}" --prune --wait; then
 	${PRINTF} '%s\n' 'Flux kustomization creation failed' >&2
-	exit 5
+	exit 7
 fi
 
 ${PRINTF} '%s\n' 'Kustomization created'

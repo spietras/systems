@@ -205,6 +205,7 @@ in {
             src = ./flux.sh;
 
             flux = "${pkgs.fluxcd}/bin/flux";
+            keyFile = config.constants.secrets.sops.keyFile;
             kubeconfig = config.constants.kubernetes.files.kubeconfig;
             kubectl = "${pkgs.k3s}/bin/kubectl";
             printf = "${pkgs.coreutils}/bin/printf";
