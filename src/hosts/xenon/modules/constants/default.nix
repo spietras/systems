@@ -41,6 +41,12 @@
               type = lib.types.str;
             };
 
+            ignore = lib.mkOption {
+              default = "";
+              description = "Paths to ignore in the repository";
+              type = lib.types.str;
+            };
+
             path = lib.mkOption {
               default = "src/clusters/${config.constants.kubernetes.cluster.name}";
               description = "Path to the directory with manifests";

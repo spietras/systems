@@ -3,13 +3,14 @@
 ### CONFIGURATION ###
 
 FLUX='@flux@'
-KEYFILE='@keyFile@'
+KEY_FILE='@keyFile@'
 KUBECONFIG='@kubeconfig@'
 KUBECTL='@kubectl@'
 PRINTF='@printf@'
 SEQ='@seq@'
 SLEEP='@sleep@'
 SOURCE_BRANCH='@sourceBranch@'
+SOURCE_IGNORE='@sourceIgnore@'
 SOURCE_PATH='@sourcePath@'
 SOURCE_URL='@sourceUrl@'
 
@@ -59,7 +60,7 @@ ${PRINTF} '%s\n' 'Flux installed'
 
 ${PRINTF} '%s\n' 'Adding SOPS keys secret'
 
-if ! manifest="$(${KUBECTL} --kubeconfig "${KUBECONFIG}" create secret generic sops-keys --namespace flux-system --from-file sops.agekey="${KEYFILE}" --dry-run=client --save-config --output yaml)"; then
+if ! manifest="$(${KUBECTL} --kubeconfig "${KUBECONFIG}" create secret generic sops-keys --namespace flux-system --from-file sops.agekey="${KEY_FILE}" --dry-run=client --save-config --output yaml)"; then
 	${PRINTF} '%s\n' 'Secret manifest creation failed' >&2
 	exit 4
 fi
@@ -75,7 +76,7 @@ ${PRINTF} '%s\n' 'Secret added'
 
 ${PRINTF} '%s\n' 'Creating source'
 
-if ! ${FLUX} --kubeconfig "${KUBECONFIG}" create source git main --url "${SOURCE_URL}" --branch "${SOURCE_BRANCH}"; then
+if ! ${FLUX} --kubeconfig "${KUBECONFIG}" create source git main --url "${SOURCE_URL}" --branch "${SOURCE_BRANCH}" --ignore-paths "${SOURCE_IGNORE}"; then
 	${PRINTF} '%s\n' 'Flux source creation failed' >&2
 	exit 6
 fi
