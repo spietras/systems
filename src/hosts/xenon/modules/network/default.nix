@@ -37,9 +37,6 @@
 
       # Listen on loopback IPv6 interface
       "::1"
-
-      # Listen on Tailscale interface
-      config.constants.network.tailscale.ip
     ];
 
     listen-ports = [
@@ -171,8 +168,13 @@ in {
       enable = true;
 
       extraConfig = ''
-        # Disable listening for DNS requests on network interfaces
+        # Disable default listener on port 53 on loopback interface
         DNSStubListener=no
+
+        # Listen for DNS requests on Tailscale interface
+        # Port 53 is used for that
+        # Both TCP and UDP requests are accepted
+        DNSStubListenerExtra=${config.constants.network.tailscale.ip}
       '';
     };
 
