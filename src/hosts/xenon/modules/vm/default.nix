@@ -42,6 +42,16 @@
 
       constants = {
         kubernetes = {
+          flux = {
+            source = {
+              # Override the path to cluster resources to use the ones for tests
+              path = "tests/clusters/${config.virtualisation.vmVariant.constants.kubernetes.cluster.name}";
+
+              # Don't ignore tests
+              ignore = "!/tests/";
+            };
+          };
+
           resources = {
             reserved = {
               # Override reserved resources to adjust them for the virtual machine

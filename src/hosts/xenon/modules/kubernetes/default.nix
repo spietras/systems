@@ -217,6 +217,7 @@ in {
             seq = "${pkgs.coreutils}/bin/seq";
             sleep = "${pkgs.coreutils}/bin/sleep";
             sourceBranch = config.constants.kubernetes.flux.source.branch;
+            sourceIgnore = config.constants.kubernetes.flux.source.ignore;
             sourcePath = config.constants.kubernetes.flux.source.path;
             sourceUrl = config.constants.kubernetes.flux.source.url;
           }
