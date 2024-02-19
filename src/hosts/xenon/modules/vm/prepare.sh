@@ -10,7 +10,10 @@
 DISK='@disk@'
 HARDSTATE='@hardstate@'
 HOME='@home@'
+LONGHORN='@longhorn@'
+LONGHORN_SIZE='@longhornSize@'
 MAIN='@main@'
+MKFSEXT4='@mkfsext4@'
 NIX='@nix@'
 PARTED='@parted@'
 SOFTSTATE='@softstate@'
@@ -92,6 +95,30 @@ if ! "${ZFS_PACKAGE}/bin/zfs" create -o compression=on "${MAIN}/${NIX}" ||
 	exit 3
 fi
 
+printf '%s\n' 'Creating ZFS volumes'
+
+if ! "${ZFS_PACKAGE}/bin/zfs" create -o compression=on -V "${LONGHORN_SIZE}" "${MAIN}/${LONGHORN}"; then
+	printf '%s\n' 'Creating ZFS volumes failed' >&2
+	exit 4
+fi
+
+# force udev to create device nodes for volumes
+udevadm trigger
+
+printf '%s' 'Waiting for volumes to appear...'
+while [ ! -e "/dev/zvol/${MAIN}/${LONGHORN}" ]; do
+	sleep 1
+	printf '%s' '.'
+done
+printf '\n'
+
+printf '%s\n' 'Formatting ZFS volumes'
+
+if ! ${MKFSEXT4} -L "${LONGHORN}" "/dev/zvol/${MAIN}/${LONGHORN}"; then
+	printf '%s\n' 'Formatting ZFS volumes failed' >&2
+	exit 5
+fi
+
 printf '%s\n' "Formatting /dev/disk/by-partlabel/${SWAP} as swap"
 
 # swap is just swap
@@ -105,6 +132,7 @@ udevadm trigger
 
 printf '%s' 'Waiting for filesystems to appear...'
 while [ ! -e "/dev/disk/by-label/${MAIN}" ] ||
+	[ ! -e "/dev/disk/by-label/${LONGHORN}" ] ||
 	[ ! -e "/dev/disk/by-label/${SWAP}" ]; do
 	sleep 1
 	printf '%s' '.'

@@ -20,7 +20,10 @@
                   disk = config.virtualisation.vmVariant.constants.disk.path;
                   hardstate = config.virtualisation.vmVariant.constants.disk.partitions.main.datasets.hardstate.label;
                   home = config.virtualisation.vmVariant.constants.disk.partitions.main.datasets.home.label;
+                  longhorn = config.virtualisation.vmVariant.constants.disk.partitions.main.volumes.longhorn.label;
+                  longhornSize = (toString config.virtualisation.vmVariant.constants.disk.partitions.main.volumes.longhorn.size) + "MB";
                   main = config.virtualisation.vmVariant.constants.disk.partitions.main.label;
+                  mkfsext4 = "${pkgs.e2fsprogs}/bin/mkfs.ext4";
                   nix = config.virtualisation.vmVariant.constants.disk.partitions.main.datasets.nix.label;
                   parted = "${pkgs.parted}/bin/parted";
                   softstate = config.virtualisation.vmVariant.constants.disk.partitions.main.datasets.softstate.label;

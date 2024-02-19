@@ -130,10 +130,19 @@
         "zfsutil"
       ];
     };
+
+    # Longhorn data
+    "/var/lib/longhorn" = {
+      device = "/dev/disk/by-label/${config.constants.disk.partitions.main.volumes.longhorn.label}";
+
+      # Longhorn data uses ext4
+      fsType = "ext4";
+    };
   };
 
   services = {
     sanoid = {
+      # This is called datasets, but volumes can also be here
       datasets = {
         "${config.constants.disk.partitions.main.label}/${config.constants.disk.partitions.main.datasets.home.label}" = {
           # Keep 30 past snapshots that are taken once a day
@@ -156,9 +165,20 @@
           # Don't keep any monthly snapshots
           monthly = 0;
         };
+
+        "${config.constants.disk.partitions.main.label}/${config.constants.disk.partitions.main.volumes.longhorn.label}" = {
+          # Keep 30 past snapshots that are taken once a day
+          daily = 30;
+
+          # Keep 24 past snapshots that are taken once an hour
+          hourly = 24;
+
+          # Don't keep any monthly snapshots
+          monthly = 0;
+        };
       };
 
-      # Enable periodic snapshots of the ZFS datasets
+      # Enable periodic snapshots of ZFS datasets and volumes
       enable = true;
     };
 
