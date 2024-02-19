@@ -170,8 +170,11 @@ in {
         # Specify IP address allocation range for services
         "--service-cidr ${config.constants.kubernetes.network.addresses.service}"
 
-        # Add hostname to the list of SANs in the TLS certificate
-        "--tls-san ${config.networking.hostName}"
+        # Add alternative names to the TLS certificate
+        "--tls-san ${config.constants.network.tailscale.ip}"
+        "--tls-san ${config.constants.name}"
+        "--tls-san ${config.constants.name}.${config.constants.network.tailscale.tailnet}.ts.net"
+        "--tls-san ${config.constants.name}.${config.constants.network.domain.subdomains.tailscale}.${config.constants.network.domain.root}"
 
         # Create kubeconfig file for local access
         "--write-kubeconfig ${config.constants.kubernetes.files.kubeconfig}"
