@@ -61,7 +61,7 @@
           flux = {
             source = {
               # Override the path to cluster resources to use the ones for tests
-              path = "tests/clusters/${config.virtualisation.vmVariant.constants.kubernetes.cluster.name}";
+              path = "tests/clusters/vm/${config.virtualisation.vmVariant.constants.kubernetes.cluster.name}";
 
               # Don't ignore tests
               ignore = "!/tests/";
