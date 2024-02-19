@@ -205,6 +205,22 @@
       };
 
       network = {
+        domain = {
+          root = lib.mkOption {
+            default = "spietras.dev";
+            description = "Root domain that I own";
+            type = lib.types.str;
+          };
+
+          subdomains = {
+            tailscale = lib.mkOption {
+              default = "ts";
+              description = "Subdomain for Tailscale";
+              type = lib.types.str;
+            };
+          };
+        };
+
         hostId = lib.mkOption {
           default = "9f86d081";
           description = "Unique identifier for the machine";
@@ -215,6 +231,12 @@
           ip = lib.mkOption {
             default = "100.127.131.11";
             description = "IP address of the machine in the Tailscale network";
+            type = lib.types.str;
+          };
+
+          tailnet = lib.mkOption {
+            default = "mermaid-vibe";
+            description = "Name of the Tailscale network";
             type = lib.types.str;
           };
         };
