@@ -2,25 +2,32 @@
 
 ### CONFIGURATION ###
 
+# Don't try to make the script self-contained
+# Just use binaries that are already available
+# This is because this goes to initrd
+# And initrd goes to boot partition which is small
+
 DISK='@disk@'
-ZFS_HARDSTATE='@hardstate@'
-ZFS_HOME='@home@'
-MAIN_LABEL='@main@'
-MKSWAP='@mkswap@'
-ZFS_NIX='@nix@'
+HARDSTATE='@hardstate@'
+HOME='@home@'
+MAIN='@main@'
+NIX='@nix@'
 PARTED='@parted@'
-PRINTF='@printf@'
-SLEEP='@sleep@'
-ZFS_SOFTSTATE='@softstate@'
-SWAP_LABEL='@swap@'
+SOFTSTATE='@softstate@'
+SWAP='@swap@'
 SWAP_SIZE='@swapSize@'
-UDEVADM='@udevadm@'
-ZFS='@zfs@'
-ZPOOL='@zpool@'
+ZFS_PACKAGE='@zfsPackage@'
+
+### PREPARATION ###
+
+# install ZFS udev rules
+mkdir --parents /etc/udev/rules.d/
+cp "${ZFS_PACKAGE}"/lib/udev/rules.d/*.rules /etc/udev/rules.d/
+udevadm control --reload-rules
 
 ### PARTITIONING ###
 
-${PRINTF} '%s\n' "Partitioning disk ${DISK}"
+printf '%s\n' "Partitioning disk ${DISK}"
 
 # partition the disk
 # use GPT to store partition metadata
@@ -28,34 +35,34 @@ ${PRINTF} '%s\n' "Partitioning disk ${DISK}"
 # and the rest is for the main partition
 if ! ${PARTED} --script --align optimal "${DISK}" -- \
 	mklabel gpt \
-	mkpart "${MAIN_LABEL}" 1MB "-${SWAP_SIZE}" \
-	mkpart "${SWAP_LABEL}" linux-swap "-${SWAP_SIZE}" 100%; then
-	${PRINTF} '%s\n' 'Partitioning failed' >&2
+	mkpart "${MAIN}" 1MB "-${SWAP_SIZE}" \
+	mkpart "${SWAP}" linux-swap "-${SWAP_SIZE}" 100%; then
+	printf '%s\n' 'Partitioning failed' >&2
 	exit 1
 fi
 
 # force udev to reread partition table
-${UDEVADM} trigger
+udevadm trigger
 
-printf '%s' "Waiting for partitions to appear..."
-while [ ! -e "/dev/disk/by-partlabel/${MAIN_LABEL}" ] ||
-	[ ! -e "/dev/disk/by-partlabel/${SWAP_LABEL}" ]; do
-	${SLEEP} 1
+printf '%s' 'Waiting for partitions to appear...'
+while [ ! -e "/dev/disk/by-partlabel/${MAIN}" ] ||
+	[ ! -e "/dev/disk/by-partlabel/${SWAP}" ]; do
+	sleep 1
 	printf '%s' '.'
 done
-${PRINTF} '\n'
+printf '\n'
 
-${PRINTF} '%s\n' 'Partitioning complete'
+printf '%s\n' 'Partitioning complete'
 
 ### FORMATTING ###
 
 # format the partitions with appropriate filesystems
 # note that referring to devices by by-partlabel works only when using GPT
 
-${PRINTF} '%s\n' "Creating ZFS pool ${MAIN_LABEL} on /dev/disk/by-partlabel/${MAIN_LABEL}"
+printf '%s\n' "Creating ZFS pool ${MAIN} on /dev/disk/by-partlabel/${MAIN}"
 
 # setup main partition with zfs
-if ! ${ZPOOL} create -f \
+if ! "${ZFS_PACKAGE}/bin/zpool" create -f \
 	-o autoexpand=on \
 	-o autoreplace=on \
 	-o autotrim=on \
@@ -70,43 +77,43 @@ if ! ${ZPOOL} create -f \
 	-O normalization=formD \
 	-O relatime=on \
 	-O xattr=sa \
-	"${MAIN_LABEL}" "/dev/disk/by-partlabel/${MAIN_LABEL}"; then
-	${PRINTF} '%s\n' 'Creating ZFS pool failed' >&2
+	"${MAIN}" "/dev/disk/by-partlabel/${MAIN}"; then
+	printf '%s\n' 'Creating ZFS pool failed' >&2
 	exit 2
 fi
 
-${PRINTF} '%s\n' 'Creating ZFS datasets'
+printf '%s\n' 'Creating ZFS datasets'
 
-if ! ${ZFS} create -o compression=on "${MAIN_LABEL}/${ZFS_NIX}" ||
-	! ${ZFS} create -o compression=on "${MAIN_LABEL}/${ZFS_HOME}" ||
-	! ${ZFS} create -o compression=on "${MAIN_LABEL}/${ZFS_HARDSTATE}" ||
-	! ${ZFS} create -o compression=on "${MAIN_LABEL}/${ZFS_SOFTSTATE}"; then
-	${PRINTF} '%s\n' 'Creating ZFS datasets failed' >&2
+if ! "${ZFS_PACKAGE}/bin/zfs" create -o compression=on "${MAIN}/${NIX}" ||
+	! "${ZFS_PACKAGE}/bin/zfs" create -o compression=on "${MAIN}/${HOME}" ||
+	! "${ZFS_PACKAGE}/bin/zfs" create -o compression=on "${MAIN}/${HARDSTATE}" ||
+	! "${ZFS_PACKAGE}/bin/zfs" create -o compression=on "${MAIN}/${SOFTSTATE}"; then
+	printf '%s\n' 'Creating ZFS datasets failed' >&2
 	exit 3
 fi
 
-${PRINTF} '%s\n' "Formatting /dev/disk/by-partlabel/${SWAP_LABEL} as swap"
+printf '%s\n' "Formatting /dev/disk/by-partlabel/${SWAP} as swap"
 
 # swap is just swap
-if ! ${MKSWAP} -L "${SWAP_LABEL}" "/dev/disk/by-partlabel/${SWAP_LABEL}"; then
-	${PRINTF} '%s\n' 'Formatting swap partition failed' >&2
-	exit 4
+if ! mkswap -L "${SWAP}" "/dev/disk/by-partlabel/${SWAP}"; then
+	printf '%s\n' 'Formatting swap partition failed' >&2
+	exit 6
 fi
 
 # force udev to reread filesystems
-${UDEVADM} trigger
+udevadm trigger
 
-printf '%s' "Waiting for filesystems to appear..."
-while [ ! -e "/dev/disk/by-label/${MAIN_LABEL}" ] ||
-	[ ! -e "/dev/disk/by-label/${SWAP_LABEL}" ]; do
-	${SLEEP} 1
+printf '%s' 'Waiting for filesystems to appear...'
+while [ ! -e "/dev/disk/by-label/${MAIN}" ] ||
+	[ ! -e "/dev/disk/by-label/${SWAP}" ]; do
+	sleep 1
 	printf '%s' '.'
 done
-${PRINTF} '\n'
+printf '\n'
 
-${PRINTF} '%s\n' 'Formatting complete'
+printf '%s\n' 'Formatting complete'
 
 ### CLEANUP ###
 
 # export the pool to make the state clean
-${ZPOOL} export "${MAIN_LABEL}"
+"${ZFS_PACKAGE}/bin/zpool" export "${MAIN}"

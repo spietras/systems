@@ -24,7 +24,7 @@
         pkgs.substituteAll {
           src = ./prepare.sh;
 
-          hardstate = config.constants.storage.partitions.main.datasets.hardstate.label;
+          hardstate = config.constants.disk.partitions.main.datasets.hardstate.label;
 
           hardstateDirectories = (
             lib.strings.concatStringsSep
@@ -36,8 +36,8 @@
             )
           );
 
-          main = config.constants.storage.partitions.main.label;
-          softstate = config.constants.storage.partitions.main.datasets.softstate.label;
+          main = config.constants.disk.partitions.main.label;
+          softstate = config.constants.disk.partitions.main.datasets.softstate.label;
 
           softstateDirectories = (
             lib.strings.concatStringsSep

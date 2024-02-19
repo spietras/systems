@@ -7,10 +7,10 @@
 # This is because this goes to initrd
 # And initrd goes to boot partition which is small
 
-ZFS_HARDSTATE='@hardstate@'
+HARDSTATE='@hardstate@'
 HARDSTATE_DIRECTORIES='@hardstateDirectories@'
-MAIN_LABEL='@main@'
-ZFS_SOFTSTATE='@softstate@'
+MAIN='@main@'
+SOFTSTATE='@softstate@'
 SOFTSTATE_DIRECTORIES='@softstateDirectories@'
 
 ### PREPARATION ###
@@ -19,7 +19,7 @@ SOFTSTATE_DIRECTORIES='@softstateDirectories@'
 udevadm trigger
 
 printf '%s' 'Waiting for filesystems to appear...'
-while [ ! -e "/dev/disk/by-label/${MAIN_LABEL}" ]; do
+while [ ! -e "/dev/disk/by-label/${MAIN}" ]; do
 	sleep 1
 	printf '%s' '.'
 done
@@ -27,16 +27,16 @@ printf '\n'
 
 printf '%s\n' 'Importing ZFS pool'
 
-if ! zpool import -aN -d "/dev/disk/by-label/${MAIN_LABEL}"; then
+if ! zpool import -aN -d "/dev/disk/by-label/${MAIN}"; then
 	printf '%s\n' 'Importing ZFS pool failed' >&2
 	exit 1
 fi
 
 printf '%s\n' 'Mounting persistent filesystems'
 
-if ! mkdir --parents "/mnt/${ZFS_HARDSTATE}/" "/mnt/${ZFS_SOFTSTATE}/" ||
-	! mount --types zfs --options zfsutil "${MAIN_LABEL}/${ZFS_HARDSTATE}" "/mnt/${ZFS_HARDSTATE}/" ||
-	! mount --types zfs --options zfsutil "${MAIN_LABEL}/${ZFS_SOFTSTATE}" "/mnt/${ZFS_SOFTSTATE}/"; then
+if ! mkdir --parents "/mnt/${HARDSTATE}/" "/mnt/${SOFTSTATE}/" ||
+	! mount --types zfs --options zfsutil "${MAIN}/${HARDSTATE}" "/mnt/${HARDSTATE}/" ||
+	! mount --types zfs --options zfsutil "${MAIN}/${SOFTSTATE}" "/mnt/${SOFTSTATE}/"; then
 	printf '%s\n' 'Mounting filesystems failed' >&2
 	exit 2
 fi
@@ -45,11 +45,11 @@ printf '%s\n' 'Creating necessary directories'
 
 create_directories() {
 	for directory in $(printf '%s' "${HARDSTATE_DIRECTORIES}" | tr ':' ' '); do
-		set -- "/mnt/${ZFS_HARDSTATE}/${directory}" "$@"
+		set -- "/mnt/${HARDSTATE}/${directory}" "$@"
 	done
 
 	for directory in $(printf '%s' "${SOFTSTATE_DIRECTORIES}" | tr ':' ' '); do
-		set -- "/mnt/${ZFS_SOFTSTATE}/${directory}" "$@"
+		set -- "/mnt/${SOFTSTATE}/${directory}" "$@"
 	done
 
 	mkdir --parents "$@"
@@ -62,7 +62,7 @@ fi
 
 printf '%s\n' 'Unmounting persistent filesystems'
 
-if ! umount "/mnt/${ZFS_HARDSTATE}/" "/mnt/${ZFS_SOFTSTATE}/"; then
+if ! umount "/mnt/${HARDSTATE}/" "/mnt/${SOFTSTATE}/"; then
 	printf '%s\n' 'Unmounting filesystems failed' >&2
 	exit 4
 fi

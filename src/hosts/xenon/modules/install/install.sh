@@ -2,43 +2,34 @@
 
 ### CONFIGURATION ###
 
-BOOT_LABEL='@boot@'
-CAT='@cat@'
-CP='@cp@'
+# Don't try to make the script self-contained
+# Just assume some binaries are already available
+# First, this reduces the size down
+# Second, some things need to be compatible with the host system
+
+BOOT='@boot@'
 DISK='@disk@'
 FLAKEDIR='@flake@'
 GREP='@grep@'
-ZFS_HARDSTATE='@hardstate@'
-ZFS_HOME='@home@'
+HARDSTATE='@hardstate@'
+HOME='@home@'
 HOSTNAME='@host@'
-MAIN_LABEL='@main@'
-MKDIR='@mkdir@'
+MAIN='@main@'
 MKFSFAT='@mkfsfat@'
-MKSWAP='@mkswap@'
-MOUNT='@mount@'
-MOUNTPOINT='@mountpoint@'
-ZFS_NIX='@nix@'
+NIX='@nix@'
 NIXOSINSTALL='@nixosinstall@'
 PARTED='@parted@'
-PRINTF='@printf@'
-RM='@rm@'
-ZFS_SOFTSTATE='@softstate@'
-SLEEP='@sleep@'
-SWAP_LABEL='@swap@'
-SWAPOFF='@swapoff'
-SWAPON='@swapon@'
-SWAP_SIZE='@swapsize@'
-UDEVADM='@udevadm@'
-UMOUNT='@umount@'
-ZFS='@zfs@'
-ZPOOL='@zpool@'
+SOFTSTATE='@softstate@'
+SWAP='@swap@'
+SWAP_SIZE='@swapSize@'
+ZFS_PACKAGE='@zfsPackage@'
 
 ### HELPER FUNCTIONS ###
 
 print_usage() {
 	# Print script usage
 
-	${CAT} <<EOF
+	cat <<EOF
 Usage: $0 [-k KEYFILE]
 Install NixOS on a host.
 
@@ -76,23 +67,30 @@ set -- ${unparsed}
 
 ### CLEANUP ###
 
-${PRINTF} '%s\n' 'Cleaning up old state'
+printf '%s\n' 'Cleaning up old state'
 
 # remove old age key if exists
-${RM} --force "/mnt/${ZFS_HARDSTATE}/sops/age/keys.txt"
+rm --force "/mnt/${HARDSTATE}/sops/age/keys.txt"
 
 # unmount everything
-${MOUNTPOINT} --quiet /mnt/ && ${UMOUNT} --recursive /mnt/
+mountpoint --quiet /mnt/ && umount --recursive /mnt/
 
 # disable swap
-${SWAPOFF} "/dev/disk/by-partlabel/${SWAP_LABEL}" 2>/dev/null || true
+swapoff "/dev/disk/by-partlabel/${SWAP}" 2>/dev/null || true
 
 # destroy zfs pool
-${ZPOOL} list -H -o name | ${GREP} --quiet "${MAIN_LABEL}" && ${ZPOOL} destroy -f "${MAIN_LABEL}"
+"${ZFS_PACKAGE}/bin/zpool" list -H -o name | ${GREP} --quiet "${MAIN}" && "${ZFS_PACKAGE}/bin/zpool" destroy -f "${MAIN}"
+
+### PREPARATION ###
+
+# install ZFS udev rules
+mkdir --parents /etc/udev/rules.d/
+cp "${ZFS_PACKAGE}"/lib/udev/rules.d/*.rules /etc/udev/rules.d/
+udevadm control --reload-rules
 
 ### PARTITIONING ###
 
-${PRINTF} '%s\n' "Partitioning disk ${DISK}"
+printf '%s\n' "Partitioning disk ${DISK}"
 
 # partition the disk
 # use GPT to store partition metadata
@@ -101,45 +99,46 @@ ${PRINTF} '%s\n' "Partitioning disk ${DISK}"
 # and the rest is for the main partition
 if ! ${PARTED} --script --align optimal "${DISK}" -- \
 	mklabel gpt \
-	mkpart "${BOOT_LABEL}" fat32 1MB 512MB \
+	mkpart "${BOOT}" fat32 1MB 512MB \
 	set 1 boot on \
 	set 1 esp on \
-	mkpart "${MAIN_LABEL}" 512MB "-${SWAP_SIZE}" \
-	mkpart "${SWAP_LABEL}" linux-swap "-${SWAP_SIZE}" 100%; then
-	${PRINTF} '%s\n' 'Partitioning failed' >&2
+	mkpart "${MAIN}" 512MB "-${SWAP_SIZE}" \
+	mkpart "${SWAP}" linux-swap "-${SWAP_SIZE}" 100%; then
+	printf '%s\n' 'Partitioning failed' >&2
 	exit 1
 fi
 
 # force udev to reread partition table
-${UDEVADM} trigger
+udevadm trigger
 
-${PRINTF} '%s' 'Waiting for partitions to appear...'
-while [ ! -e "/dev/disk/by-partlabel/${MAIN_LABEL}" ] ||
-	[ ! -e "/dev/disk/by-partlabel/${SWAP_LABEL}" ]; do
-	${SLEEP} 1
+printf '%s' 'Waiting for partitions to appear...'
+while [ ! -e "/dev/disk/by-partlabel/${BOOT}" ] ||
+	[ ! -e "/dev/disk/by-partlabel/${MAIN}" ] ||
+	[ ! -e "/dev/disk/by-partlabel/${SWAP}" ]; do
+	sleep 1
 	printf '%s' '.'
 done
-${PRINTF} '\n'
+printf '\n'
 
-${PRINTF} '%s\n' 'Partitioning complete'
+printf '%s\n' 'Partitioning complete'
 
 ### FORMATTING ###
 
 # format the partitions with appropriate filesystems
 # note that referring to devices by by-partlabel works only when using GPT
 
-${PRINTF} '%s\n' "Formatting /dev/disk/by-partlabel/${BOOT_LABEL} with FAT32"
+printf '%s\n' "Formatting /dev/disk/by-partlabel/${BOOT} with FAT32"
 
 # fat32 for the boot partition
-if ! ${MKFSFAT} -c -F 32 -n "${BOOT_LABEL}" "/dev/disk/by-partlabel/${BOOT_LABEL}"; then
-	${PRINTF} '%s\n' 'Formatting boot partition failed' >&2
+if ! ${MKFSFAT} -c -F 32 -n "${BOOT}" "/dev/disk/by-partlabel/${BOOT}"; then
+	printf '%s\n' 'Formatting boot partition failed' >&2
 	exit 2
 fi
 
-${PRINTF} '%s\n' "Creating ZFS pool ${MAIN_LABEL} on /dev/disk/by-partlabel/${MAIN_LABEL}"
+printf '%s\n' "Creating ZFS pool ${MAIN} on /dev/disk/by-partlabel/${MAIN}"
 
 # setup main partition with zfs
-if ! ${ZPOOL} create -f \
+if ! "${ZFS_PACKAGE}/bin/zpool" create -f \
 	-o autoexpand=on \
 	-o autoreplace=on \
 	-o autotrim=on \
@@ -154,79 +153,79 @@ if ! ${ZPOOL} create -f \
 	-O normalization=formD \
 	-O relatime=on \
 	-O xattr=sa \
-	"${MAIN_LABEL}" "/dev/disk/by-partlabel/${MAIN_LABEL}"; then
-	${PRINTF} '%s\n' 'Creating ZFS pool failed' >&2
+	"${MAIN}" "/dev/disk/by-partlabel/${MAIN}"; then
+	printf '%s\n' 'Creating ZFS pool failed' >&2
 	exit 3
 fi
 
-${PRINTF} '%s\n' 'Creating ZFS datasets'
+printf '%s\n' 'Creating ZFS datasets'
 
-if ! ${ZFS} create -o compression=on "${MAIN_LABEL}/${ZFS_HARDSTATE}" ||
-	! ${ZFS} create -o compression=on "${MAIN_LABEL}/${ZFS_HOME}" ||
-	! ${ZFS} create -o compression=on "${MAIN_LABEL}/${ZFS_NIX}" ||
-	! ${ZFS} create -o compression=on "${MAIN_LABEL}/${ZFS_SOFTSTATE}"; then
-	${PRINTF} '%s\n' 'Creating ZFS datasets failed' >&2
+if ! "${ZFS_PACKAGE}/bin/zfs" create -o compression=on "${MAIN}/${HARDSTATE}" ||
+	! "${ZFS_PACKAGE}/bin/zfs" create -o compression=on "${MAIN}/${HOME}" ||
+	! "${ZFS_PACKAGE}/bin/zfs" create -o compression=on "${MAIN}/${NIX}" ||
+	! "${ZFS_PACKAGE}/bin/zfs" create -o compression=on "${MAIN}/${SOFTSTATE}"; then
+	printf '%s\n' 'Creating ZFS datasets failed' >&2
 	exit 4
 fi
 
-${PRINTF} '%s\n' "Formatting /dev/disk/by-partlabel/${SWAP_LABEL} as swap"
+printf '%s\n' "Formatting /dev/disk/by-partlabel/${SWAP} as swap"
 
 # swap is just swap
-if ! ${MKSWAP} -c -L "${SWAP_LABEL}" "/dev/disk/by-partlabel/${SWAP_LABEL}"; then
-	${PRINTF} '%s\n' 'Formatting swap partition failed' >&2
-	exit 5
-fi
-
-# force udev to reread filesystems
-${UDEVADM} trigger
-
-printf '%s' 'Waiting for filesystems to appear...'
-while [ ! -e "/dev/disk/by-label/${BOOT_LABEL}" ] ||
-	[ ! -e "/dev/disk/by-label/${MAIN_LABEL}" ] ||
-	[ ! -e "/dev/disk/by-label/${SWAP_LABEL}" ]; do
-	${SLEEP} 1
-	printf '%s' '.'
-done
-${PRINTF} '\n'
-
-${PRINTF} '%s\n' 'Formatting complete'
-
-### PREPARATION ###
-
-${PRINTF} '%s\n' 'Enabling swap'
-
-# enable swap already so installation can use more memory
-if ! ${SWAPON} "/dev/disk/by-partlabel/${SWAP_LABEL}"; then
-	${PRINTF} '%s\n' 'Enabling swap failed' >&2
-	exit 6
-fi
-
-${PRINTF} '%s\n' 'Mounting filesystems'
-
-# mount everything
-if ! ${MOUNT} --types tmpfs --options mode=755 none /mnt/ ||
-	! ${MKDIR} --parents /mnt/boot/ /mnt/home/ /mnt/nix/ "/mnt/${ZFS_HARDSTATE}/" "/mnt/${ZFS_SOFTSTATE}/" ||
-	! ${MOUNT} --types vfat "/dev/disk/by-label/${BOOT_LABEL}" /mnt/boot/ ||
-	! ${MOUNT} --types zfs --options zfsutil "${MAIN_LABEL}/${ZFS_HOME}" /mnt/home/ ||
-	! ${MOUNT} --types zfs --options zfsutil "${MAIN_LABEL}/${ZFS_NIX}" /mnt/nix/ ||
-	! ${MOUNT} --types zfs --options zfsutil "${MAIN_LABEL}/${ZFS_HARDSTATE}" "/mnt/${ZFS_HARDSTATE}/" ||
-	! ${MOUNT} --types zfs --options zfsutil "${MAIN_LABEL}/${ZFS_SOFTSTATE}" "/mnt/${ZFS_SOFTSTATE}/"; then
-	${PRINTF} '%s\n' 'Mounting filesystems failed' >&2
+if ! mkswap -c -L "${SWAP}" "/dev/disk/by-partlabel/${SWAP}"; then
+	printf '%s\n' 'Formatting swap partition failed' >&2
 	exit 7
 fi
 
-${PRINTF} '%s\n' 'Copying age keys'
+# force udev to reread filesystems
+udevadm trigger
+
+printf '%s' 'Waiting for filesystems to appear...'
+while [ ! -e "/dev/disk/by-label/${BOOT}" ] ||
+	[ ! -e "/dev/disk/by-label/${MAIN}" ] ||
+	[ ! -e "/dev/disk/by-label/${SWAP}" ]; do
+	sleep 1
+	printf '%s' '.'
+done
+printf '\n'
+
+printf '%s\n' 'Formatting complete'
+
+### PREPARATION ###
+
+printf '%s\n' 'Enabling swap'
+
+# enable swap already so installation can use more memory
+if ! swapon "/dev/disk/by-partlabel/${SWAP}"; then
+	printf '%s\n' 'Enabling swap failed' >&2
+	exit 8
+fi
+
+printf '%s\n' 'Mounting filesystems'
+
+# mount everything
+if ! mount --types tmpfs --options mode=755 none /mnt/ ||
+	! mkdir --parents /mnt/boot/ /mnt/home/ /mnt/nix/ "/mnt/${HARDSTATE}/" "/mnt/${SOFTSTATE}/" ||
+	! mount --types vfat "/dev/disk/by-label/${BOOT}" /mnt/boot/ ||
+	! mount --types zfs --options zfsutil "${MAIN}/${HOME}" /mnt/home/ ||
+	! mount --types zfs --options zfsutil "${MAIN}/${NIX}" /mnt/nix/ ||
+	! mount --types zfs --options zfsutil "${MAIN}/${HARDSTATE}" "/mnt/${HARDSTATE}/" ||
+	! mount --types zfs --options zfsutil "${MAIN}/${SOFTSTATE}" "/mnt/${SOFTSTATE}/"; then
+	printf '%s\n' 'Mounting filesystems failed' >&2
+	exit 9
+fi
+
+printf '%s\n' 'Copying age keys'
 
 # copy age keys
-if ! ${MKDIR} --parents "/mnt/${ZFS_HARDSTATE}/sops/age/" ||
-	! ${CP} "${keyfile}" "/mnt/${ZFS_HARDSTATE}/sops/age/keys.txt"; then
-	${PRINTF} '%s\n' 'Copying age keys failed' >&2
-	exit 8
+if ! mkdir --parents "/mnt/${HARDSTATE}/sops/age/" ||
+	! cp "${keyfile}" "/mnt/${HARDSTATE}/sops/age/keys.txt"; then
+	printf '%s\n' 'Copying age keys failed' >&2
+	exit 10
 fi
 
 ### INSTALLATION ###
 
-${PRINTF} '%s\n' 'Installing NixOS'
+printf '%s\n' 'Installing NixOS'
 
 # install
 ${NIXOSINSTALL} --no-root-passwd --flake "${FLAKEDIR}#${HOSTNAME}" "$@"

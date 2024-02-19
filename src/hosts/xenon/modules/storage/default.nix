@@ -62,7 +62,7 @@
     };
 
     "/boot" = {
-      device = "/dev/disk/by-label/${config.constants.storage.partitions.boot.label}";
+      device = "/dev/disk/by-label/${config.constants.disk.partitions.boot.label}";
 
       # /boot uses FAT32, but mount only recognizes vfat type
       fsType = "vfat";
@@ -72,7 +72,7 @@
     };
 
     "/home" = {
-      device = "${config.constants.storage.partitions.main.label}/${config.constants.storage.partitions.main.datasets.home.label}";
+      device = "${config.constants.disk.partitions.main.label}/${config.constants.disk.partitions.main.datasets.home.label}";
 
       # /home is a ZFS dataset
       fsType = "zfs";
@@ -87,7 +87,7 @@
     };
 
     "/nix" = {
-      device = "${config.constants.storage.partitions.main.label}/${config.constants.storage.partitions.main.datasets.nix.label}";
+      device = "${config.constants.disk.partitions.main.label}/${config.constants.disk.partitions.main.datasets.nix.label}";
 
       # /nix is a ZFS dataset
       fsType = "zfs";
@@ -101,8 +101,8 @@
       ];
     };
 
-    "/${config.constants.storage.partitions.main.datasets.hardstate.label}" = {
-      device = "${config.constants.storage.partitions.main.label}/${config.constants.storage.partitions.main.datasets.hardstate.label}";
+    "/${config.constants.disk.partitions.main.datasets.hardstate.label}" = {
+      device = "${config.constants.disk.partitions.main.label}/${config.constants.disk.partitions.main.datasets.hardstate.label}";
 
       # hardstate is a ZFS dataset
       fsType = "zfs";
@@ -116,8 +116,8 @@
       ];
     };
 
-    "/${config.constants.storage.partitions.main.datasets.softstate.label}" = {
-      device = "${config.constants.storage.partitions.main.label}/${config.constants.storage.partitions.main.datasets.softstate.label}";
+    "/${config.constants.disk.partitions.main.datasets.softstate.label}" = {
+      device = "${config.constants.disk.partitions.main.label}/${config.constants.disk.partitions.main.datasets.softstate.label}";
 
       # softstate is a ZFS dataset
       fsType = "zfs";
@@ -135,7 +135,7 @@
   services = {
     sanoid = {
       datasets = {
-        "${config.constants.storage.partitions.main.label}/${config.constants.storage.partitions.main.datasets.home.label}" = {
+        "${config.constants.disk.partitions.main.label}/${config.constants.disk.partitions.main.datasets.home.label}" = {
           # Keep 30 past snapshots that are taken once a day
           daily = 30;
 
@@ -146,7 +146,7 @@
           monthly = 0;
         };
 
-        "${config.constants.storage.partitions.main.label}/${config.constants.storage.partitions.main.datasets.hardstate.label}" = {
+        "${config.constants.disk.partitions.main.label}/${config.constants.disk.partitions.main.datasets.hardstate.label}" = {
           # Keep 30 past snapshots that are taken once a day
           daily = 30;
 
@@ -195,7 +195,7 @@
     # One swap device on separate partition
     {
       # We need to use partlabel here, because regular label can change with encryption
-      device = "/dev/disk/by-partlabel/${config.constants.storage.partitions.swap.label}";
+      device = "/dev/disk/by-partlabel/${config.constants.disk.partitions.swap.label}";
 
       randomEncryption = {
         # Allow TRIM requests to be sent to the swap device

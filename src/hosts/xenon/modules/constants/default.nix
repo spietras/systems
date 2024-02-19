@@ -8,6 +8,80 @@
 }: {
   options = {
     constants = {
+      disk = {
+        partitions = {
+          boot = {
+            label = lib.mkOption {
+              default = "boot";
+              description = "Label for the boot partition";
+              type = lib.types.str;
+            };
+          };
+
+          main = {
+            datasets = {
+              hardstate = {
+                label = lib.mkOption {
+                  default = "hardstate";
+                  description = "Label for the hardstate dataset";
+                  type = lib.types.str;
+                };
+              };
+
+              home = {
+                label = lib.mkOption {
+                  default = "home";
+                  description = "Label for the home dataset";
+                  type = lib.types.str;
+                };
+              };
+
+              nix = {
+                label = lib.mkOption {
+                  default = "nix";
+                  description = "Label for the nix dataset";
+                  type = lib.types.str;
+                };
+              };
+
+              softstate = {
+                label = lib.mkOption {
+                  default = "softstate";
+                  description = "Label for the softstate dataset";
+                  type = lib.types.str;
+                };
+              };
+            };
+
+            label = lib.mkOption {
+              default = "main";
+              description = "Label for the main partition";
+              type = lib.types.str;
+            };
+          };
+
+          swap = {
+            label = lib.mkOption {
+              default = "swap";
+              description = "Label for the swap partition";
+              type = lib.types.str;
+            };
+
+            size = lib.mkOption {
+              default = 16384;
+              description = "Size of the swap partition in MB";
+              type = lib.types.int;
+            };
+          };
+        };
+
+        path = lib.mkOption {
+          default = "/dev/sda";
+          description = "Path to the disk";
+          type = lib.types.path;
+        };
+      };
+
       kubernetes = {
         cluster = {
           name = lib.mkOption {
@@ -155,116 +229,52 @@
       secrets = {
         sops = {
           keyFile = lib.mkOption {
-            default = "/${config.constants.storage.partitions.main.datasets.hardstate.label}/sops/age/keys.txt";
+            default = "/${config.constants.disk.partitions.main.datasets.hardstate.label}/sops/age/keys.txt";
             description = "Path to the age key file for SOPS";
             type = lib.types.path;
           };
         };
       };
 
-      storage = {
-        diskPath = lib.mkOption {
-          default = "/dev/sda";
-          description = "Path to the disk";
-          type = lib.types.path;
-        };
-
-        partitions = {
-          boot = {
-            label = lib.mkOption {
-              default = "boot";
-              description = "Label for the boot partition";
-              type = lib.types.str;
-            };
-          };
-
-          main = {
-            datasets = {
-              hardstate = {
-                label = lib.mkOption {
-                  default = "hardstate";
-                  description = "Label for the hardstate dataset";
-                  type = lib.types.str;
-                };
-              };
-
-              home = {
-                label = lib.mkOption {
-                  default = "home";
-                  description = "Label for the home dataset";
-                  type = lib.types.str;
-                };
-              };
-
-              nix = {
-                label = lib.mkOption {
-                  default = "nix";
-                  description = "Label for the nix dataset";
-                  type = lib.types.str;
-                };
-              };
-
-              softstate = {
-                label = lib.mkOption {
-                  default = "softstate";
-                  description = "Label for the softstate dataset";
-                  type = lib.types.str;
-                };
-              };
-            };
-
-            label = lib.mkOption {
-              default = "main";
-              description = "Label for the main partition";
-              type = lib.types.str;
-            };
-          };
-
-          swap = {
-            label = lib.mkOption {
-              default = "swap";
-              description = "Label for the swap partition";
-              type = lib.types.str;
-            };
-
-            size = lib.mkOption {
-              default = 16384;
-              description = "Size of the swap partition in MB";
-              type = lib.types.int;
-            };
-          };
-        };
-      };
-
       vm = {
-        cores = lib.mkOption {
-          default = 4;
-          description = "Number of CPU cores";
-          type = lib.types.int;
+        cpu = {
+          cores = lib.mkOption {
+            default = 4;
+            description = "Number of CPU cores";
+            type = lib.types.int;
+          };
         };
 
-        diskPath = lib.mkOption {
-          default = "/dev/vda";
-          description = "Path to the disk in the virtual machine";
-          type = lib.types.path;
+        disk = {
+          partitions = {
+            swap = {
+              size = lib.mkOption {
+                default = 1024;
+                description = "Size of the swap partition in MB";
+                type = lib.types.int;
+              };
+            };
+          };
+
+          path = lib.mkOption {
+            default = "/dev/vda";
+            description = "Path to the disk in the virtual machine";
+            type = lib.types.path;
+          };
+
+          size = lib.mkOption {
+            default = 8192;
+            description = "Size of the disk in MB";
+            type = lib.types.int;
+          };
         };
 
-        diskSize = lib.mkOption {
-          default = 8192;
-          description = "Size of the disk in MB";
-          type = lib.types.int;
-        };
-
-        memorySize = lib.mkOption {
-          default = 4096;
-          description = "Size of the memory in MB";
-          type = lib.types.int;
-        };
-
-        swapSize = lib.mkOption {
-          default = 1024;
-          description = "Size of the swap in MB";
-          type = lib.types.int;
+        memory = {
+          size = lib.mkOption {
+            default = 4096;
+            description = "Size of the memory in MB";
+            type = lib.types.int;
+          };
         };
       };
     };

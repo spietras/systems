@@ -17,21 +17,16 @@
                 pkgs.substituteAll {
                   src = ./prepare.sh;
 
-                  disk = config.virtualisation.vmVariant.constants.storage.diskPath;
-                  hardstate = config.virtualisation.vmVariant.constants.storage.partitions.main.datasets.hardstate.label;
-                  home = config.virtualisation.vmVariant.constants.storage.partitions.main.datasets.home.label;
-                  main = config.virtualisation.vmVariant.constants.storage.partitions.main.label;
-                  mkswap = "${pkgs.util-linux}/bin/mkswap";
-                  nix = config.virtualisation.vmVariant.constants.storage.partitions.main.datasets.nix.label;
+                  disk = config.virtualisation.vmVariant.constants.disk.path;
+                  hardstate = config.virtualisation.vmVariant.constants.disk.partitions.main.datasets.hardstate.label;
+                  home = config.virtualisation.vmVariant.constants.disk.partitions.main.datasets.home.label;
+                  main = config.virtualisation.vmVariant.constants.disk.partitions.main.label;
+                  nix = config.virtualisation.vmVariant.constants.disk.partitions.main.datasets.nix.label;
                   parted = "${pkgs.parted}/bin/parted";
-                  printf = "${pkgs.coreutils}/bin/printf";
-                  sleep = "${pkgs.coreutils}/bin/sleep";
-                  softstate = config.virtualisation.vmVariant.constants.storage.partitions.main.datasets.softstate.label;
-                  swap = config.virtualisation.vmVariant.constants.storage.partitions.swap.label;
-                  swapSize = (toString config.virtualisation.vmVariant.constants.storage.partitions.swap.size) + "MB";
-                  udevadm = "${pkgs.eudev}/bin/udevadm";
-                  zfs = "${pkgs.zfs}/bin/zfs";
-                  zpool = "${pkgs.zfs}/bin/zpool";
+                  softstate = config.virtualisation.vmVariant.constants.disk.partitions.main.datasets.softstate.label;
+                  swap = config.virtualisation.vmVariant.constants.disk.partitions.swap.label;
+                  swapSize = (toString config.virtualisation.vmVariant.constants.disk.partitions.swap.size) + "MB";
+                  zfsPackage = config.boot.zfs.package;
                 }
               )
             )
@@ -41,6 +36,27 @@
       };
 
       constants = {
+        disk = {
+          # Override the disk path to use the virtual machine disk
+          path = config.constants.vm.disk.path;
+
+          partitions = {
+            main = {
+              volumes = {
+                longhorn = {
+                  # Override the longhorn volume size to use the virtual machine disk size
+                  size = config.constants.vm.disk.partitions.main.volumes.longhorn.size;
+                };
+              };
+            };
+
+            swap = {
+              # Override the swap partition size to use the virtual machine swap size
+              size = config.constants.vm.disk.partitions.swap.size;
+            };
+          };
+        };
+
         kubernetes = {
           flux = {
             source = {
@@ -77,27 +93,15 @@
             ip = "100.127.132.11";
           };
         };
-
-        storage = {
-          # Override the disk path to use the virtual machine disk
-          diskPath = config.constants.vm.diskPath;
-
-          partitions = {
-            swap = {
-              # Override the swap partition size to use the virtual machine swap size
-              size = config.constants.vm.swapSize;
-            };
-          };
-        };
       };
 
       virtualisation = {
-        cores = config.virtualisation.vmVariant.constants.vm.cores;
+        cores = config.virtualisation.vmVariant.constants.vm.cpu.cores;
 
         # This file will be created on your development machine
         diskImage = "./bin/${config.virtualisation.vmVariant.system.name}.qcow2";
 
-        diskSize = config.virtualisation.vmVariant.constants.vm.diskSize;
+        diskSize = config.virtualisation.vmVariant.constants.vm.disk.size;
 
         # Filesystems need to be defined separately for virtual machines
         # But it's the same as in the real system
@@ -108,29 +112,35 @@
           "/home" =
             config.fileSystems."/home"
             // {
-              device = "${config.virtualisation.vmVariant.constants.storage.partitions.main.label}/${config.virtualisation.vmVariant.constants.storage.partitions.main.datasets.home.label}";
+              device = "${config.virtualisation.vmVariant.constants.disk.partitions.main.label}/${config.virtualisation.vmVariant.constants.disk.partitions.main.datasets.home.label}";
             };
 
           "/nix" =
             config.fileSystems."/nix"
             // {
-              device = "${config.virtualisation.vmVariant.constants.storage.partitions.main.label}/${config.virtualisation.vmVariant.constants.storage.partitions.main.datasets.nix.label}";
+              device = "${config.virtualisation.vmVariant.constants.disk.partitions.main.label}/${config.virtualisation.vmVariant.constants.disk.partitions.main.datasets.nix.label}";
             };
 
-          "/${config.virtualisation.vmVariant.constants.storage.partitions.main.datasets.hardstate.label}" =
-            config.fileSystems."/${config.constants.storage.partitions.main.datasets.hardstate.label}"
+          "/${config.virtualisation.vmVariant.constants.disk.partitions.main.datasets.hardstate.label}" =
+            config.fileSystems."/${config.constants.disk.partitions.main.datasets.hardstate.label}"
             // {
-              device = "${config.virtualisation.vmVariant.constants.storage.partitions.main.label}/${config.virtualisation.vmVariant.constants.storage.partitions.main.datasets.hardstate.label}";
+              device = "${config.virtualisation.vmVariant.constants.disk.partitions.main.label}/${config.virtualisation.vmVariant.constants.disk.partitions.main.datasets.hardstate.label}";
             };
 
-          "/${config.virtualisation.vmVariant.constants.storage.partitions.main.datasets.softstate.label}" =
-            config.fileSystems."/${config.constants.storage.partitions.main.datasets.softstate.label}"
+          "/${config.virtualisation.vmVariant.constants.disk.partitions.main.datasets.softstate.label}" =
+            config.fileSystems."/${config.constants.disk.partitions.main.datasets.softstate.label}"
             // {
-              device = "${config.virtualisation.vmVariant.constants.storage.partitions.main.label}/${config.virtualisation.vmVariant.constants.storage.partitions.main.datasets.softstate.label}";
+              device = "${config.virtualisation.vmVariant.constants.disk.partitions.main.label}/${config.virtualisation.vmVariant.constants.disk.partitions.main.datasets.softstate.label}";
+            };
+
+          "/var/lib/longhorn" =
+            config.fileSystems."/var/lib/longhorn"
+            // {
+              device = "/dev/disk/by-label/${config.virtualisation.vmVariant.constants.disk.partitions.main.volumes.longhorn.label}";
             };
         };
 
-        memorySize = config.virtualisation.vmVariant.constants.vm.memorySize;
+        memorySize = config.virtualisation.vmVariant.constants.vm.memory.size;
 
         # Shared directories between the virtual machine and your development machine
         sharedDirectories = {
@@ -140,7 +150,7 @@
             source = "\${SOPS_AGE_KEY_DIR:-\${XDG_CONFIG_HOME:-$HOME/.config}/sops/age}";
 
             # And will be mounted in the virtual machine at this path
-            target = "/${config.virtualisation.vmVariant.constants.storage.partitions.main.datasets.hardstate.label}/sops/age";
+            target = "/${config.virtualisation.vmVariant.constants.disk.partitions.main.datasets.hardstate.label}/sops/age";
           };
         };
 
