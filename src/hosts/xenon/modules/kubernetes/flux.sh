@@ -6,6 +6,7 @@ FLUX='@flux@'
 KEY_FILE='@keyFile@'
 KUBECONFIG='@kubeconfig@'
 KUBECTL='@kubectl@'
+NODE='@node@'
 PRINTF='@printf@'
 SEQ='@seq@'
 SLEEP='@sleep@'
@@ -74,11 +75,20 @@ fi
 
 ${PRINTF} '%s\n' 'Secret added'
 
+${PRINTF} '%s\n' 'Adding node labels'
+
+if ! ${KUBECTL} --kubeconfig "${KUBECONFIG}" label --overwrite node "${NODE}" 'node.longhorn.io/create-default-disk=true'; then
+	${PRINTF} '%s\n' 'Node label addition failed' >&2
+	exit 6
+fi
+
+${PRINTF} '%s\n' 'Node labels added'
+
 ${PRINTF} '%s\n' 'Creating source'
 
 if ! ${FLUX} --kubeconfig "${KUBECONFIG}" create source git main --url "${SOURCE_URL}" --branch "${SOURCE_BRANCH}" --ignore-paths "${SOURCE_IGNORE}"; then
 	${PRINTF} '%s\n' 'Flux source creation failed' >&2
-	exit 6
+	exit 7
 fi
 
 ${PRINTF} '%s\n' 'Source created'
@@ -87,7 +97,7 @@ ${PRINTF} '%s\n' 'Creating kustomization'
 
 if ! ${FLUX} --kubeconfig "${KUBECONFIG}" create kustomization main --source main --path "${SOURCE_PATH}" --decryption-provider sops --decryption-secret sops-keys --prune --wait; then
 	${PRINTF} '%s\n' 'Flux kustomization creation failed' >&2
-	exit 7
+	exit 8
 fi
 
 ${PRINTF} '%s\n' 'Kustomization created'

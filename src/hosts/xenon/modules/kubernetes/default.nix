@@ -170,6 +170,9 @@ in {
         # Advertise Tailscale IP address
         "--node-ip ${config.constants.network.tailscale.ip}"
 
+        # Set node name explicitly
+        "--node-name ${config.constants.name}"
+
         # Pass custom resolv.conf to kubelet
         "--resolv-conf ${resolvConf}"
 
@@ -233,6 +236,7 @@ in {
             keyFile = config.constants.secrets.sops.keyFile;
             kubeconfig = config.constants.kubernetes.files.kubeconfig;
             kubectl = "${pkgs.k3s}/bin/kubectl";
+            node = config.constants.name;
             printf = "${pkgs.coreutils}/bin/printf";
             seq = "${pkgs.coreutils}/bin/seq";
             sleep = "${pkgs.coreutils}/bin/sleep";
