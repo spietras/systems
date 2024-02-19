@@ -53,6 +53,7 @@
       nameserver ${config.constants.network.tailscale.ip}
     '';
   };
+  reversedDomain = lib.strings.concatStringsSep "." (lib.lists.reverseList (lib.strings.splitString "." config.constants.network.domain.root));
 in {
   boot = {
     kernelModules = [
@@ -82,6 +83,14 @@ in {
 
       # Install kubectl
       pkgs.kubectl
+
+      # Packages needed by Longhorn
+      pkgs.bash
+      pkgs.curl
+      pkgs.gawk
+      pkgs.gnugrep
+      pkgs.nfs-utils
+      pkgs.util-linux
     ];
   };
 
@@ -186,6 +195,14 @@ in {
       # Shared secret used by all nodes to join the cluster
       tokenFile = config.sops.secrets."k3s/token".path;
     };
+
+    openiscsi = {
+      # Enable iSCSI daemon needed by Longhorn
+      enable = true;
+
+      # This doesn't matter, but is required
+      name = "iqn.1998-03.${reversedDomain}:${config.constants.name}";
+    };
   };
 
   systemd = {
@@ -243,6 +260,15 @@ in {
           "tailscale-up.service"
         ];
       };
+    };
+
+    tmpfiles = {
+      rules = [
+        # Create symlink to system binaries
+        # This is needed for Longhorn, because it uses a different PATH
+        # It's harmless, because there is no /usr/local/bin in NixOS
+        "L+ /usr/local/bin - - - - /run/current-system/sw/bin/"
+      ];
     };
   };
 }

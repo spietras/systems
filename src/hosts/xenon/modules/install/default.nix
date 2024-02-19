@@ -25,7 +25,10 @@
             hardstate = config.constants.disk.partitions.main.datasets.hardstate.label;
             home = config.constants.disk.partitions.main.datasets.home.label;
             host = config.constants.name;
+            longhorn = config.constants.disk.partitions.main.volumes.longhorn.label;
+            longhornSize = (toString config.constants.disk.partitions.main.volumes.longhorn.size) + "MB";
             main = config.constants.disk.partitions.main.label;
+            mkfsext4 = "${pkgs.e2fsprogs}/bin/mkfs.ext4";
             mkfsfat = "${pkgs.dosfstools}/bin/mkfs.fat";
             nix = config.constants.disk.partitions.main.datasets.nix.label;
             nixosinstall = "${pkgs.nixos-install-tools}/bin/nixos-install";

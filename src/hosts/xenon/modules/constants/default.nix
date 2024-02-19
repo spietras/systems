@@ -58,6 +58,22 @@
               description = "Label for the main partition";
               type = lib.types.str;
             };
+
+            volumes = {
+              longhorn = {
+                label = lib.mkOption {
+                  default = "longhorn";
+                  description = "Label for the Longhorn volume";
+                  type = lib.types.str;
+                };
+
+                size = lib.mkOption {
+                  default = 65536;
+                  description = "Size of the Longhorn volume in MB";
+                  type = lib.types.int;
+                };
+              };
+            };
           };
 
           swap = {
@@ -269,6 +285,18 @@
 
         disk = {
           partitions = {
+            main = {
+              volumes = {
+                longhorn = {
+                  size = lib.mkOption {
+                    default = 1024;
+                    description = "Size of the Longhorn volume in MB";
+                    type = lib.types.int;
+                  };
+                };
+              };
+            };
+
             swap = {
               size = lib.mkOption {
                 default = 1024;

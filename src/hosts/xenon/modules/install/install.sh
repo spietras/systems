@@ -14,7 +14,10 @@ GREP='@grep@'
 HARDSTATE='@hardstate@'
 HOME='@home@'
 HOSTNAME='@host@'
+LONGHORN='@longhorn@'
+LONGHORN_SIZE='@longhornSize@'
 MAIN='@main@'
+MKFSEXT4='@mkfsext4@'
 MKFSFAT='@mkfsfat@'
 NIX='@nix@'
 NIXOSINSTALL='@nixosinstall@'
@@ -168,6 +171,30 @@ if ! "${ZFS_PACKAGE}/bin/zfs" create -o compression=on "${MAIN}/${HARDSTATE}" ||
 	exit 4
 fi
 
+printf '%s\n' 'Creating ZFS volumes'
+
+if ! "${ZFS_PACKAGE}/bin/zfs" create -o compression=on -V "${LONGHORN_SIZE}" "${MAIN}/${LONGHORN}"; then
+	printf '%s\n' 'Creating ZFS volumes failed' >&2
+	exit 5
+fi
+
+# force udev to create device nodes for volumes
+udevadm trigger
+
+printf '%s' 'Waiting for volumes to appear...'
+while [ ! -e "/dev/zvol/${MAIN}/${LONGHORN}" ]; do
+	sleep 1
+	printf '%s' '.'
+done
+printf '\n'
+
+printf '%s\n' 'Formatting ZFS volumes'
+
+if ! ${MKFSEXT4} -L "${LONGHORN}" "/dev/zvol/${MAIN}/${LONGHORN}"; then
+	printf '%s\n' 'Formatting ZFS volumes failed' >&2
+	exit 6
+fi
+
 printf '%s\n' "Formatting /dev/disk/by-partlabel/${SWAP} as swap"
 
 # swap is just swap
@@ -182,6 +209,7 @@ udevadm trigger
 printf '%s' 'Waiting for filesystems to appear...'
 while [ ! -e "/dev/disk/by-label/${BOOT}" ] ||
 	[ ! -e "/dev/disk/by-label/${MAIN}" ] ||
+	[ ! -e "/dev/disk/by-label/${LONGHORN}" ] ||
 	[ ! -e "/dev/disk/by-label/${SWAP}" ]; do
 	sleep 1
 	printf '%s' '.'
@@ -204,12 +232,13 @@ printf '%s\n' 'Mounting filesystems'
 
 # mount everything
 if ! mount --types tmpfs --options mode=755 none /mnt/ ||
-	! mkdir --parents /mnt/boot/ /mnt/home/ /mnt/nix/ "/mnt/${HARDSTATE}/" "/mnt/${SOFTSTATE}/" ||
+	! mkdir --parents /mnt/boot/ /mnt/home/ /mnt/nix/ "/mnt/${HARDSTATE}/" "/mnt/${SOFTSTATE}/" /var/lib/longhorn/ ||
 	! mount --types vfat "/dev/disk/by-label/${BOOT}" /mnt/boot/ ||
 	! mount --types zfs --options zfsutil "${MAIN}/${HOME}" /mnt/home/ ||
 	! mount --types zfs --options zfsutil "${MAIN}/${NIX}" /mnt/nix/ ||
 	! mount --types zfs --options zfsutil "${MAIN}/${HARDSTATE}" "/mnt/${HARDSTATE}/" ||
-	! mount --types zfs --options zfsutil "${MAIN}/${SOFTSTATE}" "/mnt/${SOFTSTATE}/"; then
+	! mount --types zfs --options zfsutil "${MAIN}/${SOFTSTATE}" "/mnt/${SOFTSTATE}/" ||
+	! mount --types ext4 "/dev/disk/by-label/${LONGHORN}" /var/lib/longhorn/; then
 	printf '%s\n' 'Mounting filesystems failed' >&2
 	exit 9
 fi
