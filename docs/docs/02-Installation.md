@@ -19,9 +19,9 @@ where `$HOST` is the name of the host device of your choice.
 When you are ready, commit the changes to the repository.
 
 Put the [`age`](https://github.com/FiloSottile/age)
-private key on the target machine either in `~/.config/sops/age/keys.txt`
+private keys on the target machine either in `~/.config/sops/age/keys.txt`
 or somewhere else with `SOPS_AGE_KEY_FILE` environment variable set.
-The installation script will copy the key to persistent storage.
+The installation script will copy the keys to persistent storage.
 
 Change the `HOST` variable to the name of the host device and run:
 

@@ -14,8 +14,8 @@ in {
 
   sops = {
     age = {
-      # age private key should be stored at this path on the host
-      keyFile = "/${osConfig.constants.disk.partitions.main.datasets.hardstate.label}/sops/age/keys.txt";
+      # age private keys should be stored at this path on the host
+      keyFile = osConfig.constants.secrets.sops.keyFile;
     };
 
     defaultSopsFile = ./secrets.yaml;
