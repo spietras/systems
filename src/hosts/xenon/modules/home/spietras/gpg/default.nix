@@ -14,12 +14,6 @@
       # Don't allow to edit trust manually
       mutableTrust = false;
 
-      # For some reason, the newer version of GnuPG doesn't work
-      package = pkgs.gnupg22.override {
-        # However, the older version uses insecure libgcrypt, so we need to change it
-        libgcrypt = pkgs.libgcrypt;
-      };
-
       publicKeys = [
         {
           # Take the public key from GitHub

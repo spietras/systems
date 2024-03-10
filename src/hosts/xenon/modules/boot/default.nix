@@ -136,7 +136,7 @@
           enable = true;
 
           # This is needed for correct ordering of boot entries
-          entryFilename = "a_memtest86.conf";
+          sortKey = "a_memtest86";
         };
 
         netbootxyz = {
@@ -144,7 +144,7 @@
           enable = true;
 
           # This is needed for correct ordering of boot entries
-          entryFilename = "a_netbootxyz.conf";
+          sortKey = "a_netbootxyz";
         };
       };
     };
