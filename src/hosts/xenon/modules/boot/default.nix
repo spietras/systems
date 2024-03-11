@@ -9,16 +9,6 @@
     # Disable console messages
     consoleLogLevel = 0;
 
-    # Kernel modules configuration
-    extraModprobeConfig = ''
-      # OverlayFS options
-      # Enable index to pevent breaking hardlinks
-      # Enable metacopy to speed up recursive metadata updates
-      # Enable redirect_dir to allow renaming directories on lower layers
-      # Enable xino_auto to let OverlayFS decide whether to use alternative inode indexing
-      options overlay index=on metacopy=on redirect_dir=on xino_auto=on
-    '';
-
     initrd = {
       # This was autodetected by nixos-generate-config
       availableKernelModules = [
