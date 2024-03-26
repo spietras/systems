@@ -13,10 +13,10 @@ if [[ -s /secrets/.ghtoken && -r /secrets/.ghtoken ]]; then
 	configfile="${confighome}/nix/nix.conf"
 	tmpfile="$(mktemp)"
 
-	mkdir -p "$(dirname "${configfile}")"
+	mkdir --parents "$(dirname "${configfile}")"
 	touch "${configfile}"
 
-	if grep -q extra-access-tokens "${configfile}"; then
+	if grep --quiet extra-access-tokens "${configfile}"; then
 		sed "s|extra-access-tokens.*|extra-access-tokens = github.com=${token}|" "${configfile}" >"${tmpfile}"
 		cat "${tmpfile}" >"${configfile}"
 		rm "${tmpfile}"
@@ -31,6 +31,6 @@ if [[ -s /secrets/.agekeys && -r /secrets/.agekeys ]]; then
 
 	# Copy age keys to SOPS config
 	targetfile="${confighome}/sops/age/keys.txt"
-	mkdir -p "$(dirname "${targetfile}")"
-	cp -f /secrets/.agekeys "${targetfile}"
+	mkdir --parents "$(dirname "${targetfile}")"
+	cp --force /secrets/.agekeys "${targetfile}"
 fi
