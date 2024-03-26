@@ -51,6 +51,10 @@ tasks:
         --recursive
         --force
         node_modules/
+    status:
+      - >
+        test
+        '!'
         -d
         node_modules/
   install-docs:
