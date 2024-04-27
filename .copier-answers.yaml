@@ -1,11 +1,10 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-_commit: 0.6.0
-_src_path: gh:quickplates/generic
+_commit: 0.1.0
+_src_path: gh:quickplates/nixos
 accountname: spietras
 description: NixOS configs for my homelab ❄️
 docs: true
 docsurl: https://spietras.github.io/systems
 projectname: systems
-releases: false
 reponame: systems
 repourl: https://github.com/spietras/systems
