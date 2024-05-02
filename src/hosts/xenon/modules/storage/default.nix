@@ -1,5 +1,9 @@
 # Storage configuration
-{inputs, ...}: {
+{
+  config,
+  inputs,
+  ...
+}: {
   imports = [
     # Import Disko modules
     inputs.disko.nixosModules.disko
@@ -50,6 +54,8 @@
               };
             };
           };
+
+          device = config.constants.storage.disks.main.device;
         };
       };
     };

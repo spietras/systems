@@ -174,6 +174,18 @@
         type = lib.types.str;
       };
 
+      storage = {
+        disks = {
+          main = lib.mkOption {
+            device = lib.mkOption {
+              default = "/dev/disk/by-id/ata-TEAM_T253240GB_TPBF2209020010203322";
+              description = "Device path of the main disk";
+              type = lib.types.str;
+            };
+          };
+        };
+      };
+
       vm = {
         cpu = {
           cores = lib.mkOption {

@@ -23,6 +23,7 @@
         # Provide values to substitute
         flake = inputs.self;
         host = config.constants.name;
+        main = config.constants.storage.disks.main.device;
       }
     );
   };
