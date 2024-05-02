@@ -1,33 +1,32 @@
 # Configuration related to visual appearance of the system
-{
-  inputs,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   fonts = {
     packages = [
+      # Roboto font from Google
+      pkgs.roboto
+
+      # Roboto Mono font patched with Nerd Font
+      (pkgs.nerdfonts.override {fonts = ["RobotoMono"];})
+
       # Emoji font from Google
       pkgs.noto-fonts-emoji
-
-      # Apple fonts
-      (pkgs.callPackage inputs.packages.apple-fonts {})
     ];
 
     fontconfig = {
       defaultFonts = {
         sansSerif = [
-          "SF Pro Text"
+          "Roboto"
         ];
 
         serif = [
-          "New York"
+          "Roboto"
         ];
 
         monospace = [
-          "SFMono Nerd Font"
+          "RobotoMono Nerd Font"
 
           # Unpatched font as fallback
-          "SF Mono"
+          "Roboto Mono"
         ];
 
         emoji = [
