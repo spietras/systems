@@ -8,21 +8,22 @@
   runtimeDir = "/run/user/${uid}";
 in {
   imports = [
-    # Import sops module
+    # Import sops modules
     inputs.sops-nix.homeManagerModules.sops
   ];
 
   sops = {
     age = {
       # age private keys should be stored at this path on the host
-      keyFile = osConfig.constants.secrets.sops.keyFile;
+      keyFile = "/var/lib/sops/age/keys.txt";
     };
 
+    # Store encrypted secrets in this file in the repository
     defaultSopsFile = ./secrets.yaml;
 
     # Make the paths explicit
     defaultSymlinkPath = "${runtimeDir}/secrets";
-    defaultSecretsMountPoint = "${runtimeDir}/secrets.d";
+    defaultSecretsMountPoint = "${runtimeDir}/secrets.d/";
 
     # You need to explicitly list here all secrets you want to use
     secrets = {

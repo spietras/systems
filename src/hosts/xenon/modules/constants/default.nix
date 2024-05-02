@@ -1,6 +1,6 @@
 # Reusable constants are defined here
 # All options have default values
-# You can use them in other modules
+# You can use these options in other modules
 {
   config,
   lib,
@@ -8,96 +8,6 @@
 }: {
   options = {
     constants = {
-      disk = {
-        partitions = {
-          boot = {
-            label = lib.mkOption {
-              default = "boot";
-              description = "Label for the boot partition";
-              type = lib.types.str;
-            };
-          };
-
-          main = {
-            datasets = {
-              hardstate = {
-                label = lib.mkOption {
-                  default = "hardstate";
-                  description = "Label for the hardstate dataset";
-                  type = lib.types.str;
-                };
-              };
-
-              home = {
-                label = lib.mkOption {
-                  default = "home";
-                  description = "Label for the home dataset";
-                  type = lib.types.str;
-                };
-              };
-
-              nix = {
-                label = lib.mkOption {
-                  default = "nix";
-                  description = "Label for the nix dataset";
-                  type = lib.types.str;
-                };
-              };
-
-              softstate = {
-                label = lib.mkOption {
-                  default = "softstate";
-                  description = "Label for the softstate dataset";
-                  type = lib.types.str;
-                };
-              };
-            };
-
-            label = lib.mkOption {
-              default = "main";
-              description = "Label for the main partition";
-              type = lib.types.str;
-            };
-
-            volumes = {
-              longhorn = {
-                label = lib.mkOption {
-                  default = "longhorn";
-                  description = "Label for the Longhorn volume";
-                  type = lib.types.str;
-                };
-
-                size = lib.mkOption {
-                  default = 65536;
-                  description = "Size of the Longhorn volume in MB";
-                  type = lib.types.int;
-                };
-              };
-            };
-          };
-
-          swap = {
-            label = lib.mkOption {
-              default = "swap";
-              description = "Label for the swap partition";
-              type = lib.types.str;
-            };
-
-            size = lib.mkOption {
-              default = 16384;
-              description = "Size of the swap partition in MB";
-              type = lib.types.int;
-            };
-          };
-        };
-
-        path = lib.mkOption {
-          default = "/dev/sda";
-          description = "Path to the disk";
-          type = lib.types.path;
-        };
-      };
-
       kubernetes = {
         cluster = {
           name = lib.mkOption {
@@ -264,16 +174,6 @@
         type = lib.types.str;
       };
 
-      secrets = {
-        sops = {
-          keyFile = lib.mkOption {
-            default = "/${config.constants.disk.partitions.main.datasets.hardstate.label}/sops/age/keys.txt";
-            description = "Path to the age key file for SOPS";
-            type = lib.types.path;
-          };
-        };
-      };
-
       vm = {
         cpu = {
           cores = lib.mkOption {
@@ -284,34 +184,6 @@
         };
 
         disk = {
-          partitions = {
-            main = {
-              volumes = {
-                longhorn = {
-                  size = lib.mkOption {
-                    default = 1024;
-                    description = "Size of the Longhorn volume in MB";
-                    type = lib.types.int;
-                  };
-                };
-              };
-            };
-
-            swap = {
-              size = lib.mkOption {
-                default = 1024;
-                description = "Size of the swap partition in MB";
-                type = lib.types.int;
-              };
-            };
-          };
-
-          path = lib.mkOption {
-            default = "/dev/vda";
-            description = "Path to the disk in the virtual machine";
-            type = lib.types.path;
-          };
-
           size = lib.mkOption {
             default = 8192;
             description = "Size of the disk in MB";
@@ -324,6 +196,28 @@
             default = 4096;
             description = "Size of the memory in MB";
             type = lib.types.int;
+          };
+        };
+
+        name = lib.mkOption {
+          default = "xenon-vm";
+          description = "Name of the virtual machine";
+          type = lib.types.str;
+        };
+
+        network = {
+          hostId = lib.mkOption {
+            default = "cc4e8be2";
+            description = "Unique identifier for the virtual machine";
+            type = lib.types.str;
+          };
+
+          tailscale = {
+            ip = lib.mkOption {
+              default = "100.127.132.11";
+              description = "IP address of the machine in the Tailscale network";
+              type = lib.types.str;
+            };
           };
         };
       };

@@ -1,18 +1,15 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 ### CONFIGURATION ###
 
-CAT='@cat@'
-MKTEMP='@mktemp@'
 MOTDFILE='@motdfile@'
-RM='@rm@'
 SCRIPT='@script@'
 
 ### FUNCTIONS ###
 
 # Get temporary file
 get_temporary_file() {
-	"${MKTEMP}"
+	mktemp
 }
 
 # Print motd
@@ -24,13 +21,13 @@ print_motd() {
 # $1: source
 # $2: destination
 move_file_contents() {
-	"${CAT}" "${1}" >"${2}"
+	cat "${1}" >"${2}"
 }
 
 # Remove temporary file
 # $1: file
 remove_temporary_file() {
-	"${RM}" --force "${1}"
+	rm --force "${1}"
 }
 
 # Execute

@@ -4,12 +4,13 @@
       url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     };
 
-    flake-parts = {
-      url = "github:hercules-ci/flake-parts";
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    impermanence = {
-      url = "github:nix-community/impermanence";
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
     };
 
     sops-nix = {

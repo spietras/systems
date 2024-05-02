@@ -5,6 +5,41 @@
   ...
 }: let
   yamlFormat = pkgs.formats.yaml {};
+  chronyOnlineOfflineScript = pkgs.writeShellApplication {
+    # Name of the script
+    name = "chrony-online-offline";
+
+    # Packages available in the script
+    runtimeInputs = [pkgs.coreutils pkgs.chrony];
+
+    # Load the script with substituted values
+    text = builtins.readFile (
+      # Substitute values in the script
+      pkgs.substituteAll {
+        # Use this file as source
+        src = ./chrony-online-offline.sh;
+      }
+    );
+  };
+  chronyDHCPNTPScript = pkgs.writeShellApplication {
+    # Name of the script
+    name = "chrony-dhcp-ntp";
+
+    # Packages available in the script
+    runtimeInputs = [pkgs.coreutils pkgs.chrony];
+
+    # Load the script with substituted values
+    text = builtins.readFile (
+      # Substitute values in the script
+      pkgs.substituteAll {
+        # Use this file as source
+        src = ./chrony-dhcp-ntp.sh;
+
+        # Provide values to substitute
+        sourcedir = "dhcp";
+      }
+    );
+  };
   dnsproxyConfig = yamlFormat.generate "dnsproxy.yaml" {
     # Query upstream DNS servers in parallel
     all-servers = true;
@@ -55,18 +90,43 @@
       "https://dns.google/dns-query"
     ];
   };
-in {
-  environment = {
-    persistence = {
-      "/softstate" = {
-        directories = [
-          # Network connections
-          "/etc/NetworkManager/system-connections/"
-        ];
-      };
-    };
-  };
+  tailscaleLogoutScript = pkgs.writeShellApplication {
+    # Name of the script
+    name = "tailscale-logout";
 
+    # Packages available in the script
+    runtimeInputs = [pkgs.tailscale];
+
+    # Load the script with substituted values
+    text = builtins.readFile (
+      # Substitute values in the script
+      pkgs.substituteAll {
+        # Use this file as source
+        src = ./tailscale-logout.sh;
+      }
+    );
+  };
+  tailscaleUpScript = pkgs.writeShellApplication {
+    # Name of the script
+    name = "tailscale-up";
+
+    # Packages available in the script
+    runtimeInputs = [pkgs.coreutils pkgs.curl pkgs.findutils pkgs.jq pkgs.tailscale];
+
+    # Load the script with substituted values
+    text = builtins.readFile (
+      # Substitute values in the script
+      pkgs.substituteAll {
+        # Use this file as source
+        src = ./tailscale-up.sh;
+
+        clientId = config.sops.secrets."tailscale/clientId".path;
+        clientSecret = config.sops.secrets."tailscale/clientSecret".path;
+        ip = config.constants.network.tailscale.ip;
+      }
+    );
+  };
+in {
   networking = {
     dhcpcd = {
       # Disable dhcpcd, we use NetworkManager which has its own DHCP client
@@ -80,7 +140,10 @@ in {
       ];
     };
 
+    # The identifier of the machine
     hostId = config.constants.network.hostId;
+
+    # The hostname of the machine
     hostName = config.constants.name;
 
     # We use dnsproxy as a local DNS resolver, so we need to point to it
@@ -93,29 +156,12 @@ in {
       dispatcherScripts = [
         # Change chrony servers states based on connection status
         {
-          source = pkgs.substituteAll {
-            src = ./chrony-online-offline.sh;
-
-            chronyc = "${pkgs.chrony}/bin/chronyc";
-            printf = "${pkgs.coreutils}/bin/printf";
-          };
+          source = "${chronyOnlineOfflineScript}/bin/chrony-online-offline";
         }
 
         # Add DHCP-provided NTP servers to chrony
         {
-          source = pkgs.substituteAll {
-            src = ./chrony-dhcp-ntp.sh;
-
-            chmod = "${pkgs.coreutils}/bin/chmod";
-            chown = "${pkgs.coreutils}/bin/chown";
-            chronyc = "${pkgs.chrony}/bin/chronyc";
-            mkdir = "${pkgs.coreutils}/bin/mkdir";
-            printf = "${pkgs.coreutils}/bin/printf";
-            sourcedir = "dhcp";
-            touch = "${pkgs.coreutils}/bin/touch";
-            tr = "${pkgs.coreutils}/bin/tr";
-            wc = "${pkgs.coreutils}/bin/wc";
-          };
+          source = "${chronyDHCPNTPScript}/bin/chrony-dhcp-ntp";
         }
       ];
 
@@ -271,13 +317,7 @@ in {
         };
 
         # Run when stopping the system
-        preStop = builtins.readFile (
-          pkgs.substituteAll {
-            src = ./tailscale-logout.sh;
-
-            tailscale = "${pkgs.tailscale}/bin/tailscale";
-          }
-        );
+        preStop = "${tailscaleLogoutScript}/bin/tailscale-logout";
 
         wantedBy = [
           # Make available at startup
@@ -310,21 +350,7 @@ in {
           Type = "oneshot";
         };
 
-        script = builtins.readFile (
-          pkgs.substituteAll {
-            src = ./tailscale-up.sh;
-
-            clientId = config.sops.secrets."tailscale/clientId".path;
-            clientSecret = config.sops.secrets."tailscale/clientSecret".path;
-            curl = "${pkgs.curl}/bin/curl";
-            ip = config.constants.network.tailscale.ip;
-            jq = "${pkgs.jq}/bin/jq";
-            mktemp = "${pkgs.coreutils}/bin/mktemp";
-            rm = "${pkgs.coreutils}/bin/rm";
-            tailscale = "${pkgs.tailscale}/bin/tailscale";
-            xargs = "${pkgs.findutils}/bin/xargs";
-          }
-        );
+        script = "${tailscaleUpScript}/bin/tailscale-up";
 
         wantedBy = [
           # Run at startup

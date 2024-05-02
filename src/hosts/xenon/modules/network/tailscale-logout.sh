@@ -1,9 +1,5 @@
-#!/bin/sh
-
-### CONFIGURATION ###
-
-TAILSCALE='@tailscale@'
+#!/usr/bin/env bash
 
 ### MAIN ###
 
-${TAILSCALE} logout
+tailscale logout

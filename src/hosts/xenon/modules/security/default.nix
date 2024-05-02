@@ -11,11 +11,6 @@
       # Reject bad packets instead of dropping them
       rejectPackets = true;
     };
-
-    tcpcrypt = {
-      # Use tcpcrypt to encrypt TCP connections when possible
-      enable = true;
-    };
   };
 
   security = {
@@ -33,24 +28,6 @@
 
       # But they don't need to enter a password
       wheelNeedsPassword = false;
-    };
-  };
-
-  users = {
-    groups = {
-      # We need to create a group for tcpcryptd
-      # For some reason it's not created automatically
-      tcpcryptd = {
-      };
-    };
-
-    users = {
-      tcpcryptd = {
-        # tcpcryptd user is actually created automatically, but we need to assign it to a group
-        group = "tcpcryptd";
-
-        isSystemUser = true;
-      };
     };
   };
 }

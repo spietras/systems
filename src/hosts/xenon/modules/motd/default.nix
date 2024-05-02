@@ -3,18 +3,62 @@
   config,
   pkgs,
   ...
-}: {
-  environment = {
-    persistence = {
-      "/softstate" = {
-        files = [
-          # MOTD
-          "/etc/motd"
-        ];
-      };
-    };
-  };
+}: let
+  dataScript = pkgs.writeShellApplication {
+    # Name of the script
+    name = "data";
 
+    # Packages available in the script
+    runtimeInputs = [pkgs.coreutils pkgs.curl pkgs.gawk pkgs.gnused pkgs.jq pkgs.krabby];
+
+    # Load the script with substituted values
+    text = builtins.readFile (
+      # Substitute values in the script
+      pkgs.substituteAll {
+        # Use this file as source
+        src = ./data.sh;
+      }
+    );
+  };
+  printScript = pkgs.writeShellApplication {
+    # Name of the script
+    name = "print";
+
+    # Packages available in the script
+    runtimeInputs = [pkgs.coreutils pkgs.gum pkgs.jq];
+
+    # Load the script with substituted values
+    text = builtins.readFile (
+      # Substitute values in the script
+      pkgs.substituteAll {
+        # Use this file as source
+        src = ./print.sh;
+
+        script = "${dataScript}/bin/data";
+      }
+    );
+  };
+  motdScript = pkgs.writeShellApplication {
+    # Name of the script
+    name = "motd";
+
+    # Packages available in the script
+    runtimeInputs = [pkgs.coreutils];
+
+    # Load the script with substituted values
+    text = builtins.readFile (
+      # Substitute values in the script
+      pkgs.substituteAll {
+        # Use this file as source
+        src = ./motd.sh;
+
+        # Provide values to substitute
+        motdfile = config.users.motdFile;
+        script = "${printScript}/bin/print";
+      }
+    );
+  };
+in {
   systemd = {
     services = {
       # Create a service for changing the MOTD
@@ -26,48 +70,7 @@
           "network-online.target"
         ];
 
-        script = builtins.readFile (
-          pkgs.substituteAll {
-            src = ./motd.sh;
-
-            cat = "${pkgs.coreutils}/bin/cat";
-            mktemp = "${pkgs.coreutils}/bin/mktemp";
-            motdfile = config.users.motdFile;
-            rm = "${pkgs.coreutils}/bin/rm";
-
-            script = pkgs.substituteAll {
-              src = ./print.sh;
-              isExecutable = true;
-
-              base64 = "${pkgs.coreutils}/bin/base64";
-              gum = "${pkgs.gum}/bin/gum";
-              jq = "${pkgs.jq}/bin/jq";
-              mktemp = "${pkgs.coreutils}/bin/mktemp";
-              printf = "${pkgs.coreutils}/bin/printf";
-              rm = "${pkgs.coreutils}/bin/rm";
-
-              script = pkgs.substituteAll {
-                src = ./data.sh;
-                isExecutable = true;
-
-                awk = "${pkgs.gawk}/bin/awk";
-                base64 = "${pkgs.coreutils}/bin/base64";
-                curl = "${pkgs.curl}/bin/curl";
-                jq = "${pkgs.jq}/bin/jq";
-                krabby = "${pkgs.krabby}/bin/krabby";
-                mktemp = "${pkgs.coreutils}/bin/mktemp";
-                printf = "${pkgs.coreutils}/bin/printf";
-                rm = "${pkgs.coreutils}/bin/rm";
-                sed = "${pkgs.gnused}/bin/sed";
-                shuf = "${pkgs.coreutils}/bin/shuf";
-                tr = "${pkgs.coreutils}/bin/tr";
-              };
-
-              tr = "${pkgs.coreutils}/bin/tr";
-              xargs = "${pkgs.findutils}/bin/xargs";
-            };
-          }
-        );
+        script = "${motdScript}/bin/motd";
 
         serviceConfig = {
           # This is needed to format the output correctly
@@ -90,6 +93,7 @@
   };
 
   users = {
+    # Store MOTD in this file
     motdFile = "/etc/motd";
   };
 }

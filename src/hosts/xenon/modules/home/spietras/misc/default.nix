@@ -24,7 +24,7 @@
       time = "pl_PL.UTF-8";
     };
 
-    # This should just stay as is
+    # Keep this value as the NixOS version used during first installation
     stateVersion = "22.11";
   };
 
