@@ -5,41 +5,31 @@
   lib,
   pkgs,
   ...
-}: {
+}: let
+  script = pkgs.writeShellApplication {
+    # Name of the script
+    name = "install";
+
+    # Packages available in the script
+    runtimeInputs = [pkgs.coreutils pkgs.disko];
+
+    # Load the script with substituted values
+    text = builtins.readFile (
+      # Substitute values in the script
+      pkgs.substituteAll {
+        # Use this file as source
+        src = ./install.sh;
+
+        # Provide values to substitute
+        flake = inputs.self;
+        host = config.constants.name;
+      }
+    );
+  };
+in {
   options = {
     installScript = lib.mkOption {
-      # Create shell script with some setup code added automatically
-      default = pkgs.writeShellApplication {
-        name = "install";
-
-        # pkgs.substituteAll returns a path to a file, so we need to read it
-        text = builtins.readFile (
-          # This is used to provide data to the script by replacing some strings
-          pkgs.substituteAll {
-            src = ./install.sh;
-
-            boot = config.constants.disk.partitions.boot.label;
-            disk = config.constants.disk.path;
-            flake = inputs.self;
-            grep = "${pkgs.gnugrep}/bin/grep";
-            hardstate = config.constants.disk.partitions.main.datasets.hardstate.label;
-            home = config.constants.disk.partitions.main.datasets.home.label;
-            host = config.constants.name;
-            longhorn = config.constants.disk.partitions.main.volumes.longhorn.label;
-            longhornSize = (toString config.constants.disk.partitions.main.volumes.longhorn.size) + "MB";
-            main = config.constants.disk.partitions.main.label;
-            mkfsext4 = "${pkgs.e2fsprogs}/bin/mkfs.ext4";
-            mkfsfat = "${pkgs.dosfstools}/bin/mkfs.fat";
-            nix = config.constants.disk.partitions.main.datasets.nix.label;
-            nixosinstall = "${pkgs.nixos-install-tools}/bin/nixos-install";
-            parted = "${pkgs.parted}/bin/parted";
-            softstate = config.constants.disk.partitions.main.datasets.softstate.label;
-            swap = config.constants.disk.partitions.swap.label;
-            swapSize = (toString config.constants.disk.partitions.swap.size) + "MB";
-            zfsPackage = config.boot.zfs.package;
-          }
-        );
-      };
+      default = script;
     };
   };
 }

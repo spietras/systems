@@ -1,19 +1,16 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 ### CONFIGURATION ###
 
-CHRONYC='@chronyc@'
-PRINTF='@printf@'
-
-STATUS="$2"
+status="$2"
 
 ### MAIN ###
 
-case "${STATUS}" in
+case "${status}" in
 up | down | connectivity-change | dhcp6-change)
-	${PRINTF} '%s\n' 'Switching sources to appropriate state'
+	printf '%s\n' 'Switching sources to appropriate state'
 
-	${CHRONYC} onoffline >/dev/null 2>&1
+	chronyc onoffline >/dev/null 2>&1
 	;;
 *) ;;
 esac

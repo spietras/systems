@@ -1,19 +1,9 @@
 # SSH server configuration
 {
-  config,
   lib,
   pkgs,
   ...
 }: {
-  environment = {
-    persistence = {
-      "/softstate" = {
-        # SSH host keys
-        files = map (key: key.path) config.services.openssh.hostKeys;
-      };
-    };
-  };
-
   services = {
     openssh = {
       # Enable SSH server

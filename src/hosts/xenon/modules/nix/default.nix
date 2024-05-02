@@ -50,7 +50,7 @@
       allowUnfree = true;
     };
 
-    # This is needed to specify the architecture of the system
+    # Specify the architecture of the system
     hostPlatform = config.constants.platform;
   };
 
@@ -73,7 +73,7 @@
       randomizedDelaySec = "1h";
     };
 
-    # This should just stay as is
+    # Keep this value as the NixOS version used during first installation
     stateVersion = "22.11";
   };
 }

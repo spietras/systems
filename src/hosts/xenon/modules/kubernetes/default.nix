@@ -29,6 +29,30 @@
       }
     ];
   };
+  fluxScript = pkgs.writeShellApplication {
+    # Name of the script
+    name = "flux";
+
+    # Packages available in the script
+    runtimeInputs = [pkgs.coreutils pkgs.fluxcd pkgs.k3s];
+
+    # Load the script with substituted values
+    text = builtins.readFile (
+      # Substitute values in the script
+      pkgs.substituteAll {
+        # Use this file as source
+        src = ./flux.sh;
+
+        # Provide values to substitute
+        kubeconfig = config.constants.kubernetes.files.kubeconfig;
+        node = config.constants.name;
+        sourceBranch = config.constants.kubernetes.flux.source.branch;
+        sourceIgnore = config.constants.kubernetes.flux.source.ignore;
+        sourcePath = config.constants.kubernetes.flux.source.path;
+        sourceUrl = config.constants.kubernetes.flux.source.url;
+      }
+    );
+  };
   kubeletConfig = yamlFormat.generate "kubelet.yaml" {
     apiVersion = "kubelet.config.k8s.io/v1beta1";
     kind = "KubeletConfiguration";
@@ -63,20 +87,6 @@ in {
   };
 
   environment = {
-    persistence = {
-      "/hardstate" = {
-        directories = [
-          # Kubernetes state
-          config.constants.kubernetes.directories.state
-        ];
-
-        files = [
-          # Node password
-          "/etc/rancher/node/password"
-        ];
-      };
-    };
-
     systemPackages = [
       # Install flux CLI
       pkgs.fluxcd
@@ -228,24 +238,7 @@ in {
           Type = "oneshot";
         };
 
-        script = builtins.readFile (
-          pkgs.substituteAll {
-            src = ./flux.sh;
-
-            flux = "${pkgs.fluxcd}/bin/flux";
-            keyFile = config.constants.secrets.sops.keyFile;
-            kubeconfig = config.constants.kubernetes.files.kubeconfig;
-            kubectl = "${pkgs.k3s}/bin/kubectl";
-            node = config.constants.name;
-            printf = "${pkgs.coreutils}/bin/printf";
-            seq = "${pkgs.coreutils}/bin/seq";
-            sleep = "${pkgs.coreutils}/bin/sleep";
-            sourceBranch = config.constants.kubernetes.flux.source.branch;
-            sourceIgnore = config.constants.kubernetes.flux.source.ignore;
-            sourcePath = config.constants.kubernetes.flux.source.path;
-            sourceUrl = config.constants.kubernetes.flux.source.url;
-          }
-        );
+        script = "${fluxScript}/bin/flux";
 
         wantedBy = [
           # Run at startup

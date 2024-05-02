@@ -1,59 +1,18 @@
 # Boot configuration
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   boot = {
     # Disable console messages
     consoleLogLevel = 0;
 
     initrd = {
-      # This was autodetected by nixos-generate-config
+      # Kernel modules needed for booting
       availableKernelModules = [
+        # These were autodetected by nixos-generate-config
         "ahci"
         "xhci_pci"
         "virtio_pci"
         "sr_mod"
         "virtio_blk"
-      ];
-
-      # Setup directories for persistent storage at boot
-      postDeviceCommands = builtins.readFile (
-        pkgs.substituteAll {
-          src = ./prepare.sh;
-
-          hardstate = config.constants.disk.partitions.main.datasets.hardstate.label;
-
-          hardstateDirectories = (
-            lib.strings.concatStringsSep
-            ":"
-            (
-              map
-              (directory: directory.directory)
-              config.environment.persistence."/hardstate".directories
-            )
-          );
-
-          main = config.constants.disk.partitions.main.label;
-          softstate = config.constants.disk.partitions.main.datasets.softstate.label;
-
-          softstateDirectories = (
-            lib.strings.concatStringsSep
-            ":"
-            (
-              map
-              (directory: directory.directory)
-              config.environment.persistence."/softstate".directories
-            )
-          );
-        }
-      );
-
-      supportedFilesystems = [
-        # Needed to support ZFS at boot
-        "zfs"
       ];
 
       # Disable log messages
@@ -84,13 +43,11 @@
       };
     };
 
-    # This was autodetected by nixos-generate-config
+    # Other kernel modules to load
     kernelModules = [
+      # These were autodetected by nixos-generate-config
       "kvm-intel"
     ];
-
-    # This is needed for ZFS to work
-    kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
 
     kernelParams = [
       # Reboot after 10 seconds on panic
@@ -150,11 +107,6 @@
         (pkgs.adi1090x-plymouth-themes.override {selected_themes = ["angular"];})
       ];
     };
-
-    supportedFilesystems = [
-      # Also needed to support ZFS at boot
-      "zfs"
-    ];
   };
 
   systemd = {

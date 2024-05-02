@@ -1,31 +1,17 @@
-#!/bin/sh
-
-### CONFIGURATION ###
-
-AWK='@awk@'
-BASE64='@base64@'
-CURL='@curl@'
-JQ='@jq@'
-KRABBY='@krabby@'
-MKTEMP='@mktemp@'
-PRINTF='@printf@'
-RM='@rm@'
-SED='@sed@'
-SHUF='@shuf@'
-TR='@tr@'
+#!/usr/bin/env bash
 
 ### FUNCTIONS ###
 
 # Get random pokeapi id
 get_random_pokeapi_id() {
-	"${SHUF}" --input-range 1-905 --head-count 1
+	shuf --input-range 1-905 --head-count 1
 }
 
 # Get pokeapi id
 # $1: pokemon id or name (optional)
 get_pokeapi_id() {
-	if [ -n "${1}" ]; then
-		"${PRINTF}" '%s' "${1}"
+	if [[ -n ${1:-} ]]; then
+		printf '%s' "${1}"
 	else
 		get_random_pokeapi_id
 	fi
@@ -33,7 +19,7 @@ get_pokeapi_id() {
 
 # Get temporare file
 get_temporary_file() {
-	"${MKTEMP}" "$@"
+	mktemp "$@"
 }
 
 # Get temporary json file
@@ -44,60 +30,62 @@ get_temporary_json_file() {
 # Get pokemon data
 # $1: pokeapi id
 get_pokemon_data() {
-	"${CURL}" --fail --silent --location https://pokeapi.co/api/v2/pokemon/"${1}"
+	curl --fail --silent --location https://pokeapi.co/api/v2/pokemon/"${1}"
 }
 
 # Get species url
 # $1: pokemon data file
 get_species_url() {
-	"${JQ}" --raw-output '.species.url' <"${1}"
+	jq --raw-output '.species.url' <"${1}"
 }
 
 # Get species data
 # $1: species url
 get_species_data() {
-	"${CURL}" --fail --silent --location "${1}"
+	curl --fail --silent --location "${1}"
 }
 
 # Get pokemon id
 # $1: pokemon data file
 get_pokemon_id() {
-	"${JQ}" --raw-output '.id' <"${1}"
+	jq --raw-output '.id' <"${1}"
 }
 
 # Get pokemon types
 # $1: pokemon data file
 get_pokemon_types() {
-	"${JQ}" --raw-output '.types[].type.name' <"${1}" |
-		"${TR}" '\n' ' ' |
-		"${SED}" 's/ *$//g'
+	# shellcheck disable=SC2312
+	jq --raw-output '.types[].type.name' <"${1}" |
+		tr '\n' ' ' |
+		sed 's/ *$//g'
 }
 
 # Get pokemon name
 # $1: pokemon data file
 get_pokemon_name() {
-	"${JQ}" --raw-output '.name' <"${1}"
+	jq --raw-output '.name' <"${1}"
 }
 
 # Get pokemon full name
 # $1: species data file
 get_pokemon_fullname() {
-	"${JQ}" --raw-output 'last(.names[] | select(.language.name == "en")).name' <"${1}"
+	jq --raw-output 'last(.names[] | select(.language.name == "en")).name' <"${1}"
 }
 
 # Get pokemon description
 # $1: species data file
 get_pokemon_description() {
-	"${JQ}" --raw-output 'last(.flavor_text_entries[] | select(.language.name == "en")).flavor_text' <"${1}" |
-		"${TR}" '\n\f' ' ' |
-		"${SED}" 's/ *$//g'
+	# shellcheck disable=SC2312
+	jq --raw-output 'last(.flavor_text_entries[] | select(.language.name == "en")).flavor_text' <"${1}" |
+		tr '\n\f' ' ' |
+		sed 's/ *$//g'
 }
 
 # Get shininess
 get_shininess() {
-	# shellcheck disable=SC2016
-	"${SHUF}" --input-range 1-100 --head-count 1 |
-		"${AWK}" '{ if ($1 <= 5) print "true"; else print "false" }'
+	# shellcheck disable=SC2016,SC2312
+	shuf --input-range 1-100 --head-count 1 |
+		awk '{ if ($1 <= 5) print "true"; else print "false" }'
 }
 
 # Get pokemon image encoded in base64
@@ -106,13 +94,13 @@ get_shininess() {
 get_pokemon_image() {
 	file="$(get_temporary_file)" || return 1
 
-	if [ "${2}" = "true" ]; then
-		"${KRABBY}" name "${1}" --no-title --shiny >"${file}" 2>/dev/null || return 2
+	if [[ ${2} == "true" ]]; then
+		krabby name "${1}" --no-title --shiny >"${file}" 2>/dev/null || return 2
 	else
-		"${KRABBY}" name "${1}" --no-title >"${file}" 2>/dev/null || return 2
+		krabby name "${1}" --no-title >"${file}" 2>/dev/null || return 2
 	fi
 
-	"${BASE64}" --wrap 0 <"${file}" || return 3
+	base64 --wrap 0 <"${file}" || return 3
 
 	remove_temporary_file "${file}" || return 4
 }
@@ -120,13 +108,13 @@ get_pokemon_image() {
 # Remove temporary file
 # $1: filename
 remove_temporary_file() {
-	"${RM}" --force "${1}"
+	rm --force "${1}"
 }
 
 # Execute
 # $1: pokemon id or name (optional)
 execute() {
-	pokeapi_id="$(get_pokeapi_id "${1}")" || return 1
+	pokeapi_id="$(get_pokeapi_id "${1:-}")" || return 1
 
 	pokemon_data_file="$(get_temporary_json_file)" || return 2
 	get_pokemon_data "${pokeapi_id}" >"${pokemon_data_file}" || return 3
@@ -147,7 +135,7 @@ execute() {
 	remove_temporary_file "${species_data_file}" || return 15
 
 	# Print json
-	"${PRINTF}" '{"pokemon_id": "%s", "types": "%s", "name": "%s", "fullname": "%s", "description": "%s", "shiny": "%s", "image": "%s"}\n' \
+	printf '{"pokemon_id": "%s", "types": "%s", "name": "%s", "fullname": "%s", "description": "%s", "shiny": "%s", "image": "%s"}\n' \
 		"${pokemon_id}" \
 		"${types}" \
 		"${name}" \

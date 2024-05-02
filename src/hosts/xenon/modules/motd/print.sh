@@ -1,22 +1,14 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 ### CONFIGURATION ###
 
-BASE64='@base64@'
-GUM='@gum@'
-JQ='@jq@'
-MKTEMP='@mktemp@'
-PRINTF='@printf@'
-RM='@rm@'
 SCRIPT='@script@'
-TR='@tr@'
-XARGS='@xargs@'
 
 ### FUNCTIONS ###
 
 # Get temporary json file
 get_temporary_json_file() {
-	"${MKTEMP}" --suffix '.json'
+	mktemp --suffix '.json'
 }
 
 # Get data
@@ -27,55 +19,56 @@ get_data() {
 # Get pokeapi id
 # $1: data file
 get_pokeapi_id() {
-	"${JQ}" --raw-output '.pokeapi_id' <"${1}"
+	jq --raw-output '.pokeapi_id' <"${1}"
 }
 
 # Get pokemon id
 # $1: data file
 get_pokemon_id() {
-	"${JQ}" --raw-output '.pokemon_id' <"${1}"
+	jq --raw-output '.pokemon_id' <"${1}"
 }
 
 # Get pokemon types
 # $1: data file
 get_types() {
-	"${JQ}" --raw-output '.types' <"${1}"
+	jq --raw-output '.types' <"${1}"
 }
 
 # Get pokemon name
 # $1: data file
 get_name() {
-	"${JQ}" --raw-output '.name' <"${1}"
+	jq --raw-output '.name' <"${1}"
 }
 
 # Get pokemon full name
 # $1: data file
 get_fullname() {
-	"${JQ}" --raw-output '.fullname' <"${1}"
+	jq --raw-output '.fullname' <"${1}"
 }
 
 # Get pokemon description
 # $1: data file
 get_description() {
-	"${JQ}" --raw-output '.description' <"${1}"
+	jq --raw-output '.description' <"${1}"
 }
 
 # Get shininess
 # $1: data file
 get_shininess() {
-	"${JQ}" --raw-output '.shiny' <"${1}"
+	jq --raw-output '.shiny' <"${1}"
 }
 
 # Get pokemon image
 # $1: data file
 get_image() {
-	"${JQ}" --raw-output '.image' <"${1}" |
-		"${BASE64}" --decode
+	# shellcheck disable=SC2312
+	jq --raw-output '.image' <"${1}" |
+		base64 --decode
 }
 
 # Get shiny color
 get_shiny_color() {
-	"${PRINTF}" '%s' '#FFD700'
+	printf '%s' '#FFD700'
 }
 
 # Get type color
@@ -83,61 +76,61 @@ get_shiny_color() {
 get_type_color() {
 	case "${1}" in
 	normal)
-		"${PRINTF}" '%s' '#A8A878'
+		printf '%s' '#A8A878'
 		;;
 	fire)
-		"${PRINTF}" '%s' '#F08030'
+		printf '%s' '#F08030'
 		;;
 	fighting)
-		"${PRINTF}" '%s' '#C03028'
+		printf '%s' '#C03028'
 		;;
 	water)
-		"${PRINTF}" '%s' '#6890F0'
+		printf '%s' '#6890F0'
 		;;
 	flying)
-		"${PRINTF}" '%s' '#A890F0'
+		printf '%s' '#A890F0'
 		;;
 	grass)
-		"${PRINTF}" '%s' '#78C850'
+		printf '%s' '#78C850'
 		;;
 	poison)
-		"${PRINTF}" '%s' '#A040A0'
+		printf '%s' '#A040A0'
 		;;
 	electric)
-		"${PRINTF}" '%s' '#F8D030'
+		printf '%s' '#F8D030'
 		;;
 	ground)
-		"${PRINTF}" '%s' '#E0C068'
+		printf '%s' '#E0C068'
 		;;
 	psychic)
-		"${PRINTF}" '%s' '#F85888'
+		printf '%s' '#F85888'
 		;;
 	rock)
-		"${PRINTF}" '%s' '#B8A038'
+		printf '%s' '#B8A038'
 		;;
 	ice)
-		"${PRINTF}" '%s' '#98D8D8'
+		printf '%s' '#98D8D8'
 		;;
 	bug)
-		"${PRINTF}" '%s' '#A8B820'
+		printf '%s' '#A8B820'
 		;;
 	dragon)
-		"${PRINTF}" '%s' '#7038F8'
+		printf '%s' '#7038F8'
 		;;
 	ghost)
-		"${PRINTF}" '%s' '#705898'
+		printf '%s' '#705898'
 		;;
 	dark)
-		"${PRINTF}" '%s' '#705848'
+		printf '%s' '#705848'
 		;;
 	steel)
-		"${PRINTF}" '%s' '#B8B8D0'
+		printf '%s' '#B8B8D0'
 		;;
 	fairy)
-		"${PRINTF}" '%s' '#EE99AC'
+		printf '%s' '#EE99AC'
 		;;
 	*)
-		"${PRINTF}" '%s' '#68A090'
+		printf '%s' '#68A090'
 		;;
 	esac
 }
@@ -145,7 +138,7 @@ get_type_color() {
 # Print image
 # $1: image
 print_image() {
-	"${GUM}" style \
+	gum style \
 		-- \
 		"${1}"
 }
@@ -153,7 +146,7 @@ print_image() {
 # Print pokemon id
 # $1: pokemon id
 print_pokemon_id() {
-	"${GUM}" style \
+	gum style \
 		--foreground '#000' \
 		--background '#fff' \
 		--padding '0 1' \
@@ -165,13 +158,13 @@ print_pokemon_id() {
 # $1: fullname
 # $2: shininess
 print_fullname() {
-	if [ "${2}" = "true" ]; then
+	if [[ ${2} == "true" ]]; then
 		color="$(get_shiny_color)"
 	else
 		color='#fff'
 	fi
 
-	"${GUM}" style \
+	gum style \
 		--bold \
 		--padding '0 3' \
 		--foreground "${color}" \
@@ -182,10 +175,10 @@ print_fullname() {
 # Print type
 # $1: type
 print_type() {
-	type="$("${PRINTF}" '%s' "${1}" | "${TR}" '[:lower:]' '[:upper:]')"
+	type="$(printf '%s' "${1}" | tr '[:lower:]' '[:upper:]')"
 	color="$(get_type_color "${1}")"
 
-	"${GUM}" style \
+	gum style \
 		--foreground '#fff' \
 		--background "${color}" \
 		--padding '0 1' \
@@ -197,11 +190,12 @@ print_type() {
 # $1: types
 print_types() {
 	for type in ${1}; do
+		# shellcheck disable=SC2312
 		type="$(print_type "${type}")"
-		"${PRINTF}" '%s\0' "${type}"
+		printf '%s\0' "${type}"
 	done |
-		"${XARGS}" -0 -- \
-			"${GUM}" join \
+		xargs -0 -- \
+			gum join \
 			--horizontal
 }
 
@@ -209,13 +203,13 @@ print_types() {
 # $1: description
 # $2: shininess
 print_description() {
-	if [ "${2}" = "true" ]; then
+	if [[ ${2} == "true" ]]; then
 		color="$(get_shiny_color)"
 	else
 		color='#fff'
 	fi
 
-	"${GUM}" style \
+	gum style \
 		--border rounded \
 		--border-foreground "${color}" \
 		--foreground "${color}" \
@@ -241,16 +235,16 @@ print_info() {
 	description="$(print_description "${6}" "${7}")"
 
 	top=$(
-		"${GUM}" join \
+		gum join \
 			--horizontal \
 			-- \
 			"${pokemon_id}" \
 			"${name}" \
 			"${types}"
 	)
-	top=$("${GUM}" style --padding '0 0 1 0' -- "${top}")
+	top=$(gum style --padding '0 0 1 0' -- "${top}")
 
-	"${GUM}" join \
+	gum join \
 		--vertical \
 		--align center \
 		-- \
@@ -261,7 +255,7 @@ print_info() {
 # Remove temporary file
 # $1: filename
 remove_temporary_file() {
-	"${RM}" --force "${1}"
+	rm --force "${1}"
 }
 
 # Print all
@@ -277,11 +271,11 @@ print_all() {
 	image="$(print_image "${8}")"
 	info="$(print_info "${1}" "${2}" "${3}" "${4}" "${5}" "${6}" "${7}")"
 
-	image=$("${GUM}" style --padding '0' -- "${image}")
-	info=$("${GUM}" style --padding '0 0 0 6' -- "${info}")
+	image=$(gum style --padding '0' -- "${image}")
+	info=$(gum style --padding '0 0 0 6' -- "${info}")
 
 	all=$(
-		"${GUM}" join \
+		gum join \
 			--horizontal \
 			--align center \
 			-- \
@@ -289,7 +283,7 @@ print_all() {
 			"${info}"
 	)
 
-	"${GUM}" style --padding 1 -- "${all}"
+	gum style --padding 1 -- "${all}"
 }
 
 # Execute

@@ -1,4 +1,4 @@
-# Enable locales
+# Locales configuration
 {
   i18n = {
     supportedLocales = [
