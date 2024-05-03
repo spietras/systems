@@ -5,7 +5,7 @@
   ...
 }: let
   uid = toString osConfig.users.users.spietras.uid;
-  runtimeDir = "/run/user/${uid}";
+  runtimeDir = "/run/user/${uid}/";
 in {
   imports = [
     # Import sops modules
@@ -15,7 +15,7 @@ in {
   sops = {
     age = {
       # age private keys should be stored at this path on the host
-      keyFile = "/var/lib/sops/age/keys.txt";
+      keyFile = osConfig.constants.secrets.sops.age.file;
     };
 
     # Store encrypted secrets in this file in the repository

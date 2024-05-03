@@ -140,12 +140,6 @@ in {
       ];
     };
 
-    # The identifier of the machine
-    hostId = config.constants.network.hostId;
-
-    # The hostname of the machine
-    hostName = config.constants.name;
-
     # We use dnsproxy as a local DNS resolver, so we need to point to it
     nameservers = [
       "127.0.0.1"
@@ -178,6 +172,12 @@ in {
       };
     };
 
+    # The identifier of the machine
+    hostId = config.constants.network.hostId;
+
+    # The hostname of the machine
+    hostName = config.constants.name;
+
     # Disable default NTP servers
     timeServers = [];
 
@@ -195,14 +195,14 @@ in {
       enable = true;
 
       extraConfig = ''
+        # Use NTS only as a fallback, because it's not reliable on some networks
+        authselectmode ignore
+
         # ntp.org is probably the most reliable NTP server
         pool pool.ntp.org iburst
 
         # Cloudflare is also great and supports NTS
         pool time.cloudflare.com iburst nts
-
-        # Use NTS only as a fallback, because it's not reliable on some networks
-        authselectmode ignore
 
         # Also use DHCP-provided NTP servers
         sourcedir /var/run/chrony/dhcp/
@@ -300,6 +300,9 @@ in {
 
         description = "Automatic logout from Tailscale";
 
+        # Run when stopping the system
+        preStop = "${tailscaleLogoutScript}/bin/tailscale-logout";
+
         requires = [
           # Require network to be online
           "network-online.target"
@@ -315,9 +318,6 @@ in {
           # This is needed for some reason
           RemainAfterExit = "yes";
         };
-
-        # Run when stopping the system
-        preStop = "${tailscaleLogoutScript}/bin/tailscale-logout";
 
         wantedBy = [
           # Make available at startup
@@ -345,12 +345,12 @@ in {
           "tailscaled.service"
         ];
 
+        script = "${tailscaleUpScript}/bin/tailscale-up";
+
         serviceConfig = {
           # Connect only once at startup
           Type = "oneshot";
         };
-
-        script = "${tailscaleUpScript}/bin/tailscale-up";
 
         wantedBy = [
           # Run at startup

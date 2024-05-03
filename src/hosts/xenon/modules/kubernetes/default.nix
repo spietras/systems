@@ -44,6 +44,7 @@
         src = ./flux.sh;
 
         # Provide values to substitute
+        keysFile = config.constants.secrets.sops.age.file;
         kubeconfig = config.constants.kubernetes.files.kubeconfig;
         node = config.constants.name;
         sourceBranch = config.constants.kubernetes.flux.source.branch;
@@ -60,11 +61,11 @@
       # Reserved CPU for system
       cpu = "${config.constants.kubernetes.resources.reserved.system.cpu}";
 
-      # Reserved memory for system
-      memory = "${config.constants.kubernetes.resources.reserved.system.memory}";
-
       # Reserved storage for system
       ephemeral-storage = "${config.constants.kubernetes.resources.reserved.system.storage}";
+
+      # Reserved memory for system
+      memory = "${config.constants.kubernetes.resources.reserved.system.memory}";
 
       # Reserved number of process IDs for system
       pid = "${toString config.constants.kubernetes.resources.reserved.system.pid}";

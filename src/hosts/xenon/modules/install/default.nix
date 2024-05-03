@@ -1,7 +1,7 @@
 # Install script
 {
-  inputs,
   config,
+  inputs,
   lib,
   pkgs,
   ...
@@ -23,7 +23,8 @@
         # Provide values to substitute
         flake = inputs.self;
         host = config.constants.name;
-        main = config.constants.storage.disks.main.device;
+        keysFile = config.constants.secrets.sops.age.file;
+        mainDiskDevice = config.constants.storage.disks.main.device;
       }
     );
   };
