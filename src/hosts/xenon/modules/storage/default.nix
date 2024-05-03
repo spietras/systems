@@ -14,48 +14,73 @@
       disk = {
         main = {
           content = {
-            # Use GPT partition table
-            type = "gpt";
-
             partitions = {
               boot = {
-                # Size of the boot partition
-                size = "512M";
-
-                # EFI system partition
-                type = "EF00";
-
                 content = {
-                  # This partition contains a filesystem
-                  type = "filesystem";
-
                   # Format the partition as FAT
                   format = "vfat";
 
                   # Mount the partition at /boot
                   mountpoint = "/boot";
+
+                  # This partition contains a filesystem
+                  type = "filesystem";
                 };
+
+                # Size of the boot partition
+                size = "1G";
+
+                # EFI system partition
+                type = "EF00";
               };
 
               main = {
+                content = {
+                  # This partition contains an LVM physical volume
+                  type = "lvm_pv";
+
+                  # Attach the partition to this volume group
+                  vg = "main";
+                };
+
                 # Use the rest of the disk for the main partition
                 size = "100%";
 
-                content = {
-                  # This partition contains a filesystem
-                  type = "filesystem";
-
-                  # Format the partition as ext4
-                  format = "ext4";
-
-                  # Mount the partition at /
-                  mountpoint = "/";
-                };
+                # Linux filesystem partition
+                type = "8300";
               };
             };
+
+            # Use GPT partition table
+            type = "gpt";
           };
 
           device = config.constants.storage.disks.main.device;
+          type = "disk";
+        };
+      };
+
+      lvm_vg = {
+        main = {
+          lvs = {
+            main = {
+              content = {
+                # Format the volume as ext4
+                format = "ext4";
+
+                # Mount the volume at /
+                mountpoint = "/";
+
+                # This volume contains a filesystem
+                type = "filesystem";
+              };
+
+              # Take all the space in the volume group
+              size = "100%FREE";
+            };
+          };
+
+          type = "lvm_vg";
         };
       };
     };
