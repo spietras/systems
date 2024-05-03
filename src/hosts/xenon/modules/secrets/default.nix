@@ -1,5 +1,9 @@
 # Secrets configuration
-{inputs, ...}: {
+{
+  config,
+  inputs,
+  ...
+}: {
   imports = [
     # Import sops modules
     inputs.sops-nix.nixosModules.sops
@@ -8,7 +12,7 @@
   sops = {
     age = {
       # age private keys should be stored at this path on the host
-      keyFile = "/var/lib/sops/age/keys.txt";
+      keyFile = config.constants.secrets.sops.age.file;
 
       # This is needed so that ssh keys are not unnecessarily picked up
       sshKeyPaths = [];
@@ -24,6 +28,9 @@
 
     # You need to explicitly list here all secrets you want to use
     secrets = {
+      "k3s/token" = {
+      };
+
       "passwords/root" = {
         # This is needed to make the secret available early enough
         neededForUsers = true;
@@ -33,9 +40,6 @@
       };
 
       "tailscale/clientSecret" = {
-      };
-
-      "k3s/token" = {
       };
     };
   };

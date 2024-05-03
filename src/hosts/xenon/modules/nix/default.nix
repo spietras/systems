@@ -24,22 +24,22 @@
 
     settings = {
       allowed-users = [
-        # Allow the wheel group (basically, all users with sudo access)
-        "@wheel"
-
         # Allow all normal users
         "@users"
+
+        # Allow the wheel group (basically, all users with sudo access)
+        "@wheel"
       ];
 
       # Enable automatic optimisation
       auto-optimise-store = true;
 
       experimental-features = [
-        # Enable commands
-        "nix-command"
-
         # Enable flakes
         "flakes"
+
+        # Enable commands
+        "nix-command"
       ];
     };
   };
@@ -74,6 +74,6 @@
     };
 
     # Keep this value as the NixOS version used during first installation
-    stateVersion = "22.11";
+    stateVersion = "23.11";
   };
 }

@@ -62,14 +62,6 @@
         };
 
         network = {
-          interfaces = {
-            cni = lib.mkOption {
-              default = "cni0";
-              description = "Name of the CNI interface";
-              type = lib.types.str;
-            };
-          };
-
           addresses = {
             cluster = lib.mkOption {
               default = "10.42.0.0/16";
@@ -80,6 +72,14 @@
             service = lib.mkOption {
               default = "10.43.0.0/16";
               description = "IP address allocation range for services";
+              type = lib.types.str;
+            };
+          };
+
+          interfaces = {
+            cni = lib.mkOption {
+              default = "cni0";
+              description = "Name of the CNI interface";
               type = lib.types.str;
             };
           };
@@ -108,16 +108,16 @@
                 type = lib.types.str;
               };
 
-              storage = lib.mkOption {
-                default = "5Gi";
-                description = "Reserved storage for system";
-                type = lib.types.str;
-              };
-
               pid = lib.mkOption {
                 default = 100;
                 description = "Reserved number of process IDs for system";
                 type = lib.types.int;
+              };
+
+              storage = lib.mkOption {
+                default = "5Gi";
+                description = "Reserved storage for system";
+                type = lib.types.str;
               };
             };
           };
@@ -172,6 +172,18 @@
         default = "x86_64-linux";
         description = "Platform of the machine";
         type = lib.types.str;
+      };
+
+      secrets = {
+        sops = {
+          age = {
+            file = lib.mkOption {
+              default = "/var/lib/sops/age/keys.txt";
+              description = "Path to the file with private age keys";
+              type = lib.types.str;
+            };
+          };
+        };
       };
 
       storage = {

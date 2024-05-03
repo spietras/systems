@@ -25,7 +25,7 @@
     };
 
     # Keep this value as the NixOS version used during first installation
-    stateVersion = "22.11";
+    stateVersion = "23.11";
   };
 
   manual = {

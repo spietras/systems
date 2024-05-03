@@ -2,6 +2,7 @@
 
 ### CONFIGURATION ###
 
+KEYS_FILE='@keysFile@'
 KUBECONFIG='@kubeconfig@'
 NODE='@node@'
 SOURCE_BRANCH='@sourceBranch@'
@@ -55,7 +56,7 @@ printf '%s\n' 'Flux installed'
 
 printf '%s\n' 'Adding SOPS keys secret'
 
-if ! manifest="$(kubectl --kubeconfig "${KUBECONFIG}" create secret generic sops-keys --namespace flux-system --from-file sops.agekey=/var/lib/sops/age/keys.txt --dry-run=client --save-config --output yaml)"; then
+if ! manifest="$(kubectl --kubeconfig "${KUBECONFIG}" create secret generic sops-keys --namespace flux-system --from-file "sops.agekey=${KEYS_FILE}" --dry-run=client --save-config --output yaml)"; then
 	printf '%s\n' 'Secret manifest creation failed' >&2
 	exit 4
 fi

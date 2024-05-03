@@ -276,9 +276,9 @@ in {
 
       # It's empty, but it's required
       settings = {
-        shared = {};
         client = {};
         daemon = {};
+        shared = {};
       };
     };
   };
