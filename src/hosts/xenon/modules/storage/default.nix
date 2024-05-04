@@ -78,6 +78,19 @@
               # Take all the space in the volume group
               size = "100%FREE";
             };
+
+            swap = {
+              content = {
+                # Enable encryption
+                randomEncryption = true;
+
+                # This volume contains a swap partition
+                type = "swap";
+              };
+
+              # Use 8 GB for swap
+              size = "8G";
+            };
           };
 
           type = "lvm_vg";
