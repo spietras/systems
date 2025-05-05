@@ -157,6 +157,9 @@ in {
         # Specify port for the API server
         "--https-listen-port ${toString config.constants.kubernetes.network.ports.api}"
 
+        # Remove terminated pods if there are too many
+        "--kube-controller-manager-arg '--terminated-pod-gc-threshold=10'"
+
         # Advertise Tailscale IP address
         "--node-ip ${config.constants.network.tailscale.ip}"
 
