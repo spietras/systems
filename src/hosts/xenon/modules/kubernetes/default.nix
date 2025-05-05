@@ -203,6 +203,11 @@ in {
         };
       };
 
+      gracefulNodeShutdown = {
+        # Enable graceful shutdown
+        enabled = true;
+      };
+
       # Use this device as the k3s server
       role = "server";
 
