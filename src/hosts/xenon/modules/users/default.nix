@@ -23,6 +23,9 @@
           # Can use docker
           "docker"
 
+          # Can use kubernetes
+          "kubernetes"
+
           # Can use sudo
           "wheel"
         ];

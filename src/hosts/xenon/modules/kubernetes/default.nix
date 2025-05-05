@@ -181,6 +181,8 @@ in {
 
         # Create kubeconfig file for local access
         "--write-kubeconfig ${config.constants.kubernetes.files.kubeconfig}"
+        "--write-kubeconfig-group ${config.users.groups.kubernetes.name}"
+        "--write-kubeconfig-mode 640"
       ];
 
       extraKubeletConfig = {
@@ -272,6 +274,14 @@ in {
         # It's harmless, because there is no /usr/local/bin in NixOS
         "L+ /usr/local/bin - - - - /run/current-system/sw/bin/"
       ];
+    };
+  };
+
+  users = {
+    groups = {
+      # Create kubernetes group
+      kubernetes = {
+      };
     };
   };
 }
