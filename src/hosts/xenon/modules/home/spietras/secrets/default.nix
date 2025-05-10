@@ -1,12 +1,10 @@
 # Secrets configuration
 {
+  config,
   inputs,
   osConfig,
   ...
-}: let
-  uid = toString osConfig.users.users.spietras.uid;
-  runtimeDir = "/run/user/${uid}/";
-in {
+}: {
   imports = [
     # Import sops modules
     inputs.sops-nix.homeManagerModules.sops
@@ -20,10 +18,6 @@ in {
 
     # Store encrypted secrets in this file in the repository
     defaultSopsFile = ./secrets.yaml;
-
-    # Make the paths explicit
-    defaultSymlinkPath = "${runtimeDir}/secrets";
-    defaultSecretsMountPoint = "${runtimeDir}/secrets.d/";
 
     # You need to explicitly list here all secrets you want to use
     secrets = {
