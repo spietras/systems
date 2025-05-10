@@ -23,9 +23,6 @@
     secrets = {
       "cloudflared/token" = {
       };
-
-      "openai/apiKey" = {
-      };
     };
   };
 }

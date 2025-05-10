@@ -20,9 +20,6 @@ in {
       # Terminal graphics
       pkgs.chafa
 
-      # ChatGPT CLI
-      pkgs.chatgpt-cli
-
       # Cloudflare Tunnel
       pkgs.cloudflared
 
@@ -98,9 +95,6 @@ in {
       # Colors helper
       pkgs.pastel
 
-      # Send files to other devices
-      pkgs.portal
-
       # Cure your bad habit of mistyping
       pkgs.sl
 
@@ -109,14 +103,6 @@ in {
 
       # sysctl on steroids
       pkgs.systeroid
-
-      # Trash management
-      (
-        pkgs.trashy.overrideAttrs (f: p: {
-          # Disable installing completions because they are broken
-          preFixup = "";
-        })
-      )
 
       # Share the terminal over the web
       pkgs.ttyd
@@ -135,9 +121,6 @@ in {
 
       # HTTPie alternative
       pkgs.xh
-
-      # Pretty resource viewer
-      pkgs.zfxtop
     ];
 
     shellAliases = {
@@ -262,9 +245,6 @@ in {
       shellAliases = {
         # Provide token to cloudflared
         cfd = "TUNNEL_TOKEN=\"$(cat ${config.sops.secrets."cloudflared/token".path})\" TUNNEL_TRANSPORT_PROTOCOL=http2 cloudflared";
-
-        # Provide API key to chatgpt
-        cgpt = "OPENAI_API_KEY=\"$(cat ${config.sops.secrets."openai/apiKey".path})\" chatgpt";
       };
     };
   };
@@ -273,30 +253,6 @@ in {
     # Task scheduler
     pueue = {
       enable = true;
-
-      # It's empty, but it's required
-      settings = {
-        client = {};
-        daemon = {};
-        shared = {};
-      };
-    };
-  };
-
-  xdg = {
-    configFile = {
-      "chatgpt/config.json" = {
-        source = jsonFormat.generate "chatgpt-config" {
-          # Pre-configured prompts
-          prompts = {
-            code = "Answer only with code.";
-            cmd = "Answer only with commands.";
-            default = "Answer as concisely as possible.";
-            emoji = "Answer only with my query translated to emojis.";
-            translate = "Answer only with the translation.";
-          };
-        };
-      };
     };
   };
 }
