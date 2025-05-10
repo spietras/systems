@@ -62,11 +62,6 @@
       # Enable automatic updates
       enable = true;
 
-      flags = [
-        # Refresh cache
-        "--refresh"
-      ];
-
       # Point to the GitHub repository as the source of truth
       flake = "github:spietras/systems#${config.constants.name}";
 
