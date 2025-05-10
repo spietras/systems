@@ -63,6 +63,11 @@ in {
     services = {
       # Create a service for changing the MOTD
       motd = {
+        after = [
+          # Wait for the network to be online
+          "network-online.target"
+        ];
+
         description = "Change the MOTD";
 
         requires = [
@@ -80,14 +85,31 @@ in {
           Restart = "on-failure";
         };
 
-        # Run every day at midnight
-        startAt = "00:00";
-
         unitConfig = {
           # Limit the number of restarts
           StartLimitIntervalSec = 60;
           StartLimitBurst = 10;
         };
+      };
+    };
+
+    timers = {
+      # Create a timer for the MOTD service
+      motd = {
+        description = "Change the MOTD";
+
+        timerConfig = {
+          # Run every day at midnight
+          OnCalendar = "00:00";
+
+          # Run on startup if last time was missed
+          Persistent = true;
+        };
+
+        wantedBy = [
+          # Enable the timer
+          "timers.target"
+        ];
       };
     };
   };
