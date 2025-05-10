@@ -13,7 +13,7 @@
     udev = {
       extraRules = ''
         # Add write access to the PC speaker for the "beep" group
-        ACTION=="add", SUBSYSTEM=="input", ATTRS{name}=="PC Speaker", ENV{DEVNAME}!="", RUN+="${pkgs.acl}/bin/setfacl -m g:beep:w '$env{DEVNAME}'"
+        ACTION=="add", SUBSYSTEM=="input", ATTRS{name}=="PC Speaker", ENV{DEVNAME}!="", RUN+="${pkgs.acl}/bin/setfacl -m g:${config.users.groups.beep.name}:w '$env{DEVNAME}'"
       '';
     };
   };
