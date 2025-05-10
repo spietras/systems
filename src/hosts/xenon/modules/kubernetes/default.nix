@@ -70,6 +70,13 @@ in {
   };
 
   environment = {
+    interactiveShellInit = ''
+      # Set KUBECONFIG environment variable for users in kubernetes group
+      if ${pkgs.coreutils}/bin/id --groups --name | ${pkgs.gnugrep}/bin/grep --quiet --word-regexp '${config.users.groups.kubernetes.name}'; then
+        export KUBECONFIG='${config.constants.kubernetes.files.kubeconfig}'
+      fi
+    '';
+
     systemPackages = [
       # Install flux CLI
       pkgs.fluxcd
@@ -283,6 +290,15 @@ in {
     groups = {
       # Create kubernetes group
       kubernetes = {
+      };
+    };
+
+    users = {
+      root = {
+        extraGroups = [
+          # Can use kubernetes
+          config.users.groups.kubernetes.name
+        ];
       };
     };
   };
