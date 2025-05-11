@@ -26,6 +26,9 @@
           # Can use kubernetes
           config.users.groups.kubernetes.name
 
+          # Can use tailscale
+          config.users.groups.tailscale.name
+
           # Can use sudo
           "wheel"
         ];
