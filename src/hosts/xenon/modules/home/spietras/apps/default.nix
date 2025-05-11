@@ -1,11 +1,5 @@
 # Applications
-{
-  config,
-  pkgs,
-  ...
-}: let
-  jsonFormat = pkgs.formats.json {};
-in {
+{pkgs, ...}: {
   home = {
     packages = [
       # Bandwidth usage TUI
@@ -19,9 +13,6 @@ in {
 
       # Terminal graphics
       pkgs.chafa
-
-      # Cloudflare Tunnel
-      pkgs.cloudflared
 
       # Displaying CPU information
       pkgs.cpufetch
@@ -239,13 +230,6 @@ in {
     zoxide = {
       enable = true;
       enableZshIntegration = true;
-    };
-
-    zsh = {
-      shellAliases = {
-        # Provide token to cloudflared
-        cfd = "TUNNEL_TOKEN=\"$(cat ${config.sops.secrets."cloudflared/token".path})\" TUNNEL_TRANSPORT_PROTOCOL=http2 cloudflared";
-      };
     };
   };
 

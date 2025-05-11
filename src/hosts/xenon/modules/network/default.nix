@@ -127,6 +127,13 @@
     );
   };
 in {
+  environment = {
+    systemPackages = [
+      # Cloudflare Tunnel
+      pkgs.cloudflared
+    ];
+  };
+
   networking = {
     dhcpcd = {
       # Disable dhcpcd, we use NetworkManager which has its own DHCP client
@@ -362,6 +369,10 @@ in {
 
   users = {
     groups = {
+      # Create cloudflare group
+      cloudflare = {
+      };
+
       # Create tailscale group
       tailscale = {
       };
@@ -370,6 +381,9 @@ in {
     users = {
       root = {
         extraGroups = [
+          # Can use cloudflare
+          config.users.groups.cloudflare.name
+
           # Can use tailscale
           config.users.groups.tailscale.name
         ];
