@@ -28,6 +28,11 @@
 
     # You need to explicitly list here all secrets you want to use
     secrets = {
+      "cloudflare/tunnels/demo/token" = {
+        group = config.users.groups.cloudflare.name;
+        mode = "0440";
+      };
+
       "k3s/token" = {
         group = config.users.groups.kubernetes.name;
         mode = "0440";

@@ -20,6 +20,9 @@
           # Can use beep
           config.users.groups.beep.name
 
+          # Can use cloudflare
+          config.users.groups.cloudflare.name
+
           # Can use docker
           config.users.groups.docker.name
 

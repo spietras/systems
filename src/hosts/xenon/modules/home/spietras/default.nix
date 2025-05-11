@@ -4,7 +4,6 @@
     ./git
     ./gpg
     ./misc
-    ./secrets
     ./shell
     ./ssh
   ];
