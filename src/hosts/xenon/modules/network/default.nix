@@ -359,4 +359,21 @@ in {
       };
     };
   };
+
+  users = {
+    groups = {
+      # Create tailscale group
+      tailscale = {
+      };
+    };
+
+    users = {
+      root = {
+        extraGroups = [
+          # Can use tailscale
+          config.users.groups.tailscale.name
+        ];
+      };
+    };
+  };
 }
