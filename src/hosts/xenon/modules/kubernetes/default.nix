@@ -6,6 +6,21 @@
   ...
 }: let
   jsonFormat = pkgs.formats.json {};
+  flannelConfig = jsonFormat.generate "flannel.json" {
+    Backend = {
+      # Set MTU explictly to match Tailscale MTU
+      MTU = 1280;
+
+      # Use persistent keepalives
+      PersistentKeepaliveInterval = 25;
+
+      # Use WireGuard backend
+      Type = "wireguard";
+    };
+
+    # Specify IP address allocation range for pods
+    Network = config.constants.kubernetes.network.addresses.cluster;
+  };
   flannelCniConfig = jsonFormat.generate "flannel-cni.json" {
     cniVersion = "1.0.0";
 
@@ -152,8 +167,8 @@ in {
         # Disable network policy
         "--disable-network-policy"
 
-        # Use WireGuard for Container Network Interface
-        "--flannel-backend wireguard-native"
+        # Use custom Flannel configuration
+        "--flannel-conf ${flannelConfig}"
 
         # Use custom CNI configuration
         "--flannel-cni-conf ${flannelCniConfig}"
