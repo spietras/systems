@@ -6,6 +6,24 @@
   ...
 }: let
   jsonFormat = pkgs.formats.json {};
+  flannelConfig = jsonFormat.generate "flannel.json" {
+    Backend = {
+      # Set MTU explictly to match Tailscale MTU
+      # Flannel will subtract 80 from this value when setting the actual MTU on interfaces
+      # So the actual MTU will be 1280, which is the default for Tailscale
+      # This is needed to avoid fragmentation issues in Tailscale proxy deployed in the cluster
+      MTU = 1280 + 80;
+
+      # Use persistent keepalives
+      PersistentKeepaliveInterval = 25;
+
+      # Use WireGuard backend
+      Type = "wireguard";
+    };
+
+    # Specify IP address allocation range for pods
+    Network = config.constants.kubernetes.network.addresses.cluster;
+  };
   flannelCniConfig = jsonFormat.generate "flannel-cni.json" {
     cniVersion = "1.0.0";
 
@@ -152,8 +170,11 @@ in {
         # Disable network policy
         "--disable-network-policy"
 
-        # Use WireGuard for Container Network Interface
+        # Use WireGuard backend for Flannel
         "--flannel-backend wireguard-native"
+
+        # Use custom Flannel configuration
+        "--flannel-conf ${flannelConfig}"
 
         # Use custom CNI configuration
         "--flannel-cni-conf ${flannelCniConfig}"
