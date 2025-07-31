@@ -56,11 +56,7 @@
     # Load the script with substituted values
     text = builtins.readFile (
       # Substitute values in the script
-      pkgs.substituteAll {
-        # Use this file as source
-        src = ./flux.sh;
-
-        # Provide values to substitute
+      pkgs.replaceVars ./flux.sh {
         keysFile = config.constants.secrets.sops.age.file;
         kubeconfig = config.constants.kubernetes.files.kubeconfig;
         node = config.constants.name;

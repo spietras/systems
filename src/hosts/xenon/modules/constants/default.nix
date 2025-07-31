@@ -217,7 +217,7 @@
 
         memory = {
           size = lib.mkOption {
-            default = 4096;
+            default = 8192;
             description = "Size of the memory in MB";
             type = lib.types.int;
           };

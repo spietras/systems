@@ -15,10 +15,7 @@
     # Load the script with substituted values
     text = builtins.readFile (
       # Substitute values in the script
-      pkgs.substituteAll {
-        # Use this file as source
-        src = ./chrony-online-offline.sh;
-      }
+      pkgs.replaceVars ./chrony-online-offline.sh {}
     );
   };
   chronyDHCPNTPScript = pkgs.writeShellApplication {
@@ -31,11 +28,7 @@
     # Load the script with substituted values
     text = builtins.readFile (
       # Substitute values in the script
-      pkgs.substituteAll {
-        # Use this file as source
-        src = ./chrony-dhcp-ntp.sh;
-
-        # Provide values to substitute
+      pkgs.replaceVars ./chrony-dhcp-ntp.sh {
         sourcedir = "dhcp";
       }
     );
@@ -100,10 +93,7 @@
     # Load the script with substituted values
     text = builtins.readFile (
       # Substitute values in the script
-      pkgs.substituteAll {
-        # Use this file as source
-        src = ./tailscale-logout.sh;
-      }
+      pkgs.replaceVars ./tailscale-logout.sh {}
     );
   };
   tailscaleUpScript = pkgs.writeShellApplication {
@@ -116,10 +106,7 @@
     # Load the script with substituted values
     text = builtins.readFile (
       # Substitute values in the script
-      pkgs.substituteAll {
-        # Use this file as source
-        src = ./tailscale-up.sh;
-
+      pkgs.replaceVars ./tailscale-up.sh {
         clientId = config.sops.secrets."tailscale/clientId".path;
         clientSecret = config.sops.secrets."tailscale/clientSecret".path;
         ip = config.constants.network.tailscale.ip;
