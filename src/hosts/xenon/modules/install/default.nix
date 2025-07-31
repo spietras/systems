@@ -16,11 +16,7 @@
     # Load the script with substituted values
     text = builtins.readFile (
       # Substitute values in the script
-      pkgs.substituteAll {
-        # Use this file as source
-        src = ./install.sh;
-
-        # Provide values to substitute
+      pkgs.replaceVars ./install.sh {
         flake = inputs.self;
         host = config.constants.name;
         keysFile = config.constants.secrets.sops.age.file;

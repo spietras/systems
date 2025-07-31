@@ -14,10 +14,7 @@
     # Load the script with substituted values
     text = builtins.readFile (
       # Substitute values in the script
-      pkgs.substituteAll {
-        # Use this file as source
-        src = ./data.sh;
-      }
+      pkgs.replaceVars ./data.sh {}
     );
   };
   printScript = pkgs.writeShellApplication {
@@ -30,10 +27,7 @@
     # Load the script with substituted values
     text = builtins.readFile (
       # Substitute values in the script
-      pkgs.substituteAll {
-        # Use this file as source
-        src = ./print.sh;
-
+      pkgs.replaceVars ./print.sh {
         script = "${dataScript}/bin/data";
       }
     );
@@ -48,11 +42,7 @@
     # Load the script with substituted values
     text = builtins.readFile (
       # Substitute values in the script
-      pkgs.substituteAll {
-        # Use this file as source
-        src = ./motd.sh;
-
-        # Provide values to substitute
+      pkgs.replaceVars ./motd.sh {
         motdfile = config.users.motdFile;
         script = "${printScript}/bin/print";
       }
