@@ -160,6 +160,12 @@
             type = lib.types.str;
           };
 
+          routes = lib.mkOption {
+            default = [config.constants.kubernetes.network.addresses.cluster];
+            description = "List of routes to advertise in the Tailscale network";
+            type = lib.types.listOf lib.types.str;
+          };
+
           tailnet = lib.mkOption {
             default = "mermaid-vibe";
             description = "Name of the Tailscale network";

@@ -37,6 +37,9 @@
           tailscale = {
             # Use different IP address for the virtual machine
             ip = config.virtualisation.vmVariant.constants.vm.network.tailscale.ip;
+
+            # Don't advertise any routes
+            routes = [];
           };
         };
       };
