@@ -7,6 +7,7 @@ set -o pipefail
 CLIENT_ID='@clientId@'
 CLIENT_SECRET='@clientSecret@'
 IP='@ip@'
+ROUTES='@routes@'
 
 ### MAIN ###
 
@@ -47,7 +48,11 @@ curl --silent 'https://api.tailscale.com/api/v2/tailnet/-/keys' \
 	jq --raw-output '.key' >"${keyfile}"
 
 # Connect to Tailscale
-tailscale up "--authkey=file:${keyfile}" --netfilter-mode=off
+tailscale up \
+	--accept-routes \
+	--advertise-routes="${ROUTES}" \
+	--authkey="file:${keyfile}" \
+	--netfilter-mode=off
 
 # Get device id
 device="$(tailscale status --json | jq --raw-output '.Self.ID')"

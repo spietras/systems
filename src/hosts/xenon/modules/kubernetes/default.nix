@@ -8,12 +8,6 @@
   jsonFormat = pkgs.formats.json {};
   flannelConfig = jsonFormat.generate "flannel.json" {
     Backend = {
-      # Set MTU explictly to match Tailscale MTU
-      # Flannel will subtract 80 from this value when setting the actual MTU on interfaces
-      # So the actual MTU will be 1280, which is the default for Tailscale
-      # This is needed to avoid fragmentation issues in Tailscale proxy deployed in the cluster
-      MTU = 1280 + 80;
-
       # Use persistent keepalives
       PersistentKeepaliveInterval = 25;
 
@@ -116,16 +110,16 @@ in {
       ];
 
       allowedUDPPorts = [
-        # Allow WireGuard (IPv4)
+        # Allow WireGuard
         51820
-
-        # Allow WireGuard (IPv6)
-        51821
       ];
 
       trustedInterfaces = [
         # Allow all traffic on CNI interface
         config.constants.kubernetes.network.interfaces.cni
+
+        # Allow all traffic on Flannel interface (IPv4)
+        "flannel-wg"
       ];
     };
   };

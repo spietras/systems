@@ -1,6 +1,7 @@
 # Network configuration
 {
   config,
+  lib,
   pkgs,
   ...
 }: let
@@ -110,6 +111,7 @@
         clientId = config.sops.secrets."tailscale/clientId".path;
         clientSecret = config.sops.secrets."tailscale/clientSecret".path;
         ip = config.constants.network.tailscale.ip;
+        routes = lib.strings.concatStringsSep "," config.constants.network.tailscale.routes;
       }
     );
   };
@@ -224,6 +226,9 @@ in {
 
       # Allow traffic on Tailscale port
       openFirewall = true;
+
+      # Enable system settings required for subnet routing
+      useRoutingFeatures = "both";
     };
 
     timesyncd = {
