@@ -107,27 +107,6 @@ you will have the `Trunk` extension installed in `Visual Studio Code`.
 `Trunk` will be set as the default formatter for all files,
 so you can format with it by using any editor formatting features.
 
-## 📄 Docs
-
-This project uses [`Docusaurus`](https://docusaurus.io) to generate documentation.
-The documentation is hosted on `GitHub Pages` and can be found
-[here](https://spietras.github.io/systems).
-All the documentation files are located in the `docs` directory.
-
-To build and serve the documentation locally,
-you can run the following command:
-
-```sh
-task docs
-```
-
-This will start a local server that will serve the documentation.
-
-The documentation is automatically built and deployed to `GitHub Pages`
-whenever a commit is pushed to the `main` branch.
-You can find the `GitHub Actions` workflow that does this in
-[`.github/workflows/docs.yaml`](https://github.com/spietras/systems/blob/main/.github/workflows/docs.yaml).
-
 ## 🙊 Secrets management
 
 This project uses [`SOPS`](https://github.com/getsops/sops)

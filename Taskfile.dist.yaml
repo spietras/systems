@@ -1,4 +1,4 @@
-version: "3.39"
+version: "3.43"
 
 tasks:
   template:
@@ -8,7 +8,7 @@ tasks:
       GIT_CONFIG_GLOBAL: ""
       GIT_CONFIG_SYSTEM: ""
     cmds:
-      - >
+      - >-
         copier
         update
         --answers-file
@@ -17,7 +17,7 @@ tasks:
   flake:
     desc: Update flake.lock
     cmds:
-      - >
+      - >-
         nix
         --accept-flake-config
         --extra-experimental-features
@@ -29,107 +29,27 @@ tasks:
   fmt:
     desc: Format files
     cmds:
-      - task: install-docs-internal
-      - >
+      - >-
         trunk
         fmt
         {{ .CLI_ARGS }}
   lint:
     desc: Lint files
     cmds:
-      - task: install-docs-internal
-      - >
+      - >-
         trunk
         check
         {{ .CLI_ARGS }}
-  remove-docs-node-modules:
-    desc: Clean docs node_modules
-    dir: docs/
-    cmds:
-      - >
-        rm
-        --recursive
-        --force
-        node_modules/
-    status:
-      - >
-        test
-        '!'
-        -d
-        node_modules/
-  install-docs:
-    desc: Install docs dependencies
-    dir: docs/
-    sources:
-      - package-lock.json
-      - package.json
-      - ../flake.lock
-      - ../*.nix
-      - ../Taskfile.dist.yaml
-      - ../{taskfile,Taskfile}.{yaml,yml}
-    generates:
-      - node_modules/**/*
-    cmds:
-      - >
-        npm
-        install
-        {{ .CLI_ARGS }}
-  install-docs-internal:
-    desc: Install docs dependencies quietly
-    internal: true
-    dir: docs/
-    cmds:
-      - task: install-docs
-        vars:
-          CLI_ARGS: >
-            --prefer-offline
-            --no-audit
-            --no-fund
-            --quiet
-            --no-progress
-  update-docs:
-    desc: Update docs dependencies
-    dir: docs/
-    cmds:
-      - task: install-docs-internal
-      - >
-        npm
-        run
-        --
-        update
-        {{ .CLI_ARGS }}
-  test-docs:
-    desc: Test docs
-    dir: docs/
-    cmds:
-      - task: install-docs-internal
-      - >
-        npm
-        run
-        --
-        test
-        {{ .CLI_ARGS }}
-  docs:
-    desc: Run docusaurus
-    dir: docs/
-    interactive: true
-    cmds:
-      - task: install-docs-internal
-      - >
-        npm
-        run
-        --
-        docs
-        {{ .CLI_ARGS | default "start --host 0.0.0.0" }}
   clean:
-    desc: Clean build artifacts
+    desc: Clean build outputs
     cmds:
-      - >
+      - >-
         rm
         --force
+        {{ .CLI_ARGS }}
         build
     status:
-      - >
+      - >-
         test
         '!'
         -e
@@ -137,33 +57,33 @@ tasks:
   build:
     desc: Build a target
     cmds:
-      - >
+      - >-
         ./scripts/build.sh
         {{ .CLI_ARGS }}
   run:
     desc: Run a target
     interactive: true
     cmds:
-      - >
+      - >-
         ./scripts/run.sh
         {{ .CLI_ARGS }}
   vm:
     desc: Run a virtual machine
     interactive: true
     cmds:
-      - >
+      - >-
         ./scripts/vm.sh
         {{ .CLI_ARGS }}
   install:
     desc: Install system on current machine
     cmds:
-      - >
+      - >-
         ./scripts/install.sh
         {{ .CLI_ARGS }}
   secret:
     desc: Edit secrets
     interactive: true
     cmds:
-      - >
+      - >-
         sops
         {{ .CLI_ARGS }}

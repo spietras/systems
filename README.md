@@ -5,7 +5,6 @@
 NixOS configs for my homelab ❄️
 
 [![Lint](https://github.com/spietras/systems/actions/workflows/lint.yaml/badge.svg)](https://github.com/spietras/systems/actions/workflows/lint.yaml)
-[![Docs](https://github.com/spietras/systems/actions/workflows/docs.yaml/badge.svg)](https://github.com/spietras/systems/actions/workflows/docs.yaml)
 
 </div>
 
@@ -13,13 +12,8 @@ NixOS configs for my homelab ❄️
 
 ## 💡 About
 
-This repository contains [`NixOS`](https://nixos.org)
+`systems` contains [`NixOS`](https://nixos.org)
 configurations for all my homelab machines.
-
-## 📄 Further Reading
-
-More in-depth documentation can be found
-[here](https://spietras.github.io/systems).
 
 ## 💻 Development
 
