@@ -161,7 +161,7 @@
           };
 
           routes = lib.mkOption {
-            default = [config.constants.kubernetes.network.addresses.cluster];
+            default = [config.constants.kubernetes.network.addresses.cluster config.constants.kubernetes.network.addresses.service];
             description = "List of routes to advertise in the Tailscale network";
             type = lib.types.listOf lib.types.str;
           };
