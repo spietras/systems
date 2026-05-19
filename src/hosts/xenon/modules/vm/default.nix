@@ -4,13 +4,16 @@
     vmVariant = {
       constants = {
         kubernetes = {
-          flux = {
-            source = {
-              # Don't ignore tests
-              ignore = "!/tests/";
+          cluster = {
+            # Use different cluster in the virtual machine
+            name = config.virtualisation.vmVariant.constants.vm.kubernetes.cluster.name;
+          };
 
-              # Override the path to cluster resources to use the ones for tests
-              path = "tests/clusters/vm/${config.virtualisation.vmVariant.constants.kubernetes.cluster.name}";
+          network = {
+            addresses = {
+              # Use different cluster and service CIDR in the virtual machine
+              cluster = config.virtualisation.vmVariant.constants.vm.kubernetes.network.addresses.cluster;
+              service = config.virtualisation.vmVariant.constants.vm.kubernetes.network.addresses.service;
             };
           };
 
@@ -18,10 +21,10 @@
             reserved = {
               # Override reserved resources to adjust them for the virtual machine
               system = {
-                cpu = "500m";
-                memory = "500Mi";
-                pid = 100;
-                storage = "500Mi";
+                cpu = config.virtualisation.vmVariant.constants.vm.kubernetes.resources.reserved.system.cpu;
+                memory = config.virtualisation.vmVariant.constants.vm.kubernetes.resources.reserved.system.memory;
+                pid = config.virtualisation.vmVariant.constants.vm.kubernetes.resources.reserved.system.pid;
+                storage = config.virtualisation.vmVariant.constants.vm.kubernetes.resources.reserved.system.storage;
               };
             };
           };
@@ -38,24 +41,24 @@
             # Use different IP address for the virtual machine
             ip = config.virtualisation.vmVariant.constants.vm.network.tailscale.ip;
 
-            # Don't advertise any routes
-            routes = [];
+            # Advertise different routes for the virtual machine
+            routes = config.virtualisation.vmVariant.constants.vm.network.tailscale.routes;
           };
         };
       };
 
       virtualisation = {
         # CPU cores for the virtual machine
-        cores = config.virtualisation.vmVariant.constants.vm.cpu.cores;
+        cores = config.virtualisation.vmVariant.constants.vm.resources.cpu.cores;
 
         # Path to the disk image
         diskImage = "./bin/${config.virtualisation.vmVariant.constants.vm.name}.qcow2";
 
         # Size of the disk image
-        diskSize = config.virtualisation.vmVariant.constants.vm.disk.size;
+        diskSize = config.virtualisation.vmVariant.constants.vm.resources.disk.size;
 
         # Memory size for the virtual machine
-        memorySize = config.virtualisation.vmVariant.constants.vm.memory.size;
+        memorySize = config.virtualisation.vmVariant.constants.vm.resources.memory.size;
 
         # Shared directories between the virtual machine and your development machine
         sharedDirectories = {
