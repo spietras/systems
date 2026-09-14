@@ -1,12 +1,5 @@
 # Things that impact performance
 {
-  environment = {
-    memoryAllocator = {
-      # mimalloc is supposed to be faster than the default glibc's malloc
-      provider = "mimalloc";
-    };
-  };
-
   services = {
     dbus = {
       # dbus-broker is supposed to be faster than the default dbus-daemon
@@ -26,12 +19,16 @@
     };
 
     logind = {
-      # Kill user processes when the user logs out
-      # This is useful for reducing unnecessary memory usage
-      # However, sometimes you need to keep some processes running even after logging out
-      # For example, when using screen or tmux
-      # In this case, you need to run them with systemd-run --user
-      killUserProcesses = true;
+      settings = {
+        Login = {
+          # Kill user processes when the user logs out
+          # This is useful for reducing unnecessary memory usage
+          # However, sometimes you need to keep some processes running even after logging out
+          # For example, when using screen or tmux
+          # In this case, you need to run them with systemd-run --user
+          KillUserProcesses = true;
+        };
+      };
     };
   };
 

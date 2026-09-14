@@ -1,4 +1,4 @@
-version: "3.43"
+version: "3.48"
 
 tasks:
   template:
@@ -46,13 +46,8 @@ tasks:
       - >-
         rm
         --force
+        --recursive
         {{ .CLI_ARGS }}
-        build
-    status:
-      - >-
-        test
-        '!'
-        -e
         build
   build:
     desc: Build a target
