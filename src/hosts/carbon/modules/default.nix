@@ -1,0 +1,28 @@
+{
+  imports = [
+    ./audio
+    ./boot
+    ./constants
+    ./containers
+    ./desktop
+    ./hardware
+    ./home
+    ./install
+    ./locales
+    ./misc
+    ./motd
+    ./network
+    ./nix
+    ./performance
+    ./power
+    ./printing
+    ./secrets
+    ./security
+    ./shell
+    ./ssh
+    ./storage
+    ./style
+    ./users
+    ./vm
+  ];
+}
