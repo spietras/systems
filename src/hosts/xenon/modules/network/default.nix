@@ -363,24 +363,8 @@ in {
 
   users = {
     groups = {
-      # Create cloudflare group
-      cloudflare = {
-      };
-
       # Create tailscale group
       tailscale = {
-      };
-    };
-
-    users = {
-      root = {
-        extraGroups = [
-          # Can use cloudflare
-          config.users.groups.cloudflare.name
-
-          # Can use tailscale
-          config.users.groups.tailscale.name
-        ];
       };
     };
   };
