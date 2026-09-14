@@ -209,15 +209,17 @@ in {
       # Use systemd-resolved as the system DNS resolver
       enable = true;
 
-      extraConfig = ''
-        # Disable default listener on port 53 on loopback interface
-        DNSStubListener=no
+      settings = {
+        Resolve = {
+          # Disable default listener on port 53 on loopback interface
+          DNSStubListener = "no";
 
-        # Listen for DNS requests on Tailscale interface
-        # Port 53 is used for that
-        # Both TCP and UDP requests are accepted
-        DNSStubListenerExtra=${config.constants.network.tailscale.ip}
-      '';
+          # Listen for DNS requests on Tailscale interface
+          # Port 53 is used for that
+          # Both TCP and UDP requests are accepted
+          DNSStubListenerExtra = config.constants.network.tailscale.ip;
+        };
+      };
     };
 
     tailscale = {
