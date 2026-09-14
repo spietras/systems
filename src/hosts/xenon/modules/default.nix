@@ -1,6 +1,5 @@
 {
   imports = [
-    ./appearance
     ./beep
     ./boot
     ./constants
@@ -20,6 +19,7 @@
     ./shell
     ./ssh
     ./storage
+    ./style
     ./users
     ./vm
   ];
