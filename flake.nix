@@ -48,7 +48,7 @@
           inputs.utils.mkHosts {
             inherit inputs;
             directory = "hosts";
-            hosts = ["dummy" "xenon"];
+            hosts = ["carbon" "dummy" "xenon"];
           }
         )
         // {
