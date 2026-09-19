@@ -1,5 +1,6 @@
 # Configuration related to styling
 {
+  config,
   inputs,
   lib,
   pkgs,
@@ -53,6 +54,20 @@ in {
   stylix = {
     # Use Catppuccin Mocha color scheme
     base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
+
+    cursor = {
+      # Use Bibata cursors matching the configured polarity
+      name =
+        if config.stylix.polarity == "light"
+        then "Bibata-Modern-Ice"
+        else "Bibata-Modern-Classic";
+
+      # Use Bibata cursors
+      package = pkgs.bibata-cursors;
+
+      # Set typical cursor size
+      size = 24;
+    };
 
     # Enable stylix
     enable = true;
