@@ -1,7 +1,6 @@
 {
   imports = [
     ./apps
-    ./desktop
     ./dev
     ./git
     ./misc

@@ -1,5 +1,6 @@
 # Desktop environment configuration
 {
+  config,
   lib,
   pkgs,
   ...
@@ -65,9 +66,27 @@
                   automatic-timezone = lib.gvariant.mkBoolean true;
                 };
 
+                "org/gnome/desktop/input-sources" = {
+                  # Set the default input source to Polish
+                  sources = lib.gvariant.mkArray [
+                    (lib.gvariant.mkTuple [
+                      (lib.gvariant.mkString "xkb")
+                      (lib.gvariant.mkString "pl")
+                    ])
+                  ];
+                };
+
                 "org/gnome/desktop/interface" = {
+                  # Show seconds in the clock
+                  clock-show-seconds = lib.gvariant.mkBoolean true;
+
                   # Disable hot corners
                   enable-hot-corners = lib.gvariant.mkBoolean false;
+                };
+
+                "org/gnome/desktop/session" = {
+                  # Set the idle delay to 15 minutes
+                  idle-delay = lib.gvariant.mkUint32 900;
                 };
 
                 "org/gnome/desktop/wm/preferences" = {
@@ -137,17 +156,47 @@
                   unblur-in-overview = lib.gvariant.mkBoolean true;
                 };
 
+                "org/gnome/shell/extensions/blur-my-shell/overview" = {
+                  # Select light or dark overview style
+                  style-components = lib.gvariant.mkInt32 (
+                    if config.stylix.polarity == "light"
+                    then 1
+                    else 2
+                  );
+                };
+
                 "org/gnome/shell/extensions/blur-my-shell/panel" = {
-                  # Disable panel blur in overview
-                  unblur-in-overview = lib.gvariant.mkBoolean true;
+                  # Disable panel blur
+                  blur = lib.gvariant.mkBoolean false;
                 };
 
                 "org/gnome/shell/extensions/dash-to-dock" = {
+                  # Set the animation time for the dock
+                  animation-time = lib.gvariant.mkDouble 0.1;
+
+                  # Apply custom theme
+                  apply-custom-theme = lib.gvariant.mkBoolean true;
+
                   # Disable showing the overview on startup
                   disable-overview-on-startup = lib.gvariant.mkBoolean true;
+
+                  # Set the hide delay for the dock
+                  hide-delay = lib.gvariant.mkDouble 1.0;
+
+                  # Disable requiring pressure to show the dock
+                  require-pressure-to-show = lib.gvariant.mkBoolean false;
+
+                  # Disable the show delay for the dock
+                  show-delay = lib.gvariant.mkDouble 0.0;
+
+                  # Hide mounted drives
+                  show-mounts = lib.gvariant.mkBoolean false;
                 };
 
                 "org/gnome/shell/extensions/just-perfection" = {
+                  # Hide events in clock menu
+                  events-button = lib.gvariant.mkBoolean false;
+
                   # Disable showing the overview on startup
                   startup-status = lib.gvariant.mkInt32 0;
 
@@ -158,9 +207,31 @@
                   workspaces-in-app-grid = lib.gvariant.mkBoolean false;
                 };
 
+                "org/gnome/shell/extensions/tilingshell" = {
+                  # Disable snap assistant
+                  enable-snap-assist = lib.gvariant.mkBoolean false;
+
+                  # Remove inner gaps
+                  inner-gaps = lib.gvariant.mkUint32 0;
+
+                  # Remove outer gaps
+                  outer-gaps = lib.gvariant.mkUint32 0;
+
+                  # Set the quarter tiling threshold to 25%
+                  quarter-tiling-threshold = lib.gvariant.mkUint32 25;
+
+                  # Maximize windows when dragged to the top edge
+                  top-edge-maximize = lib.gvariant.mkBoolean true;
+                };
+
                 "org/gtk/gtk4/settings/file-chooser" = {
                   # Show hidden files
                   show-hidden = lib.gvariant.mkBoolean true;
+                };
+
+                "system/locale" = {
+                  # Set the system locale to Polish
+                  region = lib.gvariant.mkString "pl_PL.UTF-8";
                 };
               };
             }
