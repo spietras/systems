@@ -1,5 +1,9 @@
 # Development related stuff
-{pkgs, ...}: {
+{
+  lib,
+  pkgs,
+  ...
+}: {
   home = {
     packages = [
       # Containers TUI
@@ -36,19 +40,24 @@
     # kubectl colorful output
     kubecolor = {
       enable = true;
-      enableAlias = true;
-      enableZshIntegration = true;
     };
 
     # Kubernetes context switching
     kubeswitch = {
       enable = true;
-      enableZshIntegration = true;
     };
 
     # uv
     uv = {
       enable = true;
+    };
+
+    # Visual Studio Code
+    vscode = {
+      enable = true;
+
+      # Use latest VS Code
+      package = lib.mkForce pkgs.multiverse.latest.vscode.fhs;
     };
   };
 }

@@ -96,15 +96,6 @@
     # Better cat
     bat = {
       enable = true;
-
-      # Enable integration with other programs
-      extraPackages = [
-        pkgs.bat-extras.batdiff
-        pkgs.bat-extras.batgrep
-        pkgs.bat-extras.batman
-        pkgs.bat-extras.batpipe
-        pkgs.bat-extras.batwatch
-      ];
     };
 
     # Bluetooth TUI
@@ -115,7 +106,6 @@
     # Navigate directory trees
     broot = {
       enable = true;
-      enableZshIntegration = true;
     };
 
     # Excellent resource monitor
@@ -123,21 +113,9 @@
       enable = true;
     };
 
-    # Change shell configuration on the fly
-    direnv = {
-      enable = true;
-      enableZshIntegration = true;
-
-      nix-direnv = {
-        # Enable better integration with Nix
-        enable = true;
-      };
-    };
-
     # Better ls
     eza = {
       enable = true;
-      enableZshIntegration = true;
     };
 
     # Display system information
@@ -158,7 +136,6 @@
     # Fuzzy finder
     fzf = {
       enable = true;
-      enableZshIntegration = true;
     };
 
     # JSON processor
@@ -174,19 +151,11 @@
     # Terminal emulator
     kitty = {
       enable = true;
-
-      settings = {
-        # See: https://github.com/kovidgoyal/kitty/issues/3284
-        linux_display_server = "x11";
-      };
     };
 
     # Manual
     man = {
       enable = true;
-
-      # Generate page index cache
-      generateCaches = true;
     };
 
     # Minimal text editor
@@ -207,18 +176,6 @@
     # TLDR
     tealdeer = {
       enable = true;
-
-      settings = {
-        updates = {
-          # Enable automatic updates
-          auto_update = true;
-        };
-      };
-    };
-
-    # Visual Studio Code
-    vscode = {
-      enable = true;
     };
 
     # YouTube downloader
@@ -234,7 +191,6 @@
     # Smart cd
     zoxide = {
       enable = true;
-      enableZshIntegration = true;
     };
   };
 

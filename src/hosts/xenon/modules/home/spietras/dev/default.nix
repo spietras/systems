@@ -36,14 +36,11 @@
     # kubectl colorful output
     kubecolor = {
       enable = true;
-      enableAlias = true;
-      enableZshIntegration = true;
     };
 
     # Kubernetes context switching
     kubeswitch = {
       enable = true;
-      enableZshIntegration = true;
     };
 
     # uv

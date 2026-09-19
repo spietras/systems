@@ -1,5 +1,5 @@
 # Configuration related to styling
-{
+{lib, ...}: {
   programs = {
     firefox = {
       profiles = {
@@ -22,11 +22,17 @@
       firefox = {
         colorTheme = {
           # Enable Firefox Color
-          enable = true;
+          enable = lib.mkDefault true;
         };
 
         # Apply styling to default profile
-        profileNames = ["default"];
+        profileNames = lib.mkDefault ["default"];
+      };
+
+      vscode = {
+        # Disable VS Code integration as it would create read-only settings
+        # Remove later after this will be available: https://github.com/nix-community/home-manager/pull/9854
+        enable = lib.mkForce false;
       };
     };
   };
