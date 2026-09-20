@@ -27,14 +27,6 @@
       };
     };
 
-    # Terminal emulator
-    kitty = {
-      settings = {
-        # See: https://github.com/kovidgoyal/kitty/issues/3284
-        linux_display_server = "x11";
-      };
-    };
-
     # Manual
     man = {
       # Generate page index cache
