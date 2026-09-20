@@ -1,6 +1,5 @@
 # Desktop environment configuration
 {
-  config,
   lib,
   pkgs,
   ...
@@ -31,7 +30,6 @@
       pkgs.gnomeExtensions.alphabetical-app-grid
       pkgs.gnomeExtensions.appindicator
       pkgs.gnomeExtensions.app-hider
-      pkgs.gnomeExtensions.blur-my-shell
       pkgs.gnomeExtensions.dash-to-dock
       pkgs.gnomeExtensions.just-perfection
       pkgs.gnomeExtensions.tiling-shell
@@ -126,7 +124,6 @@
                     (lib.gvariant.mkString pkgs.gnomeExtensions.alphabetical-app-grid.extensionUuid)
                     (lib.gvariant.mkString pkgs.gnomeExtensions.appindicator.extensionUuid)
                     (lib.gvariant.mkString pkgs.gnomeExtensions.app-hider.extensionUuid)
-                    (lib.gvariant.mkString pkgs.gnomeExtensions.blur-my-shell.extensionUuid)
                     (lib.gvariant.mkString pkgs.gnomeExtensions.dash-to-dock.extensionUuid)
                     (lib.gvariant.mkString pkgs.gnomeExtensions.just-perfection.extensionUuid)
                     (lib.gvariant.mkString pkgs.gnomeExtensions.tiling-shell.extensionUuid)
@@ -149,25 +146,6 @@
                     (lib.gvariant.mkString "qt5ct.desktop")
                     (lib.gvariant.mkString "qt6ct.desktop")
                   ];
-                };
-
-                "org/gnome/shell/extensions/blur-my-shell/dash-to-dock" = {
-                  # Disable dock blur in overview
-                  unblur-in-overview = lib.gvariant.mkBoolean true;
-                };
-
-                "org/gnome/shell/extensions/blur-my-shell/overview" = {
-                  # Select light or dark overview style
-                  style-components = lib.gvariant.mkInt32 (
-                    if config.stylix.polarity == "light"
-                    then 1
-                    else 2
-                  );
-                };
-
-                "org/gnome/shell/extensions/blur-my-shell/panel" = {
-                  # Disable panel blur
-                  blur = lib.gvariant.mkBoolean false;
                 };
 
                 "org/gnome/shell/extensions/dash-to-dock" = {
