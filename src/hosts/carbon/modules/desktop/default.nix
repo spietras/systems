@@ -177,6 +177,9 @@
                   # Apply custom theme
                   apply-custom-theme = lib.gvariant.mkBoolean true;
 
+                  # Focus, minimize, or show previews when clicking on an app
+                  click-action = lib.gvariant.mkString "focus-minimize-or-previews";
+
                   # Disable showing the overview on startup
                   disable-overview-on-startup = lib.gvariant.mkBoolean true;
 
@@ -185,6 +188,9 @@
 
                   # Disable requiring pressure to show the dock
                   require-pressure-to-show = lib.gvariant.mkBoolean false;
+
+                  # Cycle through windows when scrolling on an app
+                  scroll-action = lib.gvariant.mkString "cycle-windows";
 
                   # Disable the show delay for the dock
                   show-delay = lib.gvariant.mkDouble 0.0;
