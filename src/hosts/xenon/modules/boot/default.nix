@@ -15,6 +15,12 @@
         "xhci_pci"
       ];
 
+      # Kernel modules to load in initrd
+      kernelModules = [
+        # Load Intel graphics driver to enable early kernel mode setting
+        "i915"
+      ];
+
       # Disable log messages
       verbose = false;
     };
