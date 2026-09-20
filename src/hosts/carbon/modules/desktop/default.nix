@@ -186,6 +186,9 @@
                   # Set the hide delay for the dock
                   hide-delay = lib.gvariant.mkDouble 1.0;
 
+                  # Show the dock on all monitors
+                  multi-monitor = lib.gvariant.mkBoolean true;
+
                   # Disable requiring pressure to show the dock
                   require-pressure-to-show = lib.gvariant.mkBoolean false;
 
