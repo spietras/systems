@@ -138,6 +138,11 @@
       enable = true;
     };
 
+    # Terminal emulator
+    ghostty = {
+      enable = true;
+    };
+
     # JSON processor
     jq = {
       enable = true;
@@ -145,11 +150,6 @@
 
     # Interactive jq playground
     jqp = {
-      enable = true;
-    };
-
-    # Terminal emulator
-    kitty = {
       enable = true;
     };
 
