@@ -82,6 +82,11 @@
                   enable-hot-corners = lib.gvariant.mkBoolean false;
                 };
 
+                "org/gnome/desktop/notifications" = {
+                  # Hide notifications on the lock screen
+                  show-in-lock-screen = lib.gvariant.mkBoolean false;
+                };
+
                 "org/gnome/desktop/session" = {
                   # Set the idle delay to 15 minutes
                   idle-delay = lib.gvariant.mkUint32 900;
