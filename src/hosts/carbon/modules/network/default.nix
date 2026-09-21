@@ -161,6 +161,26 @@ in {
       # Use NetworkManager to manage network connections
       enable = true;
 
+      plugins = [
+        # Add Iodine VPN support
+        pkgs.networkmanager-iodine
+
+        # Add L2TP VPN support
+        pkgs.networkmanager-l2tp
+
+        # Add OpenConnect VPN support
+        pkgs.networkmanager-openconnect
+
+        # Add OpenVPN VPN support
+        pkgs.networkmanager-openvpn
+
+        # Add SSH VPN support
+        pkgs.networkmanager-ssh
+
+        # Add StrongSwan VPN support
+        pkgs.networkmanager-strongswan
+      ];
+
       wifi = {
         # Use iwd instead of wpa_supplicant
         # It's faster for establishing connections
