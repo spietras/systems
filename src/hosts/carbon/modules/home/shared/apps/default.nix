@@ -27,6 +27,27 @@
       };
     };
 
+    # Terminal emulator
+    ghostty = {
+      settings = {
+        keybind = lib.mkDefault [
+          # Copy to clipboard without formatting
+          "ctrl+shift+c=copy_to_clipboard:plain"
+
+          # Move by word
+          "alt+left=esc:b"
+          "alt+right=esc:f"
+
+          # Delete word
+          "alt+delete=esc:d"
+
+          # Jump between prompts
+          "alt+up=jump_to_prompt:-1"
+          "alt+down=jump_to_prompt:1"
+        ];
+      };
+    };
+
     # Manual
     man = {
       # Generate page index cache
