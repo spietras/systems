@@ -161,11 +161,6 @@
       enable = true;
     };
 
-    # File manager
-    nnn = {
-      enable = true;
-    };
-
     # Better grep
     ripgrep = {
       enable = true;
@@ -173,6 +168,16 @@
 
     # TLDR
     tealdeer = {
+      enable = true;
+    };
+
+    # Network diagnostic tool
+    trippy = {
+      enable = true;
+    };
+
+    # Terminal file manager
+    yazi = {
       enable = true;
     };
 

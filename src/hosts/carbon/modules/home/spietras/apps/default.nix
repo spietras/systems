@@ -133,6 +133,11 @@
       enable = true;
     };
 
+    # E-book reader
+    foliate = {
+      enable = true;
+    };
+
     # Fuzzy finder
     fzf = {
       enable = true;
@@ -163,11 +168,6 @@
       enable = true;
     };
 
-    # File manager
-    nnn = {
-      enable = true;
-    };
-
     # Better grep
     ripgrep = {
       enable = true;
@@ -175,6 +175,16 @@
 
     # TLDR
     tealdeer = {
+      enable = true;
+    };
+
+    # Network diagnostic tool
+    trippy = {
+      enable = true;
+    };
+
+    # Terminal file manager
+    yazi = {
       enable = true;
     };
 
@@ -195,6 +205,11 @@
   };
 
   services = {
+    # Audio effects
+    easyeffects = {
+      enable = true;
+    };
+
     # Task scheduler
     pueue = {
       enable = true;
