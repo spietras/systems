@@ -52,6 +52,16 @@
       ];
     };
 
+    logitech = {
+      wireless = {
+        # Enable support for Logitech wireless devices
+        enable = true;
+
+        # Enable graphical support applications
+        enableGraphical = true;
+      };
+    };
+
     mcelog = {
       # Enable additional logging capabilities for hardware
       enable = true;
