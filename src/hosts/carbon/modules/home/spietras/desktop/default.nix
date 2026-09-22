@@ -10,11 +10,11 @@
           (lib.gvariant.mkString "epiphany.desktop")
           (lib.gvariant.mkString "kvantummanager.desktop")
           (lib.gvariant.mkString "micro.desktop")
-          (lib.gvariant.mkString "nnn.desktop")
           (lib.gvariant.mkString "org.gnome.Console.desktop")
           (lib.gvariant.mkString "org.gnome.Epiphany.desktop")
           (lib.gvariant.mkString "qt5ct.desktop")
           (lib.gvariant.mkString "qt6ct.desktop")
+          (lib.gvariant.mkString "yazi.desktop")
         ];
       };
     };
