@@ -48,5 +48,11 @@
       # Do not force the generated configuration file
       forceUserConfig = lib.mkDefault false;
     };
+
+    # Terminal file manager
+    yazi = {
+      # Use the new shell wrapper name
+      shellWrapperName = lib.mkDefault "y";
+    };
   };
 }
