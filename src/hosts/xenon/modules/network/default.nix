@@ -205,6 +205,26 @@ in {
     };
   };
 
+  programs = {
+    wireshark = {
+      dumpcap = {
+        # Allow capturing network traffic
+        enable = true;
+      };
+
+      # Enable Wireshark
+      enable = true;
+
+      # Use the CLI version
+      package = pkgs.wireshark-cli;
+
+      usbmon = {
+        # Allow capturing USB traffic
+        enable = true;
+      };
+    };
+  };
+
   services = {
     chrony = {
       # Use chrony as the NTP client

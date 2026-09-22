@@ -28,6 +28,9 @@
 
           # Can use sudo
           config.users.groups.wheel.name
+
+          # Can use wireshark
+          config.users.groups.wireshark.name
         ];
 
         hashedPasswordFile = config.sops.secrets."passwords/spietras".path;
