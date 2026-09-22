@@ -42,5 +42,11 @@
         };
       };
     };
+
+    # Network diagnostic tool
+    trippy = {
+      # Do not force the generated configuration file
+      forceUserConfig = lib.mkDefault false;
+    };
   };
 }
