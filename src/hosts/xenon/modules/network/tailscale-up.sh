@@ -17,20 +17,30 @@ secretfile="$(mktemp)"
 tokenfile="$(mktemp)"
 keyfile="$(mktemp)"
 
+# Remove temporary credentials when the script exits
+trap 'rm --force "${idfile}" "${secretfile}" "${tokenfile}" "${keyfile}"' EXIT
+
 # Put client ID and secret into temporary files
 xargs -0 printf 'client_id=%s' <"${CLIENT_ID}" >"${idfile}"
 xargs -0 printf 'client_secret=%s' <"${CLIENT_SECRET}" >"${secretfile}"
 
 # Get access token from Tailscale API
-curl --silent 'https://api.tailscale.com/api/v2/oauth/token' \
+curl \
 	--data "@${idfile}" \
-	--data "@${secretfile}" |
+	--data "@${secretfile}" \
+	--fail-with-body \
+	--max-time 30 \
+	--retry 5 \
+	--retry-all-errors \
+	--retry-delay 2 \
+	--show-error \
+	--silent \
+	'https://api.tailscale.com/api/v2/oauth/token' |
 	jq --raw-output '.access_token' |
 	xargs -0 printf 'Authorization: Bearer %s' >"${tokenfile}"
 
 # Create single-use authkey
-curl --silent 'https://api.tailscale.com/api/v2/tailnet/-/keys' \
-	--header @"${tokenfile}" \
+curl \
 	--data-binary '
 {
   "capabilities": {
@@ -44,7 +54,16 @@ curl --silent 'https://api.tailscale.com/api/v2/tailnet/-/keys' \
     }
   }
 }
-' |
+' \
+	--fail-with-body \
+	--header @"${tokenfile}" \
+	--max-time 30 \
+	--retry 5 \
+	--retry-all-errors \
+	--retry-delay 2 \
+	--show-error \
+	--silent \
+	'https://api.tailscale.com/api/v2/tailnet/-/keys' |
 	jq --raw-output '.key' >"${keyfile}"
 
 # Connect to Tailscale
@@ -58,13 +77,18 @@ tailscale up \
 device="$(tailscale status --json | jq --raw-output '.Self.ID')"
 
 # Set device IP address
-curl --silent "https://api.tailscale.com/api/v2/device/${device}/ip" \
-	--header @"${tokenfile}" \
+curl \
 	--data-binary '
 {
   "ipv4": "'"${IP}"'"
 }
-'
-
-# Clean up temporary files
-rm --force "${idfile}" "${secretfile}" "${tokenfile}" "${keyfile}"
+' \
+	--fail-with-body \
+	--header @"${tokenfile}" \
+	--max-time 30 \
+	--retry 5 \
+	--retry-all-errors \
+	--retry-delay 2 \
+	--show-error \
+	--silent \
+	"https://api.tailscale.com/api/v2/device/${device}/ip"
