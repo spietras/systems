@@ -43,8 +43,8 @@
           "alt+left=esc:b"
           "alt+right=esc:f"
 
-          # Delete word (same as ctrl+w)
-          "alt+backspace=text:\\x17"
+          # Delete word
+          "alt+backspace=text:\\x1b\\x7f"
 
           # Delete word forward
           "alt+delete=esc:d"
