@@ -11,6 +11,12 @@
       # Dockerfile linter
       pkgs.hadolint
 
+      # Google Cloud SDK
+      pkgs.google-cloud-sdk
+
+      # Google Workspace CLI
+      pkgs.gws
+
       # Nix language server
       pkgs.nil
 
