@@ -131,6 +131,9 @@
     # Firefox web browser
     firefox = {
       enable = true;
+
+      # Use the latest Firefox version
+      package = pkgs.multiverse.latest.firefox;
     };
 
     # E-book reader
@@ -151,6 +154,9 @@
     # Google Chrome web browser
     google-chrome = {
       enable = true;
+
+      # Use the latest Google Chrome version
+      package = pkgs.multiverse.latest.google-chrome;
     };
 
     # JSON processor
