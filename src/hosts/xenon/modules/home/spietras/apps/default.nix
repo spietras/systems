@@ -53,6 +53,9 @@
       # Colors helper
       pkgs.pastel
 
+      # Proton Pass CLI
+      pkgs.proton-pass-cli
+
       # Speedtest CLI
       pkgs.speedtest-go
 
