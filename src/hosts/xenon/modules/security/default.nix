@@ -1,6 +1,21 @@
 # Things related to security
-{config, ...}: {
+{
+  config,
+  pkgs,
+  ...
+}: {
   environment = {
+    systemPackages = [
+      # Sandboxing tool
+      pkgs.bubblewrap
+
+      # User-mode networking for sandboxed tools
+      pkgs.slirp4netns
+
+      # Network utility
+      pkgs.socat
+    ];
+
     sessionVariables = {
       # Point tools to the system CA bundle
       AWS_CA_BUNDLE = config.security.pki.caBundle;
