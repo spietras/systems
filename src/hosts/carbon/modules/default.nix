@@ -5,6 +5,7 @@
     ./constants
     ./containers
     ./desktop
+    ./gaming
     ./hardware
     ./home
     ./install
