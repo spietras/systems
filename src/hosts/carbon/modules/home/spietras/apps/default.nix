@@ -53,6 +53,9 @@
       # Proton Pass CLI
       pkgs.proton-pass-cli
 
+      # Signal
+      pkgs.signal-desktop
+
       # Speedtest CLI
       pkgs.speedtest-go
 
