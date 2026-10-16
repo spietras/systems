@@ -36,16 +36,30 @@
     # Bun
     bun = {
       enable = true;
+
+      # Use the latest Bun version
+      package = pkgs.multiverse.latest.bun;
     };
 
     # GitHub CLI
     gh = {
       enable = true;
+
+      extensions = [
+        # GitHub TUI dashboard
+        pkgs.multiverse.latest.gh-dash
+      ];
+
+      # Use the latest GitHub CLI version
+      package = pkgs.multiverse.latest.gh;
     };
 
     # GitHub Copilot CLI
     github-copilot-cli = {
       enable = true;
+
+      # Use the latest GitHub Copilot CLI version
+      package = pkgs.multiverse.latest.github-copilot-cli;
     };
 
     # Kubernetes TUI
@@ -66,6 +80,9 @@
     # uv
     uv = {
       enable = true;
+
+      # Use the latest uv version
+      package = pkgs.multiverse.latest.uv;
     };
 
     # Visual Studio Code
