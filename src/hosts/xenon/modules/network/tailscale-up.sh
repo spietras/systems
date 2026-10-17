@@ -86,9 +86,10 @@ curl \
 	--fail-with-body \
 	--header @"${tokenfile}" \
 	--max-time 30 \
-	--retry 5 \
+	--retry 15 \
 	--retry-all-errors \
 	--retry-delay 2 \
+	--retry-max-time 60 \
 	--show-error \
 	--silent \
 	"https://api.tailscale.com/api/v2/device/${device}/ip"
