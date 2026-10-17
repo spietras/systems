@@ -14,6 +14,12 @@
 
       # Disable GitHub CLI update notices
       GH_NO_UPDATE_NOTIFIER = lib.mkDefault "1";
+
+      # Use the keyring as the Proton Pass CLI key provider
+      PROTON_PASS_KEY_PROVIDER = lib.mkDefault "keyring";
+
+      # Use D-Bus for Proton Pass CLI keyring access
+      PROTON_PASS_LINUX_KEYRING = lib.mkDefault "dbus";
     };
   };
 
