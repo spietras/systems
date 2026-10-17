@@ -283,22 +283,12 @@ in {
     services = {
       # Run dnsproxy as a local DNS resolver
       dnsproxy = {
-        after = [
-          # Run after connecting to Tailscale
-          "tailscale-up.service"
-        ];
-
         before = [
           # Run before name resolution
           "nss-lookup.target"
         ];
 
         description = "Simple DNS proxy with DoH, DoT, DoQ and DNSCrypt support";
-
-        requires = [
-          # Require Tailscale connection
-          "tailscale-up.service"
-        ];
 
         serviceConfig = {
           # Allow binding to privileged ports
@@ -369,6 +359,9 @@ in {
       # Autoconnect to Tailscale network with authentication key
       tailscale-up = {
         after = [
+          # Run after the local DNS resolver is available
+          "dnsproxy.service"
+
           # Run after network is online
           "network-online.target"
 
@@ -402,6 +395,11 @@ in {
         wantedBy = [
           # Run at startup
           "multi-user.target"
+        ];
+
+        wants = [
+          # Start the local DNS resolver when available
+          "dnsproxy.service"
         ];
       };
     };
