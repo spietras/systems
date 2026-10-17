@@ -119,6 +119,14 @@
       enable = true;
     };
 
+    # Discord desktop app
+    discord = {
+      enable = true;
+
+      # Use the latest Discord version
+      package = pkgs.multiverse.latest.discord;
+    };
+
     # Better ls
     eza = {
       enable = true;
