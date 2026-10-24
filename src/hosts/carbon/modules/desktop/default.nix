@@ -123,6 +123,17 @@
                   show-delete-permanently = lib.gvariant.mkBoolean true;
                 };
 
+                "org/gnome/settings-daemon/plugins/power" = {
+                  # Never suspend when on AC power
+                  sleep-inactive-ac-type = lib.gvariant.mkString "nothing";
+
+                  # Suspend after 15 minutes when on battery power
+                  sleep-inactive-battery-timeout = lib.gvariant.mkInt32 900;
+
+                  # Suspend when on battery power
+                  sleep-inactive-battery-type = lib.gvariant.mkString "suspend";
+                };
+
                 "org/gnome/shell" = {
                   # Enable GNOME extensions that we want to use
                   enabled-extensions = lib.gvariant.mkArray [

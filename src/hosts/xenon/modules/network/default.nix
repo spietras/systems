@@ -84,6 +84,19 @@
       "https://dns.google/dns-query"
     ];
   };
+  tailscaleConnectivityScript = pkgs.writeShellApplication {
+    # Name of the script
+    name = "tailscale-connectivity";
+
+    # Packages available in the script
+    runtimeInputs = [pkgs.coreutils pkgs.systemd];
+
+    # Load the script with substituted values
+    text = builtins.readFile (
+      # Substitute values in the script
+      pkgs.replaceVars ./tailscale-connectivity.sh {}
+    );
+  };
   tailscaleLogoutScript = pkgs.writeShellApplication {
     # Name of the script
     name = "tailscale-logout";
@@ -102,7 +115,7 @@
     name = "tailscale-up";
 
     # Packages available in the script
-    runtimeInputs = [pkgs.coreutils pkgs.curl pkgs.findutils pkgs.jq pkgs.tailscale];
+    runtimeInputs = [pkgs.coreutils pkgs.curl pkgs.findutils pkgs.gawk pkgs.jq pkgs.tailscale];
 
     # Load the script with substituted values
     text = builtins.readFile (
@@ -152,6 +165,11 @@ in {
         # Add DHCP-provided NTP servers to chrony
         {
           source = "${chronyDHCPNTPScript}/bin/chrony-dhcp-ntp";
+        }
+
+        # Reconcile the Tailscale connection when the network changes
+        {
+          source = "${tailscaleConnectivityScript}/bin/tailscale-connectivity";
         }
       ];
 
@@ -337,9 +355,6 @@ in {
         requires = [
           # Require network to be online
           "network-online.target"
-
-          # Require tailscale daemon to be running
-          "tailscaled.service"
         ];
 
         serviceConfig = {
@@ -391,6 +406,12 @@ in {
           # Connect only once at startup
           Type = "oneshot";
         };
+
+        # Allow at most 5 restarts
+        startLimitBurst = 5;
+
+        # Count restarts within 5 minutes
+        startLimitIntervalSec = 300;
 
         wantedBy = [
           # Run at startup
