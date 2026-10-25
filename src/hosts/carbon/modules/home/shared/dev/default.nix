@@ -15,6 +15,9 @@
       # Disable GitHub CLI update notices
       GH_NO_UPDATE_NOTIFIER = lib.mkDefault "1";
 
+      # Disable automatic copying of selected text in OpenCode
+      OPENCODE_EXPERIMENTAL_DISABLE_COPY_ON_SELECT = lib.mkDefault "true";
+
       # Use the keyring as the Proton Pass CLI key provider
       PROTON_PASS_KEY_PROVIDER = lib.mkDefault "keyring";
 
@@ -68,6 +71,52 @@
     kubecolor = {
       # Use kubecolor as the default kubectl client
       enableAlias = lib.mkDefault true;
+    };
+
+    # OpenCode
+    opencode = {
+      # Enable integration with configured MCP servers
+      enableMcpIntegration = lib.mkDefault true;
+
+      extraPackages = lib.mkDefault [
+        # Go toolchain for automatic gopls installation
+        pkgs.go
+
+        # Nix language server
+        pkgs.nixd
+
+        # Prisma CLI and language server
+        pkgs.prisma
+
+        # Python language server
+        pkgs.pyright
+
+        # Rust language server
+        pkgs.rust-analyzer
+      ];
+
+      settings = {
+        # Disable update checks and notices
+        autoupdate = lib.mkDefault false;
+
+        compaction = {
+          # Remove old tool outputs from context
+          prune = lib.mkDefault true;
+        };
+
+        # Enable built-in language server integration
+        lsp = lib.mkDefault true;
+
+        # Disable automatic workspace snapshots
+        snapshot = lib.mkDefault false;
+      };
+
+      tui = {
+        attention = {
+          # Enable attention notifications and sounds
+          enabled = lib.mkDefault true;
+        };
+      };
     };
 
     # Visual Studio Code
