@@ -85,9 +85,6 @@
         # Nix language server
         pkgs.nixd
 
-        # Prisma CLI and language server
-        pkgs.prisma
-
         # Python language server
         pkgs.pyright
 
