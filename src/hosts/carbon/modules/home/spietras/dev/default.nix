@@ -77,6 +77,14 @@
       enable = true;
     };
 
+    # OpenCode
+    opencode = {
+      enable = true;
+
+      # Use the latest OpenCode version
+      package = pkgs.multiverse.latest.opencode;
+    };
+
     # uv
     uv = {
       enable = true;
