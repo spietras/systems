@@ -1,5 +1,7 @@
 # Development related stuff
-{pkgs, ...}: {
+{pkgs, ...}: let
+  jsonFormat = pkgs.formats.json {};
+in {
   home = {
     packages = [
       # Containers TUI
@@ -101,6 +103,38 @@
 
       # Use the latest uv version
       package = pkgs.multiverse.latest.uv;
+    };
+  };
+
+  xdg = {
+    configFile = {
+      "opencode/opencode-quota/quota-toast.json" = {
+        source = jsonFormat.generate "quota-toast.json" {
+          # Disable quota popups
+          enableToast = false;
+
+          enabledProviders = [
+            # Show OpenAI subscription quotas
+            "openai"
+          ];
+
+          # Show all quota windows in reports
+          formatStyle = "allWindows";
+
+          maintainerAnnouncements = {
+            # Disable maintainer announcements
+            enabled = false;
+          };
+
+          # Display used quota instead of remaining quota
+          percentDisplayMode = "used";
+
+          tuiPromptBar = {
+            # Show quota usage as a progress bar
+            enabled = true;
+          };
+        };
+      };
     };
   };
 }
