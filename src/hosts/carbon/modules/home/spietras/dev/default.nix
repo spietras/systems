@@ -83,6 +83,20 @@
 
       # Use the latest OpenCode version
       package = pkgs.multiverse.latest.opencode;
+
+      settings = {
+        plugin = [
+          # Enable subscription quota reporting
+          "@slkiser/opencode-quota@4"
+        ];
+      };
+
+      tui = {
+        plugin = [
+          # Enable subscription quota reporting
+          "@slkiser/opencode-quota@4"
+        ];
+      };
     };
 
     # uv
