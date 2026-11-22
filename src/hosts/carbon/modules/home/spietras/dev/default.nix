@@ -56,14 +56,6 @@ in {
       package = pkgs.multiverse.latest.gh;
     };
 
-    # GitHub Copilot CLI
-    github-copilot-cli = {
-      enable = true;
-
-      # Use the latest GitHub Copilot CLI version
-      package = pkgs.multiverse.latest.github-copilot-cli;
-    };
-
     # Kubernetes TUI
     k9s = {
       enable = true;
