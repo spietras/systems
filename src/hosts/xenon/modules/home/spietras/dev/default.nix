@@ -1,5 +1,9 @@
 # Development related stuff
-{pkgs, ...}: let
+{
+  lib,
+  pkgs,
+  ...
+}: let
   jsonFormat = pkgs.formats.json {};
 in {
   home = {
@@ -37,6 +41,74 @@ in {
 
       # Use the latest Bun version
       package = pkgs.multiverse.latest.bun;
+    };
+
+    # Claude Code
+    claude-code = {
+      enable = true;
+
+      # Use the latest Claude Code version
+      package = pkgs.multiverse.latest.claude-code;
+
+      rules = {
+        style = ''
+          # Code style
+
+          - Focus on readability.
+          - Keep it simple.
+          - Be consistent with everything else around.
+        '';
+
+        tools = lib.mkAfter ''
+          # Tools available to my user
+
+          - bun
+          - curlie
+          - dasel
+          - difft
+          - dive
+          - duf
+          - fd
+          - ffmpeg
+          - gcloud
+          - gdu
+          - gh
+          - gm
+          - gws
+          - http
+          - jq
+          - mlr
+          - node
+          - npm
+          - python
+          - rg
+          - usql
+          - uv
+          - xh
+          - yq
+        '';
+      };
+
+      settings = {
+        # Customize spinner verbs
+        spinnerVerbs = {
+          mode = "replace";
+
+          verbs = [
+            "let me cook 🤌"
+            "mogging 🗿"
+            "bro is lowkey processing rn 💪"
+            "dude just chill one sec ⏳"
+            "yapping 🗣🔥🔥🔥"
+            "reading tiktok comments 💅🏻"
+            "cooking straight fire bro 🔥"
+            "im tired but ok 🥀"
+            "fact-checking with twitter bros 🤓☝️"
+            "distilling knowledge from chinese models 😇"
+            "stealing tokens from openai 🤫"
+          ];
+        };
+      };
     };
 
     # GitHub CLI
