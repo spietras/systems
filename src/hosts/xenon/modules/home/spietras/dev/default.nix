@@ -162,8 +162,8 @@ in {
     opencode = {
       enable = true;
 
-      # Use the latest OpenCode version
-      package = pkgs.multiverse.latest.opencode;
+      # Pin OpenCode to the latest 1.x version
+      package = pkgs.multiverse.versions.opencode."1.19.0";
 
       settings = {
         plugin = [
