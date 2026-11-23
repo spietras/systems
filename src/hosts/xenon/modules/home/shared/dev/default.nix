@@ -101,9 +101,6 @@
         model = lib.mkDefault "sonnet";
 
         permissions = {
-          # Ask before unsandboxed retries
-          ask = lib.mkDefault ["Bash(dangerouslyDisableSandbox:true)"];
-
           # Use classifier-based approvals
           defaultMode = lib.mkDefault "auto";
 
