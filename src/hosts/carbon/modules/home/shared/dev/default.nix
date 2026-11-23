@@ -166,6 +166,7 @@
             allowedDomains = lib.mkDefault [
               # GitHub
               "api.github.com"
+              "codeload.github.com"
               "github.com"
 
               # PyPI
