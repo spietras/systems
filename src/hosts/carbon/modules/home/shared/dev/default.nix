@@ -6,6 +6,13 @@
   ...
 }: {
   home = {
+    file = {
+      # Let Docker manage its config
+      "${config.programs.docker-cli.configDir}/config.json" = {
+        enable = false;
+      };
+    };
+
     sessionVariables = {
       # Disable telemetry for tools that respect this variable
       DO_NOT_TRACK = lib.mkDefault "1";
@@ -185,12 +192,22 @@
       };
     };
 
+    # Docker CLI config
+    docker-cli = {
+      configDir = lib.mkDefault "${config.xdg.configHome}/docker";
+    };
+
     # GitHub CLI
     gh = {
       extensions = lib.mkDefault [
         # GitHub TUI dashboard
         pkgs.gh-dash
       ];
+
+      settings = {
+        # Disable telemetry
+        telemetry = lib.mkDefault "disabled";
+      };
     };
 
     # kubectl colorful output
