@@ -23,6 +23,14 @@ in {
       # Google Workspace CLI
       pkgs.gws
 
+      # Helm CLI
+      (pkgs.wrapHelm pkgs.kubernetes-helm {
+        plugins = [
+          # Preview release changes
+          pkgs.kubernetes-helmPlugins.helm-diff
+        ];
+      })
+
       # Nix language server
       pkgs.nil
 
@@ -75,6 +83,7 @@ in {
           - gh
           - gm
           - gws
+          - helm
           - http
           - jq
           - mlr
@@ -111,6 +120,11 @@ in {
       };
     };
 
+    # Docker CLI config
+    docker-cli = {
+      enable = true;
+    };
+
     # GitHub CLI
     gh = {
       enable = true;
@@ -136,6 +150,11 @@ in {
 
     # Kubernetes context switching
     kubeswitch = {
+      enable = true;
+    };
+
+    # Docker TUI
+    lazydocker = {
       enable = true;
     };
 
