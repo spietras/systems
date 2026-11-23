@@ -1,5 +1,6 @@
 # Development related stuff
 {
+  config,
   lib,
   pkgs,
   ...
@@ -27,6 +28,163 @@
   };
 
   programs = {
+    # Claude Code
+    claude-code = {
+      # Use configured MCP servers
+      enableMcpIntegration = lib.mkDefault true;
+
+      rules = {
+        tools = ''
+          # Tools available globally
+
+          - docker
+          - nh
+          - nix
+        '';
+      };
+
+      settings = {
+        # Disable attribution
+        attribution = {
+          commit = lib.mkDefault "";
+          pr = lib.mkDefault "";
+          sessionUrl = lib.mkDefault false;
+        };
+
+        # Use high reasoning effort
+        effortLevel = lib.mkDefault "high";
+
+        env = {
+          # Reset the working directory after each command
+          CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR = lib.mkDefault "1";
+
+          # Disable nonessential traffic
+          CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = lib.mkDefault "1";
+
+          # Skip IDE extension installation
+          CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL = lib.mkDefault "1";
+
+          # Limit concurrent subagents
+          CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS = lib.mkDefault "4";
+
+          # Run initialization interactively
+          CLAUDE_CODE_NEW_INIT = lib.mkDefault "true";
+
+          # Default subagents to Haiku
+          CLAUDE_CODE_SUBAGENT_MODEL = lib.mkDefault "haiku";
+
+          # Disable the feedback command
+          DISABLE_FEEDBACK_COMMAND = lib.mkDefault "1";
+
+          # Disable installation warnings
+          DISABLE_INSTALLATION_CHECKS = lib.mkDefault "1";
+
+          # Keep automatic plugin updates
+          FORCE_AUTOUPDATE_PLUGINS = lib.mkDefault "1";
+        };
+
+        # Disable Git instructions and initial status
+        includeGitInstructions = lib.mkDefault false;
+
+        # Use Sonnet by default
+        model = lib.mkDefault "sonnet";
+
+        permissions = {
+          # Ask before unsandboxed retries
+          ask = lib.mkDefault ["Bash(dangerouslyDisableSandbox:true)"];
+
+          # Use classifier-based approvals
+          defaultMode = lib.mkDefault "auto";
+
+          # Disable bypass mode
+          disableBypassPermissionsMode = lib.mkDefault "disable";
+        };
+
+        sandbox = {
+          # Allow unsandboxed retries
+          allowUnsandboxedCommands = lib.mkDefault true;
+
+          # Check permissions for sandboxed commands
+          autoAllowBashIfSandboxed = lib.mkDefault false;
+
+          # Enable sandboxing
+          enabled = lib.mkDefault true;
+
+          # Require a working sandbox
+          failIfUnavailable = lib.mkDefault true;
+
+          filesystem = {
+            allowWrite = lib.mkDefault [
+              # GitHub CLI config
+              "${config.xdg.configHome}/gh"
+
+              # GPG locks for signing
+              config.programs.gpg.homedir
+
+              # Tool caches
+              config.xdg.cacheHome
+
+              # Bun cache and global packages
+              "${config.home.homeDirectory}/.bun"
+
+              # npm cache
+              "${config.home.homeDirectory}/.npm"
+
+              # uv Python installs and tools
+              "${config.xdg.dataHome}/uv"
+            ];
+
+            denyWrite = lib.mkDefault [
+              # Protect GPG config and keys
+              "${config.programs.gpg.homedir}/common.conf"
+              "${config.programs.gpg.homedir}/dirmngr.conf"
+              "${config.programs.gpg.homedir}/gpg-agent.conf"
+              "${config.programs.gpg.homedir}/gpg.conf"
+              "${config.programs.gpg.homedir}/gpgconf.conf"
+              "${config.programs.gpg.homedir}/gpgsm.conf"
+              "${config.programs.gpg.homedir}/keyboxd.conf"
+              "${config.programs.gpg.homedir}/openpgp-revocs.d"
+              "${config.programs.gpg.homedir}/private-keys-v1.d"
+              "${config.programs.gpg.homedir}/pubring.gpg"
+              "${config.programs.gpg.homedir}/pubring.kbx"
+              "${config.programs.gpg.homedir}/public-keys.d"
+              "${config.programs.gpg.homedir}/scdaemon.conf"
+              "${config.programs.gpg.homedir}/secring.gpg"
+              "${config.programs.gpg.homedir}/sshcontrol"
+              "${config.programs.gpg.homedir}/trustlist.txt"
+            ];
+          };
+
+          network = {
+            # Allow sockets for Nix, GPG, and SSH
+            allowAllUnixSockets = lib.mkDefault true;
+
+            allowedDomains = lib.mkDefault [
+              # GitHub
+              "api.github.com"
+              "github.com"
+
+              # PyPI
+              "files.pythonhosted.org"
+              "pypi.org"
+
+              # npm registry
+              "registry.npmjs.org"
+            ];
+          };
+        };
+
+        # Use ccstatusline
+        statusLine = {
+          command = lib.mkDefault "${config.programs.bun.package}/bin/bunx ccstatusline@2.2.34";
+          type = lib.mkDefault "command";
+        };
+
+        # Use the classic interface
+        tui = lib.mkDefault "default";
+      };
+    };
+
     # GitHub CLI
     gh = {
       extensions = lib.mkDefault [
