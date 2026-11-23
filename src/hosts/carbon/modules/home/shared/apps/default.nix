@@ -53,6 +53,9 @@
           "alt+up=jump_to_prompt:-1"
           "alt+down=jump_to_prompt:1"
         ];
+
+        # Mouse-wheel scroll multiplier
+        mouse-scroll-multiplier = lib.mkDefault "discrete:1";
       };
     };
 
