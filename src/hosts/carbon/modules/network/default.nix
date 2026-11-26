@@ -397,21 +397,9 @@ in {
         script = "${tailscaleUpScript}/bin/tailscale-up";
 
         serviceConfig = {
-          # Restart after a failure
-          Restart = "on-failure";
-
-          # Wait before restarting after a failure
-          RestartSec = "10s";
-
           # Connect only once at startup
           Type = "oneshot";
         };
-
-        # Allow at most 5 restarts
-        startLimitBurst = 5;
-
-        # Count restarts within 5 minutes
-        startLimitIntervalSec = 300;
 
         wantedBy = [
           # Run at startup
